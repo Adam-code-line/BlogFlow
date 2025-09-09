@@ -157,7 +157,7 @@
 import type { BlogPost, PostListItem } from '~/types'
 
 const route = useRoute()
-const slug = computed(() => String(route.params.slug))
+const slug = computed(() => (route.params as { slug: string }).slug);
 
 // 获取真实的文章数据
 const { data: post } = await queryContent(`/blog/${slug.value}`).findOne()

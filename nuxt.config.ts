@@ -31,6 +31,14 @@ export default defineNuxtConfig({
     '@nuxt/ui'           // UI 组件库
   ],
 
+  // 自动导入配置 - 关键修复
+  imports: {
+    dirs: [
+      'composables/**',
+      'utils/**'
+    ]
+  },
+
   // Nuxt UI 配置 - 禁用字体模块以避免 Google Fonts 问题
   ui: {
     fonts: false         // 禁用 @nuxt/fonts 模块
