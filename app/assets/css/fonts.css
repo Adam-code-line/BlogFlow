@@ -1,0 +1,57 @@
+/* 系统字体配置 - 避免依赖 Google Fonts */
+
+/* 主要字体家族 - 中英文混排优化 */
+:root {
+  --font-sans: system-ui, -apple-system, 'Segoe UI', 'Roboto', 'Helvetica Neue', 
+               'Noto Sans SC', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 
+               'WenQuanYi Micro Hei', sans-serif;
+  
+  --font-mono: 'SFMono-Regular', 'Consolas', 'Liberation Mono', 'Menlo', 
+               'Courier New', monospace;
+  
+  --font-serif: 'Times New Roman', 'Times', 'Noto Serif SC', 'Source Han Serif SC', serif;
+}
+
+/* 全局字体设置 */
+body, html {
+  font-family: var(--font-sans);
+  font-feature-settings: "kern" 1, "liga" 1, "calt" 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* 代码字体 */
+code, pre, kbd, samp {
+  font-family: var(--font-mono);
+}
+
+/* 标题字体 */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-sans);
+  font-weight: 600;
+}
+
+/* 优化中文排版 */
+.chinese-text {
+  font-family: 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 
+               'WenQuanYi Micro Hei', 'Noto Sans SC', sans-serif;
+}
+
+/* 优化英文排版 */
+.english-text {
+  font-family: system-ui, -apple-system, 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
+}
+
+/* 响应式字体大小 */
+@media (max-width: 768px) {
+  html {
+    font-size: 14px;
+  }
+}
+
+@media (min-width: 769px) {
+  html {
+    font-size: 16px;
+  }
+}
