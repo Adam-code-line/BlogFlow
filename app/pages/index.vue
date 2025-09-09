@@ -9,10 +9,10 @@
           </div>
           <div class="hidden md:block">
             <div class="ml-10 flex items-baseline space-x-4">
-              <a href="#" class="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium">首页</a>
-              <a href="#" class="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium">博客</a>
-              <a href="#" class="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium">关于</a>
-              <a href="#" class="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium">联系</a>
+              <NuxtLink to="/" class="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium">首页</NuxtLink>
+              <NuxtLink to="/blog" class="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium">博客</NuxtLink>
+              <NuxtLink to="/about" class="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium">关于</NuxtLink>
+              <NuxtLink to="/contact" class="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium">联系</NuxtLink>
             </div>
           </div>
           <div class="flex items-center space-x-4">
@@ -42,10 +42,10 @@
             这里记录着我的技术思考、学习笔记和生活感悟。让我们一起探索代码的魅力，分享知识的力量。
           </p>
           <div class="flex flex-col sm:flex-row gap-4 justify-center">
-            <UButton size="lg" color="primary" variant="solid" class="px-8 py-3">
+            <UButton size="lg" color="primary" variant="solid" class="px-8 py-3" to="/blog">
               阅读博客
             </UButton>
-            <UButton size="lg" color="gray" variant="outline" class="px-8 py-3">
+            <UButton size="lg" color="neutral" variant="outline" class="px-8 py-3" to="/about">
               了解更多
             </UButton>
           </div>
@@ -85,84 +85,65 @@
           </div>
           
           <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <!-- 文章卡片 1 -->
-            <UCard class="hover:shadow-xl transition-shadow duration-300">
+            <!-- 文章卡片 -->
+            <UCard 
+              v-for="post in featuredPosts" 
+              :key="post._path"
+              class="hover:shadow-xl transition-shadow duration-300"
+            >
               <template #header>
-                <img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=400&h=200&fit=crop" 
-                     alt="文章封面" 
-                     class="w-full h-48 object-cover">
+                <div v-if="post.cover || post.seo?.ogImage" class="aspect-video overflow-hidden">
+                  <NuxtImg
+                    :src="post.cover || post.seo?.ogImage"
+                    :alt="post.title"
+                    class="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                    loading="lazy"
+                  />
+                </div>
               </template>
+              
               <div class="p-6">
+                <!-- 分类和标签 -->
                 <div class="flex items-center space-x-2 mb-3">
-                  <UBadge color="blue" variant="soft">Vue.js</UBadge>
-                  <UBadge color="green" variant="soft">前端</UBadge>
+                  <UBadge 
+                    :label="post.category" 
+                    variant="soft" 
+                    color="primary"
+                  />
+                  <UBadge 
+                    v-if="post.tags?.[0]"
+                    :label="post.tags[0]" 
+                    variant="soft" 
+                    color="secondary"
+                  />
                 </div>
-                <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-3">
-                  Vue 3 Composition API 深度解析
-                </h3>
-                <p class="text-gray-600 dark:text-gray-300 mb-4">
-                  深入探讨 Vue 3 Composition API 的设计理念和最佳实践，让你的代码更加优雅和可维护。
-                </p>
-                <div class="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">
-                  <span>2025年9月5日</span>
-                  <span>5 分钟阅读</span>
-                </div>
-              </div>
-            </UCard>
 
-            <!-- 文章卡片 2 -->
-            <UCard class="hover:shadow-xl transition-shadow duration-300">
-              <template #header>
-                <img src="https://images.unsplash.com/photo-1627398242454-45a1465c2479?w=400&h=200&fit=crop" 
-                     alt="文章封面" 
-                     class="w-full h-48 object-cover">
-              </template>
-              <div class="p-6">
-                <div class="flex items-center space-x-2 mb-3">
-                  <UBadge color="purple" variant="soft">Nuxt</UBadge>
-                  <UBadge color="orange" variant="soft">SSR</UBadge>
-                </div>
+                <!-- 标题 -->
                 <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-3">
-                  Nuxt 4 新特性全面解读
+                  <NuxtLink 
+                    :to="post._path"
+                    class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                  >
+                    {{ post.title }}
+                  </NuxtLink>
                 </h3>
-                <p class="text-gray-600 dark:text-gray-300 mb-4">
-                  Nuxt 4 带来了许多激动人心的新特性，让我们一起探索这些改进如何提升开发体验。
-                </p>
-                <div class="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">
-                  <span>2025年9月3日</span>
-                  <span>8 分钟阅读</span>
-                </div>
-              </div>
-            </UCard>
 
-            <!-- 文章卡片 3 -->
-            <UCard class="hover:shadow-xl transition-shadow duration-300">
-              <template #header>
-                <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=400&h=200&fit=crop" 
-                     alt="文章封面" 
-                     class="w-full h-48 object-cover">
-              </template>
-              <div class="p-6">
-                <div class="flex items-center space-x-2 mb-3">
-                  <UBadge color="yellow" variant="soft">JavaScript</UBadge>
-                  <UBadge color="red" variant="soft">性能优化</UBadge>
-                </div>
-                <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-3">
-                  前端性能优化实战指南
-                </h3>
+                <!-- 描述 -->
                 <p class="text-gray-600 dark:text-gray-300 mb-4">
-                  从代码层面到网络优化，全方位提升前端应用性能的实用技巧和最佳实践。
+                  {{ post.description }}
                 </p>
+
+                <!-- 时间和阅读时间 -->
                 <div class="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">
-                  <span>2025年9月1日</span>
-                  <span>12 分钟阅读</span>
+                  <span>{{ formatDate(post.publishedAt) }}</span>
+                  <span>{{ post.readingTime || 5 }} 分钟阅读</span>
                 </div>
               </div>
             </UCard>
           </div>
 
           <div class="text-center mt-12">
-            <UButton size="lg" color="gray" variant="outline">
+            <UButton size="lg" color="neutral" variant="outline" to="/blog">
               查看全部文章
             </UButton>
           </div>
@@ -273,7 +254,26 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
+// 获取精选文章（最新的3篇文章）
+const { data: featuredPosts } = await queryContent('/blog')
+  .where({ draft: { $ne: true } })
+  .sort({ publishedAt: -1 })
+  .limit(3)
+  .find()
+
+// 工具函数
+function formatDate(dateString: string | Date) {
+  if (!dateString) return ''
+  
+  const date = new Date(dateString)
+  return date.toLocaleDateString('zh-CN', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  })
+}
+
 // 设置页面元数据
 useSeoMeta({
   title: 'BlogFlow - 个人博客首页',
