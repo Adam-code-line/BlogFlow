@@ -55,13 +55,13 @@
       <div v-if="filteredPosts.length > 0" class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
         <article 
           v-for="post in filteredPosts" 
-          :key="post._path"
+          :key="post.path"
           class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-lg transition-shadow duration-300"
         >
           <!-- 文章封面 -->
           <div v-if="post.cover" class="aspect-video overflow-hidden">
             <NuxtImg
-              :src="post.cover || post.seo?.ogImage"
+              :src="post.cover"
               :alt="post.title"
               class="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
               loading="lazy"
@@ -87,7 +87,7 @@
             <!-- 文章标题 -->
             <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-3 line-clamp-2">
               <NuxtLink 
-                :to="post._path"
+                :to="post.path"
                 class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
               >
                 {{ post.title }}
@@ -112,7 +112,7 @@
                     {{ post.author?.name || 'BlogFlow Author' }}
                   </div>
                   <div class="text-xs text-gray-500">
-                    {{ formatDate(post.publishedAt) }}
+                    {{ formatDate(post.publishedAt || '') }}
                   </div>
                 </div>
               </div>
@@ -173,6 +173,23 @@
 </template>
 
 <script setup lang="ts">
+// 扩展类型以包含博客特有属性
+interface BlogPost {
+  path: string
+  title?: string
+  description?: string
+  cover?: string
+  category?: string
+  readingTime?: number
+  author?: {
+    name?: string
+    avatar?: string
+  }
+  publishedAt?: string | Date
+  featured?: boolean
+  tags?: string[]
+}
+
 // 页面元数据
 useSeoMeta({
   title: '博客文章 - BlogFlow',
@@ -181,11 +198,10 @@ useSeoMeta({
   ogDescription: '浏览我的最新技术文章和思考，涵盖前端开发、Vue.js、Nuxt.js、TypeScript 等技术主题。'
 })
 
-// 获取所有博客文章
-const { data: allPosts } = await queryContent('/blog')
-  .where({ draft: { $ne: true } })
-  .sort({ publishedAt: -1 })
-  .find()
+// 获取所有博客文章 - 使用 Content v3 API
+const allPosts = await queryCollection('content')
+  .where('path', 'LIKE', '/blog/%')
+  .all() as BlogPost[]
 
 // 响应式数据
 const searchQuery = ref('')
@@ -195,7 +211,7 @@ const postsPerPage = 9
 
 // 计算属性
 const categories = computed(() => {
-  const cats = new Set(allPosts.map((post: any) => post.category).filter(Boolean))
+  const cats = new Set(allPosts.map((post: BlogPost) => post.category).filter(Boolean))
   return Array.from(cats) as string[]
 })
 
@@ -204,13 +220,13 @@ const filteredPosts = computed(() => {
 
   // 分类筛选
   if (selectedCategory.value) {
-    posts = posts.filter((post: any) => post.category === selectedCategory.value)
+    posts = posts.filter((post: BlogPost) => post.category === selectedCategory.value)
   }
 
   // 搜索筛选
   if (searchQuery.value) {
     const query = searchQuery.value.toLowerCase()
-    posts = posts.filter((post: any) => 
+    posts = posts.filter((post: BlogPost) => 
       post.title?.toLowerCase().includes(query) ||
       post.description?.toLowerCase().includes(query) ||
       post.tags?.some((tag: string) => tag.toLowerCase().includes(query))
@@ -228,12 +244,12 @@ const totalPages = computed(() => {
   let posts = allPosts
 
   if (selectedCategory.value) {
-    posts = posts.filter((post: any) => post.category === selectedCategory.value)
+    posts = posts.filter((post: BlogPost) => post.category === selectedCategory.value)
   }
 
   if (searchQuery.value) {
     const query = searchQuery.value.toLowerCase()
-    posts = posts.filter((post: any) => 
+    posts = posts.filter((post: BlogPost) => 
       post.title?.toLowerCase().includes(query) ||
       post.description?.toLowerCase().includes(query) ||
       post.tags?.some((tag: string) => tag.toLowerCase().includes(query))

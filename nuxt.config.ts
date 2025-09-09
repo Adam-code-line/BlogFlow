@@ -1,4 +1,4 @@
-// https://nuxt.com/docs/api/configuration/nuxt-config
+import { defineNuxtConfig } from 'nuxt/config'
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
@@ -30,6 +30,29 @@ export default defineNuxtConfig({
     '@nuxt/image',       // 图片优化
     '@nuxt/ui'           // UI 组件库
   ],
+
+
+  content: {
+    build: {
+      markdown: {
+        // Object syntax can be used to override default options
+        remarkPlugins: {
+          // Override remark-emoji options
+          'remark-emoji': {
+            options: {
+              emoticon: true
+            }
+          },
+          // Disable remark-gfm
+          'remark-gfm': false
+        },
+        highlight: {
+          // Theme used in all color schemes.
+          theme: 'github-light',
+        }
+      }
+    }
+  },
 
   // 自动导入配置 - 关键修复
   imports: {

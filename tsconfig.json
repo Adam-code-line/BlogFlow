@@ -1,5 +1,5 @@
 {
-  // https://nuxt.com/docs/guide/concepts/typescript
+  //tsconfig.json
   "files": [],
   "references": [
     {
@@ -16,7 +16,9 @@
     }
   ],
   "compilerOptions": {
+    "esModuleInterop": true,
     "types": [
+      "nuxt",
       "@nuxt/content"
     ]
   }

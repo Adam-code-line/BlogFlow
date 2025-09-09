@@ -88,13 +88,13 @@
             <!-- 文章卡片 -->
             <UCard 
               v-for="post in featuredPosts" 
-              :key="post._path"
+              :key="post.path"
               class="hover:shadow-xl transition-shadow duration-300"
             >
               <template #header>
-                <div v-if="post.cover || post.seo?.ogImage" class="aspect-video overflow-hidden">
+                <div v-if="post.cover" class="aspect-video overflow-hidden">
                   <NuxtImg
-                    :src="post.cover || post.seo?.ogImage"
+                    :src="post.cover"
                     :alt="post.title"
                     class="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
                     loading="lazy"
@@ -121,7 +121,7 @@
                 <!-- 标题 -->
                 <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-3">
                   <NuxtLink 
-                    :to="post._path"
+                    :to="post.path"
                     class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
                   >
                     {{ post.title }}
@@ -135,7 +135,7 @@
 
                 <!-- 时间和阅读时间 -->
                 <div class="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">
-                  <span>{{ formatDate(post.publishedAt) }}</span>
+                  <span>{{ formatDate(post.publishedAt || '') }}</span>
                   <span>{{ post.readingTime || 5 }} 分钟阅读</span>
                 </div>
               </div>
@@ -255,12 +255,28 @@
 </template>
 
 <script setup lang="ts">
-// 获取精选文章（最新的3篇文章）
-const { data: featuredPosts } = await queryContent('/blog')
-  .where({ draft: { $ne: true } })
-  .sort({ publishedAt: -1 })
+// 博客文章类型
+interface BlogPost {
+  path: string
+  title?: string
+  description?: string
+  cover?: string
+  category?: string
+  readingTime?: number
+  author?: {
+    name?: string
+    avatar?: string
+  }
+  publishedAt?: string | Date
+  featured?: boolean
+  tags?: string[]
+}
+
+// 获取精选文章（最新的3篇文章）- 使用 Content v3 API
+const featuredPosts = await queryCollection('content')
+  .where('path', 'LIKE', '/blog/%')
   .limit(3)
-  .find()
+  .all() as BlogPost[]
 
 // 工具函数
 function formatDate(dateString: string | Date) {

@@ -33,7 +33,7 @@
                 {{ post?.author?.name || 'BlogFlow Author' }}
               </div>
               <div class="text-sm text-gray-600 dark:text-gray-400">
-                {{ formatDate(post?.publishedAt) }}
+                {{ formatDate(post?.publishedAt || '') }}
               </div>
             </div>
           </div>
@@ -120,7 +120,7 @@
           <div v-if="prev" class="order-2 md:order-1">
             <div class="text-sm text-gray-600 dark:text-gray-400 mb-2">上一篇</div>
             <NuxtLink 
-              :to="prev._path"
+              :to="prev.path"
               class="block p-4 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow"
             >
               <h3 class="font-medium text-gray-900 dark:text-white line-clamp-2">
@@ -136,7 +136,7 @@
           <div v-if="next" class="order-1 md:order-2">
             <div class="text-sm text-gray-600 dark:text-gray-400 mb-2 md:text-right">下一篇</div>
             <NuxtLink 
-              :to="next._path"
+              :to="next.path"
               class="block p-4 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow"
             >
               <h3 class="font-medium text-gray-900 dark:text-white line-clamp-2 md:text-right">
@@ -154,19 +154,41 @@
 </template>
 
 <script setup lang="ts">
-import type { BlogPost, PostListItem } from '~/types'
+// 博客文章类型
+interface BlogPost {
+  path: string
+  title?: string
+  description?: string
+  cover?: string
+  category?: string
+  readingTime?: number
+  author?: {
+    name?: string
+    avatar?: string
+  }
+  publishedAt?: string | Date
+  featured?: boolean
+  tags?: string[]
+  body?: any
+}
 
 const route = useRoute()
 const slug = computed(() => (route.params as { slug: string }).slug);
 
-// 获取真实的文章数据
-const { data: post } = await queryContent(`/blog/${slug.value}`).findOne()
+// 获取真实的文章数据 - 使用 Content v3 API
+const post = await queryCollection('content')
+  .path(`/blog/${slug.value}`)
+  .first() as BlogPost | null
 
-// 获取相邻文章
-const [prev, next] = await queryContent('/blog')
-  .where({ draft: { $ne: true } })
-  .sort({ publishedAt: -1 })
-  .findSurround(`/blog/${slug.value}`)
+// 获取相邻文章 - 使用 Content v3 API
+const allBlogPosts = await queryCollection('content')
+  .where('path', 'LIKE', '/blog/%')
+  .all() as BlogPost[]
+
+// 手动实现 surrounding 逻辑
+const currentIndex = allBlogPosts.findIndex(p => p.path === `/blog/${slug.value}`)
+const prev = currentIndex > 0 ? allBlogPosts[currentIndex - 1] : null
+const next = currentIndex < allBlogPosts.length - 1 ? allBlogPosts[currentIndex + 1] : null
 
 // 404 处理
 if (!post) {
@@ -186,11 +208,11 @@ const fullUrl = computed(() => {
 
 // 动态SEO
 useSeoMeta({
-  title: post.value?.title,
-  description: post.value?.description,
-  ogTitle: post.value?.title,
-  ogDescription: post.value?.description,
-  ogImage: post.value?.cover,
+  title: post?.title,
+  description: post?.description,
+  ogTitle: post?.title,
+  ogDescription: post?.description,
+  ogImage: post?.cover,
 })
 
 // 工具函数

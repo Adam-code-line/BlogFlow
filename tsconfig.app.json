@@ -1,0 +1,29 @@
+// tsconfig.app.json
+{
+    "extends": "./.nuxt/tsconfig.app.json",
+    "compilerOptions": {
+        "composite": true,
+        "types": [
+            "node",
+            "@nuxt/content"
+        ]
+    },
+    "include": [
+        "*.vue",
+        "app.vue",
+        "error.vue",
+        "components/**/*.{vue,ts,js}",
+        "composables/**/*.{ts,js}",
+        "layouts/**/*.vue",
+        "pages/**/*.vue",
+        "plugins/**/*.{ts,js}",
+        "middleware/**/*.{ts,js}",
+        "server/**/*.{ts,js}",
+        "content/**/*.md"
+    ],
+    "exclude": [
+        "node_modules",
+        ".nuxt",
+        "dist"
+    ]
+}

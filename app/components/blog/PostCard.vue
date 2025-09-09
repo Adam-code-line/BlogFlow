@@ -86,6 +86,7 @@
 </template>
 
 <script setup lang="ts">
+
 interface Props {
   post: any // 使用我们之前定义的 BlogPost 类型
 }
