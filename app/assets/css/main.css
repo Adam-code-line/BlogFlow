@@ -1,2 +1,5 @@
 @import "tailwindcss";
 @import "@nuxt/ui";
+
+/* 导入自定义样式 */
+@import "./code-highlight.css";

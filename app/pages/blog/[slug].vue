@@ -5,14 +5,14 @@
       <div class="max-w-4xl mx-auto px-4 py-8 sm:py-12">
         <!-- 返回按钮 -->
         <div class="mb-6">
-          <UButton
+          <UiButton
             icon="i-heroicons-arrow-left"
             variant="ghost"
             color="neutral"
             @click="$router.back()"
           >
             返回文章列表
-          </UButton>
+          </UiButton>
         </div>
 
         <!-- 文章标题 -->
@@ -94,15 +94,16 @@
         <div class="flex items-center justify-between">
           <div class="flex items-center space-x-2">
             <span class="text-sm font-medium text-gray-900 dark:text-white">分享文章：</span>
-            <UButton
+            <UiButton
               icon="i-simple-icons-twitter"
               variant="ghost"
               color="primary"
               size="sm"
               :to="`https://twitter.com/intent/tweet?text=${encodeURIComponent(post?.title || '')}&url=${encodeURIComponent(fullUrl)}`"
               target="_blank"
+              @click="trackShare('twitter')"
             />
-            <UButton
+            <UiButton
               icon="i-heroicons-link"
               variant="ghost"
               color="neutral"
@@ -156,6 +157,7 @@
 <script setup lang="ts">
 import type { ContentPost } from '~/types'
 import { useBlogPosts, useFormatDate } from '~/composables/useContent'
+import { useCodeTheme } from '~/composables/useCodeTheme'
 
 const route = useRoute()
 const slug = computed(() => (route.params as { slug: string }).slug);
@@ -163,6 +165,12 @@ const slug = computed(() => (route.params as { slug: string }).slug);
 // 使用 composables
 const blogAPI = useBlogPosts()
 const { formatDate } = useFormatDate()
+
+// 获取插件实例
+const { $analytics, $codeHighlight } = useNuxtApp()
+
+// 使用代码主题功能
+const { initialize: initCodeTheme } = useCodeTheme()
 
 // 获取文章数据
 const post = await blogAPI.getPostBySlug(slug.value)
@@ -191,6 +199,45 @@ const fullUrl = computed(() => {
   return `https://blogflow.example.com${route.path}`
 })
 
+// Analytics 事件处理
+const trackShare = (platform: string) => {
+  $analytics.trackEvent({
+    action: 'share',
+    category: 'article',
+    label: `${platform}: ${post?.title}`
+  })
+}
+
+const trackLinkCopy = () => {
+  $analytics.trackEvent({
+    action: 'copy_link',
+    category: 'article',
+    label: post?.title
+  })
+}
+
+// 页面加载和代码高亮
+onMounted(() => {
+  // 初始化代码主题
+  initCodeTheme()
+  
+  // 追踪文章阅读
+  if (post && post.title) {
+    $analytics.trackArticleRead(post.title, post.category || 'blog')
+    $analytics.trackPageView({
+      path: route.path,
+      title: `${post.title} - BlogFlow`,
+      referrer: document.referrer
+    })
+  }
+
+  // 增强代码块（在 DOM 更新后）
+  nextTick(() => {
+    $codeHighlight.enhanceCodeBlocks()
+    $codeHighlight.addCodeTitles()
+  })
+})
+
 // 动态SEO
 useSeoMeta({
   title: post?.title,
@@ -205,6 +252,7 @@ function copyUrl() {
   if (process.client) {
     navigator.clipboard.writeText(fullUrl.value).then(() => {
       console.log('URL已复制到剪贴板')
+      trackLinkCopy()
     })
   }
 }

@@ -31,14 +31,14 @@
           
           <!-- 分类筛选 -->
           <div class="flex gap-2 flex-wrap">
-            <UButton
+            <UiButton
               :variant="selectedCategory === '' ? 'solid' : 'ghost'"
               color="primary"
               @click="selectedCategory = ''"
             >
               全部
-            </UButton>
-            <UButton
+            </UiButton>
+            <UiButton
               v-for="category in categories"
               :key="String(category)"
               :variant="selectedCategory === category ? 'solid' : 'ghost'"
@@ -46,7 +46,7 @@
               @click="selectedCategory = String(category)"
             >
               {{ category }}
-            </UButton>
+            </UiButton>
           </div>
         </div>
       </div>
@@ -156,7 +156,7 @@
       <!-- 分页 -->
       <div v-if="totalPages > 1" class="mt-12 flex justify-center">
         <nav class="flex space-x-2">
-          <UButton 
+          <UiButton 
             v-for="page in totalPages" 
             :key="page"
             :variant="currentPage === page ? 'solid' : 'ghost'"
@@ -165,7 +165,7 @@
             size="sm"
           >
             {{ page }}
-          </UButton>
+          </UiButton>
         </nav>
       </div>
     </main>
@@ -175,6 +175,9 @@
 <script setup lang="ts">
 import type { ContentPost } from '~/types'
 import { useBlogPosts, useFormatDate } from '~/composables/useContent'
+import { DateFormatter, TextFormatter } from '~/utils/format'
+import { debounce } from '~/composables/useUtils'
+import { useCodeTheme } from '~/composables/useCodeTheme'
 
 // 页面元数据
 useSeoMeta({
@@ -186,7 +189,10 @@ useSeoMeta({
 
 // 使用 composables
 const blogAPI = useBlogPosts()
-const { formatDate } = useFormatDate()
+const { formatDate: originalFormatDate } = useFormatDate()
+
+// 使用代码主题功能
+const { initialize: initCodeTheme } = useCodeTheme()
 
 // 获取所有博客文章
 const allPosts = await blogAPI.getAllPosts()
@@ -196,6 +202,25 @@ const searchQuery = ref('')
 const selectedCategory = ref('')
 const currentPage = ref(1)
 const postsPerPage = 9
+
+// 格式化函数
+const formatDate = (date: string | Date) => {
+  const dateStr = typeof date === 'string' ? date : date.toISOString()
+  return DateFormatter.toChinese(dateStr)
+}
+
+const getReadingTime = (content: string) => {
+  return TextFormatter.readingTime(content)
+}
+
+const getExcerpt = (content: string, maxLength = 150) => {
+  return TextFormatter.excerpt(content, maxLength)
+}
+
+// 防抖搜索
+const debouncedSearch = debounce((query: string) => {
+  searchQuery.value = query
+}, 300)
 
 // 计算属性
 const categories = computed(() => blogAPI.getCategories(allPosts))
@@ -234,6 +259,11 @@ const totalPages = computed(() => {
 // 监听筛选条件变化，重置分页
 watch([searchQuery, selectedCategory], () => {
   currentPage.value = 1
+})
+
+// 页面挂载时初始化代码主题
+onMounted(() => {
+  initCodeTheme()
 })
 </script>
 

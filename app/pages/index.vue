@@ -42,12 +42,12 @@
             这里记录着我的技术思考、学习笔记和生活感悟。让我们一起探索代码的魅力，分享知识的力量。
           </p>
           <div class="flex flex-col sm:flex-row gap-4 justify-center">
-            <UButton size="lg" color="primary" variant="solid" class="px-8 py-3" to="/blog">
+            <UiButton size="lg" color="primary" variant="solid" class="px-8 py-3" to="/blog" @click="handleBlogClick">
               阅读博客
-            </UButton>
-            <UButton size="lg" color="neutral" variant="outline" class="px-8 py-3" to="/about">
+            </UiButton>
+            <UiButton size="lg" color="neutral" variant="outline" class="px-8 py-3" to="/about" @click="handleAboutClick">
               了解更多
-            </UButton>
+            </UiButton>
           </div>
         </div>
       </section>
@@ -86,10 +86,11 @@
           
           <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             <!-- 文章卡片 -->
-            <UCard 
+            <UiCard 
               v-for="post in featuredPosts" 
               :key="post.path"
               class="hover:shadow-xl transition-shadow duration-300"
+              hoverable
             >
               <template #header>
                 <div v-if="post.cover" class="aspect-video overflow-hidden">
@@ -139,13 +140,13 @@
                   <span>{{ post.readingTime || 5 }} 分钟阅读</span>
                 </div>
               </div>
-            </UCard>
+            </UiCard>
           </div>
 
           <div class="text-center mt-12">
-            <UButton size="lg" color="neutral" variant="outline" to="/blog">
+            <UiButton size="lg" color="neutral" variant="outline" to="/blog">
               查看全部文章
-            </UButton>
+            </UiButton>
           </div>
         </div>
       </section>
@@ -196,23 +197,23 @@
           </p>
           
           <div class="flex justify-center space-x-6 mb-12">
-            <a href="#" class="flex items-center justify-center w-12 h-12 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors">
+            <a href="#" @click="handleSocialClick('github')" class="flex items-center justify-center w-12 h-12 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors">
               <Icon name="simple-icons:github" class="w-6 h-6" />
             </a>
-            <a href="#" class="flex items-center justify-center w-12 h-12 bg-blue-400 text-white rounded-full hover:bg-blue-500 transition-colors">
+            <a href="#" @click="handleSocialClick('twitter')" class="flex items-center justify-center w-12 h-12 bg-blue-400 text-white rounded-full hover:bg-blue-500 transition-colors">
               <Icon name="simple-icons:twitter" class="w-6 h-6" />
             </a>
-            <a href="#" class="flex items-center justify-center w-12 h-12 bg-blue-700 text-white rounded-full hover:bg-blue-800 transition-colors">
+            <a href="#" @click="handleSocialClick('linkedin')" class="flex items-center justify-center w-12 h-12 bg-blue-700 text-white rounded-full hover:bg-blue-800 transition-colors">
               <Icon name="simple-icons:linkedin" class="w-6 h-6" />
             </a>
-            <a href="#" class="flex items-center justify-center w-12 h-12 bg-red-600 text-white rounded-full hover:bg-red-700 transition-colors">
+            <a href="#" @click="handleSocialClick('gmail')" class="flex items-center justify-center w-12 h-12 bg-red-600 text-white rounded-full hover:bg-red-700 transition-colors">
               <Icon name="simple-icons:gmail" class="w-6 h-6" />
             </a>
           </div>
           
-          <UButton size="lg" color="primary" variant="solid" class="px-8 py-3">
+          <UiButton size="lg" color="primary" variant="solid" class="px-8 py-3" @click="handleContactClick">
             发送邮件
-          </UButton>
+          </UiButton>
         </div>
       </section>
     </main>
@@ -257,13 +258,77 @@
 <script setup lang="ts">
 import type { ContentPost } from '~/types'
 import { useBlogPosts, useFormatDate } from '~/composables/useContent'
+import { DateFormatter, TextFormatter } from '~/utils/format'
+import { useCodeTheme } from '~/composables/useCodeTheme'
 
 // 使用 composables
 const blogAPI = useBlogPosts()
-const { formatDate } = useFormatDate()
+const { formatDate: originalFormatDate } = useFormatDate()
+
+// 获取分析工具实例
+const { $analytics } = useNuxtApp()
+
+// 使用代码主题功能
+const { initialize: initCodeTheme } = useCodeTheme()
 
 // 获取精选文章（最新的3篇文章）
 const featuredPosts = await blogAPI.getFeaturedPosts(3)
+
+// 格式化函数
+const formatDate = (date: string | Date) => {
+  const dateStr = typeof date === 'string' ? date : date.toISOString()
+  return DateFormatter.toRelative(dateStr)
+}
+
+const getReadingTime = (content: string) => {
+  return TextFormatter.readingTime(content)
+}
+
+const getExcerpt = (content: string, maxLength = 120) => {
+  return TextFormatter.excerpt(content, maxLength)
+}
+
+// Analytics 事件处理函数
+const handleBlogClick = () => {
+  $analytics.trackEvent({
+    action: 'navigate',
+    category: 'homepage',
+    label: 'view_all_posts'
+  })
+}
+
+const handleAboutClick = () => {
+  $analytics.trackEvent({
+    action: 'navigate',
+    category: 'homepage', 
+    label: 'about_page'
+  })
+}
+
+const handleContactClick = () => {
+  $analytics.trackEvent({
+    action: 'contact',
+    category: 'engagement',
+    label: 'contact_button'
+  })
+}
+
+const handleSocialClick = (platform: string) => {
+  $analytics.trackLinkClick(`https://${platform}.com/profile`, `${platform} Profile`)
+}
+
+// 页面加载时追踪
+onMounted(() => {
+  // 初始化代码主题
+  initCodeTheme()
+  
+  // 追踪页面访问
+  $analytics.trackPageView({
+    path: '/',
+    title: 'BlogFlow - 首页',
+    referrer: document.referrer
+  })
+})
 
 // 设置页面元数据
 useSeoMeta({

@@ -47,8 +47,19 @@ export default defineNuxtConfig({
           'remark-gfm': false
         },
         highlight: {
-          // Theme used in all color schemes.
-          theme: 'github-light',
+          // 设置代码高亮主题
+          theme: {
+            // 浅色主题
+            default: 'github-light',
+            // 暗色主题
+            dark: 'github-dark'
+          },
+          // 支持的语言
+          langs: [
+            'javascript', 'typescript', 'vue', 'html', 'css', 'scss', 'json',
+            'markdown', 'bash', 'shell', 'python', 'java', 'go', 'rust', 
+            'php', 'sql', 'yaml', 'xml', 'dockerfile'
+          ]
         }
       }
     }
@@ -96,7 +107,10 @@ export default defineNuxtConfig({
     public: {
       siteUrl: 'http://localhost:3000',
       siteName: 'BlogFlow',
-      siteDescription: '基于 Nuxt 4 构建的现代化个人博客'
+      siteDescription: '基于 Nuxt 4 构建的现代化个人博客',
+      // 分析工具配置
+      googleAnalyticsId: process.env.GOOGLE_ANALYTICS_ID,
+      baiduAnalyticsId: process.env.BAIDU_ANALYTICS_ID
     }
   },
 

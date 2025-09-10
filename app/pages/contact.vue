@@ -190,7 +190,7 @@
 
                   <!-- 提交按钮 -->
                   <div>
-                    <UButton
+                    <UiButton
                       type="submit"
                       size="lg"
                       color="primary"
@@ -199,7 +199,7 @@
                       block
                     >
                       {{ isSubmitting ? '发送中...' : '发送消息' }}
-                    </UButton>
+                    </UiButton>
                   </div>
                 </form>
               </div>
@@ -218,7 +218,7 @@
           
           <div class="grid md:grid-cols-3 gap-8">
             <!-- 技术咨询 -->
-            <UCard class="text-center hover:shadow-xl transition-shadow duration-300">
+            <UiCard class="text-center hover:shadow-xl transition-shadow duration-300">
               <div class="p-6">
                 <div class="w-16 h-16 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center mx-auto mb-4">
                   <Icon name="heroicons:light-bulb" class="w-8 h-8 text-blue-600 dark:text-blue-400" />
@@ -231,10 +231,10 @@
                   <li>技术选型建议</li>
                 </ul>
               </div>
-            </UCard>
+            </UiCard>
 
             <!-- 内容合作 -->
-            <UCard class="text-center hover:shadow-xl transition-shadow duration-300">
+            <UiCard class="text-center hover:shadow-xl transition-shadow duration-300">
               <div class="p-6">
                 <div class="w-16 h-16 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center mx-auto mb-4">
                   <Icon name="heroicons:pencil-square" class="w-8 h-8 text-green-600 dark:text-green-400" />
@@ -247,10 +247,10 @@
                   <li>开源项目协作</li>
                 </ul>
               </div>
-            </UCard>
+            </UiCard>
 
             <!-- 商业合作 -->
-            <UCard class="text-center hover:shadow-xl transition-shadow duration-300">
+            <UiCard class="text-center hover:shadow-xl transition-shadow duration-300">
               <div class="p-6">
                 <div class="w-16 h-16 bg-purple-100 dark:bg-purple-900 rounded-full flex items-center justify-center mx-auto mb-4">
                   <Icon name="heroicons:briefcase" class="w-8 h-8 text-purple-600 dark:text-purple-400" />
@@ -263,7 +263,7 @@
                   <li>产品技术合作</li>
                 </ul>
               </div>
-            </UCard>
+            </UiCard>
           </div>
         </div>
       </section>
@@ -351,6 +351,8 @@
 </template>
 
 <script setup lang="ts">
+import { createContactFormValidator, handleAsyncFormSubmit } from '~/utils/validate'
+
 // 表单数据
 const form = ref({
   name: '',
@@ -374,60 +376,42 @@ const subjectOptions = [
   { label: '其他问题', value: 'other' }
 ]
 
-// 表单验证
-function validateForm() {
-  errors.value = {}
-  
-  if (!form.value.name.trim()) {
-    errors.value.name = '请输入您的姓名'
-  }
-  
-  if (!form.value.email.trim()) {
-    errors.value.email = '请输入您的邮箱'
-  } else if (!/\S+@\S+\.\S+/.test(form.value.email)) {
-    errors.value.email = '请输入有效的邮箱地址'
-  }
-  
-  if (!form.value.subject) {
-    errors.value.subject = '请选择主题'
-  }
-  
-  if (!form.value.message.trim()) {
-    errors.value.message = '请输入消息内容'
-  } else if (form.value.message.trim().length < 10) {
-    errors.value.message = '消息内容至少需要10个字符'
-  }
-  
-  return Object.keys(errors.value).length === 0
-}
+// 创建表单验证器
+const validator = createContactFormValidator()
 
 // 提交表单
 async function submitForm() {
-  if (!validateForm()) {
-    return
-  }
-  
-  isSubmitting.value = true
-  
-  try {
-    // 模拟API调用
-    await new Promise(resolve => setTimeout(resolve, 2000))
-    
-    // 成功提示
-    alert('消息发送成功！我会尽快回复您。')
-    
-    // 重置表单
-    form.value = {
-      name: '',
-      email: '',
-      subject: '',
-      message: ''
+  const result = await handleAsyncFormSubmit(
+    form.value,
+    validator,
+    async (data) => {
+      // 模拟API调用
+      await new Promise(resolve => setTimeout(resolve, 2000))
+    },
+    {
+      onStart: () => {
+        isSubmitting.value = true
+        errors.value = {}
+      },
+      onSuccess: () => {
+        // 重置表单
+        form.value = {
+          name: '',
+          email: '',
+          subject: '',
+          message: ''
+        }
+      },
+      onFinally: () => {
+        isSubmitting.value = false
+      },
+      successMessage: '消息发送成功！我会尽快回复您。',
+      errorMessage: '发送失败，请稍后重试。'
     }
-    
-  } catch (error) {
-    alert('发送失败，请稍后重试。')
-  } finally {
-    isSubmitting.value = false
+  )
+  
+  if (!result.success && result.errors) {
+    errors.value = result.errors
   }
 }
 

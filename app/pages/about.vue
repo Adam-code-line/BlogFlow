@@ -92,7 +92,7 @@
           
           <div class="grid md:grid-cols-3 gap-8">
             <!-- 前端技能 -->
-            <UCard class="text-center">
+            <UiCard class="text-center">
               <div class="p-6">
                 <div class="w-16 h-16 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center mx-auto mb-4">
                   <Icon name="heroicons:computer-desktop" class="w-8 h-8 text-blue-600 dark:text-blue-400" />
@@ -113,10 +113,10 @@
                   </div>
                 </div>
               </div>
-            </UCard>
+            </UiCard>
 
             <!-- 后端技能 -->
-            <UCard class="text-center">
+            <UiCard class="text-center">
               <div class="p-6">
                 <div class="w-16 h-16 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center mx-auto mb-4">
                   <Icon name="heroicons:server" class="w-8 h-8 text-green-600 dark:text-green-400" />
@@ -137,10 +137,10 @@
                   </div>
                 </div>
               </div>
-            </UCard>
+            </UiCard>
 
             <!-- 工具技能 -->
-            <UCard class="text-center">
+            <UiCard class="text-center">
               <div class="p-6">
                 <div class="w-16 h-16 bg-purple-100 dark:bg-purple-900 rounded-full flex items-center justify-center mx-auto mb-4">
                   <Icon name="heroicons:wrench-screwdriver" class="w-8 h-8 text-purple-600 dark:text-purple-400" />
@@ -161,7 +161,7 @@
                   </div>
                 </div>
               </div>
-            </UCard>
+            </UiCard>
           </div>
         </div>
       </section>
@@ -183,7 +183,7 @@
               <div class="relative flex items-start">
                 <div class="absolute left-6 w-4 h-4 bg-blue-600 rounded-full border-4 border-white dark:border-gray-800"></div>
                 <div class="ml-16">
-                  <UCard>
+                  <UiCard>
                     <div class="p-6">
                       <div class="flex items-center justify-between mb-2">
                         <h3 class="text-lg font-semibold text-gray-900 dark:text-white">高级前端工程师</h3>
@@ -193,14 +193,14 @@
                         负责大型SPA应用的架构设计和开发，建立前端开发规范和最佳实践。
                       </p>
                     </div>
-                  </UCard>
+                  </UiCard>
                 </div>
               </div>
 
               <div class="relative flex items-start">
                 <div class="absolute left-6 w-4 h-4 bg-green-600 rounded-full border-4 border-white dark:border-gray-800"></div>
                 <div class="ml-16">
-                  <UCard>
+                  <UiCard>
                     <div class="p-6">
                       <div class="flex items-center justify-between mb-2">
                         <h3 class="text-lg font-semibold text-gray-900 dark:text-white">全栈开发工程师</h3>
@@ -210,14 +210,14 @@
                         独立负责多个项目的全栈开发，积累了丰富的用户体验优化经验。
                       </p>
                     </div>
-                  </UCard>
+                  </UiCard>
                 </div>
               </div>
 
               <div class="relative flex items-start">
                 <div class="absolute left-6 w-4 h-4 bg-purple-600 rounded-full border-4 border-white dark:border-gray-800"></div>
                 <div class="ml-16">
-                  <UCard>
+                  <UiCard>
                     <div class="p-6">
                       <div class="flex items-center justify-between mb-2">
                         <h3 class="text-lg font-semibold text-gray-900 dark:text-white">计算机科学学士</h3>
@@ -227,7 +227,7 @@
                         主修计算机科学与技术，毕业设计：基于Vue.js的在线学习平台。
                       </p>
                     </div>
-                  </UCard>
+                  </UiCard>
                 </div>
               </div>
             </div>
@@ -243,12 +243,12 @@
             如果你有有趣的项目想法，或者想要技术交流，随时联系我！
           </p>
           <div class="flex flex-col sm:flex-row gap-4 justify-center">
-            <UButton size="lg" color="neutral" variant="solid" class="px-8 py-3" to="/contact">
+            <UiButton size="lg" color="neutral" variant="solid" class="px-8 py-3" to="/contact">
               联系我
-            </UButton>
-            <UButton size="lg" color="neutral" variant="outline" class="px-8 py-3" to="/blog">
+            </UiButton>
+            <UiButton size="lg" color="neutral" variant="outline" class="px-8 py-3" to="/blog">
               查看博客
-            </UButton>
+            </UiButton>
           </div>
         </div>
       </section>

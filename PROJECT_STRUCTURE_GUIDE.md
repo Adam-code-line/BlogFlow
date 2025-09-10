@@ -11,7 +11,26 @@
 - [下一步开发建议](#下一步开发建议)
 
 ## 项目概览
-BlogFlow 是一个基于 Nuxt 4.1.1 的现代化个人博客前端项目，采用 TypeScript 开发，集成内容管理、图片优化和现代化 UI 组件。
+BlogFlow 是一个基于 Nuxt 4.1.1 的现代化个人博客前端项目，采用 T### 开发规范（更新）
+
+#### UI组件设计原则
+- **纯UI功能**: 组件只负责UI展示和基础交互，不包含业务逻辑
+- **Props传递**: 通过构造函数传递数据和回调函数
+- **事件驱动**: 所有业务逻辑都通过事件回调处理
+- **一致性**: 统一的颜色系统、圆角、间距等设计语言
+- **可访问性**: 遵循无障碍访问标准，支持键盘导航
+- **TypeScript支持**: 完整的类型定义和IDE智能提示
+
+#### 组件使用规范
+- **UI组件引用**: 使用 `UiButton`、`UiCard`、`UiModal` 等封装组件
+- **避免原生UI库**: 不直接使用 `UButton`、`UCard` 等@nuxt/ui组件
+- **统一导入**: 通过 `@/components/ui` 统一导入UI组件
+- **文档参考**: 参考 `components/ui/README.md` 了解组件API
+
+#### 组件命名
+- 文件名：PascalCase（如 `PostCard.vue`）
+- 组件名：PascalCase
+- 变量名：camelCaseipt 开发，集成内容管理、图片优化和现代化 UI 组件。
 
 ## 技术栈
 - **框架**: Nuxt 4.1.1
@@ -44,17 +63,19 @@ BlogFlow/                                # 项目根目录
 │   │   │   ├── PostCard.vue            # 文章卡片 ✅
 │   │   │   ├── PostDetail.vue          # 文章详情 ✅
 │   │   │   └── PostList.vue            # 文章列表 ✅
-│   │   ├── 📁 common/                  # 通用组件 ✅
-│   │   │   ├── ErrorMessage.vue        # 错误信息 ✅
-│   │   │   └── Loading.vue             # 加载状态 ✅
+│   │   ├── 📁 common/                  # 通用组件 ✅ 完整封装
+│   │   │   ├── ErrorMessage.vue        # 错误信息（多变体、可关闭、重试）✅
+│   │   │   └── Loading.vue             # 加载状态（多样式、覆盖层）✅
 │   │   ├── 📁 layout/                  # 布局组件 ✅
 │   │   │   ├── Footer.vue              # 页脚 ✅
 │   │   │   ├── Header.vue              # 页头 ✅
 │   │   │   └── Sidebar.vue             # 侧边栏 ✅
-│   │   └── 📁 ui/                      # UI 基础组件 ✅
-│   │       ├── Button.vue              # 按钮组件 ✅
-│   │       ├── Card.vue                # 卡片组件 ✅
-│   │       └── Modal.vue               # 模态框组件 ✅
+│   │   └── 📁 ui/                      # UI 基础组件 ✅ 完整封装
+│   │       ├── Button.vue              # 按钮组件（多变体、支持图标、链接）✅
+│   │       ├── Card.vue                # 卡片组件（多插槽、响应式）✅
+│   │       ├── Modal.vue               # 模态框组件（全屏、动画、键盘）✅
+│   │       ├── index.ts                # UI组件统一导出 ✅
+│   │       └── README.md               # UI组件使用指南 ✅
 │   ├── 📁 composables/                 # 组合式函数 ✅ 架构完成
 │   │   ├── index.ts                    # 统一导出文件 ✅
 │   │   ├── useAuth.ts                  # 认证逻辑 ✅
@@ -145,29 +166,34 @@ BlogFlow/                                # 项目根目录
 - **静态页面内容**: about.md, contact.md 等页面内容文件
 - **目录配置**: _dir.yml 配置文件管理内容结构
 
-### 2. 组件架构系统 (`app/components/`) ✅
+### 2. 组件架构系统 (`app/components/`) ✅ 重要更新
+
+- **ui/**: 基础UI组件（已完整封装）
+  - `Button.vue` - 通用按钮组件，支持多种变体（solid/outline/ghost/soft/link）、颜色主题、图标、加载状态、链接功能
+  - `Card.vue` - 卡片容器组件，支持多插槽（header/image/footer/actions）、多变体、响应式交互
+  - `Modal.vue` - 模态框组件，支持全屏显示、动画过渡、键盘控制、覆盖层点击关闭
+  - `index.ts` - UI组件统一导出文件，便于其他模块引用
+  - `README.md` - 详细的组件使用指南和API文档
+- **common/**: 通用组件（已完整封装）
+  - `ErrorMessage.vue` - 错误信息提示，支持多种错误类型（error/warning/info）、可关闭、重试功能
+  - `Loading.vue` - 加载状态指示器，支持多种样式、覆盖层模式、自定义图标和文本
 - **blog/**: 博客功能组件
   - `CategoryList.vue` - 分类列表展示
   - `PostCard.vue` - 文章卡片组件
   - `PostDetail.vue` - 文章详情展示
   - `PostList.vue` - 文章列表组件
-- **common/**: 通用组件
-  - `ErrorMessage.vue` - 错误信息提示
-  - `Loading.vue` - 加载状态指示器
 - **layout/**: 布局组件
   - `Header.vue` - 页面头部导航
   - `Footer.vue` - 页面底部信息
   - `Sidebar.vue` - 侧边栏组件
-- **ui/**: 基础UI组件
-  - `Button.vue` - 通用按钮组件
-  - `Card.vue` - 卡片容器组件
-  - `Modal.vue` - 模态框组件
 
-### 3. 页面路由系统 (`app/pages/`) ✅
-- **核心页面**: 
-  - `index.vue` - 首页（完整实现，集成真实数据）
+### 3. 页面路由系统 (`app/pages/`) ✅ 重要更新
+- **核心页面（已使用封装UI组件）**: 
+  - `index.vue` - 首页（完整实现，集成真实数据，使用UiButton/UiCard）
+  - `about.vue` - 关于页面（完整内容，使用UiButton/UiCard）
+  - `contact.vue` - 联系页面（完整表单，使用UiButton/UiCard）
   - `blog/index.vue` - 博客列表页（搜索、筛选功能）
-  - `blog/[slug].vue` - 文章详情页（完整的内容展示）
+  - `blog/[slug].vue` - 文章详情页（完整的内容展示，使用UiButton）
   - `blog/category/[name].vue` - 分类页面
 - **管理功能**: `admin/` 目录下的后台管理页面
 - **基于文件系统**: 自动路由生成，支持动态路由参数
@@ -294,7 +320,44 @@ Could not initialize provider google. unifont will not be able to process fonts 
 - **应用结构**：`app.vue` 使用 Nuxt UI 的 UApp 组件
 - **样式配置**：Tailwind CSS 和 Nuxt UI 完整集成
 
-#### 2. 类型系统（100% 完成）
+#### 2. UI组件系统（100% 完成） 🎉
+- **Button组件**：`app/components/ui/Button.vue` - 完整实现
+  - 支持6种变体：solid, outline, ghost, soft, link
+  - 支持6种颜色主题：primary, secondary, success, warning, error, neutral  
+  - 支持5种尺寸：xs, sm, md, lg, xl
+  - 支持图标、加载状态、禁用状态、块级显示
+  - 支持内部链接（NuxtLink）和外部链接功能
+- **Card组件**：`app/components/ui/Card.vue` - 完整实现
+  - 支持5种变体：default, bordered, shadow, elevated, flat
+  - 支持多插槽：header, image, footer, actions
+  - 支持交互状态：hoverable, clickable
+  - 支持自定义圆角、内边距、分割线
+- **Modal组件**：`app/components/ui/Modal.vue` - 完整实现
+  - 支持7种尺寸：xs, sm, md, lg, xl, 2xl, full
+  - 支持全屏显示和多种位置：center, top, bottom
+  - 支持动画过渡、键盘控制（ESC关闭）
+  - 支持遮罩层点击关闭、滚动锁定
+- **Loading组件**：`app/components/common/Loading.vue` - 完整实现
+  - 支持多种布局：vertical, horizontal
+  - 支持覆盖层模式和居中显示
+  - 支持自定义图标、文本、描述
+- **ErrorMessage组件**：`app/components/common/ErrorMessage.vue` - 完整实现
+  - 支持3种错误类型：error, warning, info
+  - 支持可关闭、重试功能
+  - 支持自定义图标、标题、描述
+- **组件导出系统**：`app/components/ui/index.ts` 统一导出
+- **使用文档**：`app/components/ui/README.md` 详细的API文档和示例
+
+#### 4. 页面系统（核心页面完成）
+- **首页**：`app/pages/index.vue` - 使用UiButton和UiCard组件
+- **关于页面**：`app/pages/about.vue` - 使用UiButton和UiCard组件
+- **联系页面**：`app/pages/contact.vue` - 使用UiButton和UiCard组件
+- **博客列表页**：`app/pages/blog/index.vue` - 支持搜索和分类筛选
+- **博客详情页**：`app/pages/blog/[slug].vue` - 使用UiButton组件
+- **分类页面**：`app/pages/blog/category/[name].vue` - 分类文章列表
+- **管理后台**：`app/pages/admin/` - 管理页面结构（待实现内容）
+
+#### 3. 类型系统（100% 完成）
 - **博客类型**：`app/types/blog.ts` - 完整的博客实体类型定义
   - BlogPost, PostListItem, Category, Tag 等核心类型
   - 查询参数、API响应、SEO数据等辅助类型
@@ -315,7 +378,7 @@ Could not initialize provider google. unifont will not be able to process fonts 
 - **分类页面**：`app/pages/blog/category/[name].vue` - 分类文章列表
 - **管理后台**：`app/pages/admin/` - 管理页面结构（待实现内容）
 
-#### 4. 布局与组件架构
+#### 5. 布局与组件架构
 - **博客布局**：`app/layouts/blog.vue` - 专用博客布局
 - **管理布局**：`app/layouts/admin.vue` - 管理后台布局
 - **默认布局**：`app/layouts/default.vue` - 通用页面布局
@@ -325,7 +388,7 @@ Could not initialize provider google. unifont will not be able to process fonts 
   - `components/layout/` - 布局组件（3个组件文件）
   - `components/ui/` - UI基础组件（3个组件文件）
 
-#### 5. 内容管理系统
+#### 6. 内容管理系统
 - **示例博客文章**：`content/blog/` 下的 5 篇高质量示例文章
   - 技术教程、项目分享、最佳实践等不同类型
   - 完整的 Front Matter 元数据配置
@@ -333,7 +396,7 @@ Could not initialize provider google. unifont will not be able to process fonts 
 - **静态页面内容**：`content/pages/` 下的页面内容文件
 - **内容配置**：`content/_dir.yml` 目录配置文件
 
-#### 6. 功能模块架构
+#### 7. 功能模块架构
 - **Composables**：`app/composables/` - 业务逻辑组合函数（5个文件）
   - `index.ts` - 统一导出文件
   - `useAuth.ts`, `useBlog.ts`, `useContent.ts`, `useUtils.ts`
@@ -341,13 +404,13 @@ Could not initialize provider google. unifont will not be able to process fonts 
 - **插件系统**：`app/plugins/` - 客户端插件（2个文件）
 - **工具函数**：`app/utils/` - 通用工具函数（3个文件）
 
-#### 7. Content v3 系统架构
+#### 8. Content v3 系统架构
 - **配置文件**：`content.config.ts` - Content v3 集合配置
 - **API 迁移**：从 queryContent 迁移到 queryCollection
 - **类型适配**：BlogPost 接口适配 Content v3 数据结构
 - **路径规范化**：统一使用 `path` 属性替代 `_path`
 
-#### 7. 文档与说明
+#### 9. 文档与说明
 - **README.md**：完整的项目说明文档，包含功能特点和使用指南
 - **项目结构指导**：本文档，详细的开发指导
 - **开发总结**：`DEVELOPMENT_SUMMARY.md` 项目完成状态总结
@@ -355,8 +418,8 @@ Could not initialize provider google. unifont will not be able to process fonts 
 ### 🚧 待实现内容（非核心功能）：
 
 #### 高优先级：
-1. **about.vue, contact.vue 页面内容实现**（当前为占位内容）
-2. **组件功能实现**：components 目录下的组件具体逻辑
+1. **页面中剩余UI组件替换**：将剩余的UButton、UCard替换为UiButton、UiCard
+2. **组件功能实现**：components/blog目录下的组件具体逻辑
 3. **Composables 业务逻辑**：数据获取和状态管理的具体实现
 
 #### 中优先级：
@@ -381,11 +444,12 @@ Could not initialize provider google. unifont will not be able to process fonts 
 
 ### 🎯 立即行动项：
 
-#### 1. 页面内容完善（高优先级）
+#### 1. 剩余UI组件替换（高优先级）
 ```bash
-# 完善基础页面内容
-- app/pages/about.vue       # 关于页面（当前为占位内容）
-- app/pages/contact.vue     # 联系页面（当前为占位内容）
+# 完成剩余页面中的UI组件替换
+- app/pages/blog/index.vue      # 将UButton替换为UiButton
+- app/layouts/blog.vue          # 将UButton替换为UiButton  
+- app/components/blog/PostCard.vue # 将UCard替换为UiCard
 ```
 
 #### 2. 组件功能实现（中优先级）
@@ -449,5 +513,5 @@ Could not initialize provider google. unifont will not be able to process fonts 
 
 ---
 
-*文档最后更新: 2025年9月9日 15:30*  
-*主要更新内容: 根据实际项目结构全面更新指导文档，反映 TypeScript 类型系统完成、核心页面实现、组件架构完善等当前项目状态*
+*文档最后更新: 2025年9月10日 14:30*  
+*主要更新内容: UI组件系统完整封装完成，包括Button、Card、Modal、Loading、ErrorMessage等5个核心组件，已在主要页面中集成使用；完善组件开发规范和使用指南*
