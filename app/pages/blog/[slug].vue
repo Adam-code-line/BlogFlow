@@ -154,41 +154,26 @@
 </template>
 
 <script setup lang="ts">
-// 博客文章类型
-interface BlogPost {
-  path: string
-  title?: string
-  description?: string
-  cover?: string
-  category?: string
-  readingTime?: number
-  author?: {
-    name?: string
-    avatar?: string
-  }
-  publishedAt?: string | Date
-  featured?: boolean
-  tags?: string[]
-  body?: any
-}
+import type { ContentPost } from '~/types'
+import { useBlogPosts, useFormatDate } from '~/composables/useContent'
 
 const route = useRoute()
 const slug = computed(() => (route.params as { slug: string }).slug);
 
-// 获取真实的文章数据 - 使用 Content v3 API
-const post = await queryCollection('content')
-  .path(`/blog/${slug.value}`)
-  .first() as BlogPost | null
+// 使用 composables
+const blogAPI = useBlogPosts()
+const { formatDate } = useFormatDate()
 
-// 获取相邻文章 - 使用 Content v3 API
-const allBlogPosts = await queryCollection('content')
-  .where('path', 'LIKE', '/blog/%')
-  .all() as BlogPost[]
+// 获取文章数据
+const post = await blogAPI.getPostBySlug(slug.value)
 
-// 手动实现 surrounding 逻辑
-const currentIndex = allBlogPosts.findIndex(p => p.path === `/blog/${slug.value}`)
-const prev = currentIndex > 0 ? allBlogPosts[currentIndex - 1] : null
-const next = currentIndex < allBlogPosts.length - 1 ? allBlogPosts[currentIndex + 1] : null
+// 获取所有文章用于计算相邻文章
+const allBlogPosts = await blogAPI.getAllPosts()
+
+// 获取相邻文章
+const surrounding = blogAPI.getSurroundingPosts(allBlogPosts, `/blog/${slug.value}`)
+const prev = surrounding.prev
+const next = surrounding.next
 
 // 404 处理
 if (!post) {
@@ -216,17 +201,6 @@ useSeoMeta({
 })
 
 // 工具函数
-function formatDate(dateString: string | Date) {
-  if (!dateString) return ''
-  
-  const date = new Date(dateString)
-  return date.toLocaleDateString('zh-CN', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
-  })
-}
-
 function copyUrl() {
   if (process.client) {
     navigator.clipboard.writeText(fullUrl.value).then(() => {

@@ -2,6 +2,15 @@
  * 类型定义统一导出
  */
 
+// Content API 相关类型
+export type {
+  ContentPost,
+  ExtendedContentPost,
+  ContentQueryResult,
+  ContentDocResult,
+  SurroundingPost,
+} from './content'
+
 // 博客相关类型
 export type {
   // 基础类型

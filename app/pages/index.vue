@@ -255,40 +255,15 @@
 </template>
 
 <script setup lang="ts">
-// 博客文章类型
-interface BlogPost {
-  path: string
-  title?: string
-  description?: string
-  cover?: string
-  category?: string
-  readingTime?: number
-  author?: {
-    name?: string
-    avatar?: string
-  }
-  publishedAt?: string | Date
-  featured?: boolean
-  tags?: string[]
-}
+import type { ContentPost } from '~/types'
+import { useBlogPosts, useFormatDate } from '~/composables/useContent'
 
-// 获取精选文章（最新的3篇文章）- 使用 Content v3 API
-const featuredPosts = await queryCollection('content')
-  .where('path', 'LIKE', '/blog/%')
-  .limit(3)
-  .all() as BlogPost[]
+// 使用 composables
+const blogAPI = useBlogPosts()
+const { formatDate } = useFormatDate()
 
-// 工具函数
-function formatDate(dateString: string | Date) {
-  if (!dateString) return ''
-  
-  const date = new Date(dateString)
-  return date.toLocaleDateString('zh-CN', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
-  })
-}
+// 获取精选文章（最新的3篇文章）
+const featuredPosts = await blogAPI.getFeaturedPosts(3)
 
 // 设置页面元数据
 useSeoMeta({

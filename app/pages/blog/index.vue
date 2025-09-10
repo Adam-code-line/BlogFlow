@@ -173,22 +173,8 @@
 </template>
 
 <script setup lang="ts">
-// 扩展类型以包含博客特有属性
-interface BlogPost {
-  path: string
-  title?: string
-  description?: string
-  cover?: string
-  category?: string
-  readingTime?: number
-  author?: {
-    name?: string
-    avatar?: string
-  }
-  publishedAt?: string | Date
-  featured?: boolean
-  tags?: string[]
-}
+import type { ContentPost } from '~/types'
+import { useBlogPosts, useFormatDate } from '~/composables/useContent'
 
 // 页面元数据
 useSeoMeta({
@@ -198,10 +184,12 @@ useSeoMeta({
   ogDescription: '浏览我的最新技术文章和思考，涵盖前端开发、Vue.js、Nuxt.js、TypeScript 等技术主题。'
 })
 
-// 获取所有博客文章 - 使用 Content v3 API
-const allPosts = await queryCollection('content')
-  .where('path', 'LIKE', '/blog/%')
-  .all() as BlogPost[]
+// 使用 composables
+const blogAPI = useBlogPosts()
+const { formatDate } = useFormatDate()
+
+// 获取所有博客文章
+const allPosts = await blogAPI.getAllPosts()
 
 // 响应式数据
 const searchQuery = ref('')
@@ -210,50 +198,34 @@ const currentPage = ref(1)
 const postsPerPage = 9
 
 // 计算属性
-const categories = computed(() => {
-  const cats = new Set(allPosts.map((post: BlogPost) => post.category).filter(Boolean))
-  return Array.from(cats) as string[]
-})
+const categories = computed(() => blogAPI.getCategories(allPosts))
 
 const filteredPosts = computed(() => {
   let posts = allPosts
 
   // 分类筛选
   if (selectedCategory.value) {
-    posts = posts.filter((post: BlogPost) => post.category === selectedCategory.value)
+    posts = blogAPI.filterByCategory(posts, selectedCategory.value)
   }
 
   // 搜索筛选
   if (searchQuery.value) {
-    const query = searchQuery.value.toLowerCase()
-    posts = posts.filter((post: BlogPost) => 
-      post.title?.toLowerCase().includes(query) ||
-      post.description?.toLowerCase().includes(query) ||
-      post.tags?.some((tag: string) => tag.toLowerCase().includes(query))
-    )
+    posts = blogAPI.filterBySearch(posts, searchQuery.value)
   }
 
   // 分页
-  const start = (currentPage.value - 1) * postsPerPage
-  const end = start + postsPerPage
-  
-  return posts.slice(start, end)
+  return blogAPI.paginate(posts, currentPage.value, postsPerPage)
 })
 
 const totalPages = computed(() => {
   let posts = allPosts
 
   if (selectedCategory.value) {
-    posts = posts.filter((post: BlogPost) => post.category === selectedCategory.value)
+    posts = blogAPI.filterByCategory(posts, selectedCategory.value)
   }
 
   if (searchQuery.value) {
-    const query = searchQuery.value.toLowerCase()
-    posts = posts.filter((post: BlogPost) => 
-      post.title?.toLowerCase().includes(query) ||
-      post.description?.toLowerCase().includes(query) ||
-      post.tags?.some((tag: string) => tag.toLowerCase().includes(query))
-    )
+    posts = blogAPI.filterBySearch(posts, searchQuery.value)
   }
 
   return Math.ceil(posts.length / postsPerPage)
@@ -263,18 +235,6 @@ const totalPages = computed(() => {
 watch([searchQuery, selectedCategory], () => {
   currentPage.value = 1
 })
-
-// 工具函数
-function formatDate(dateString: string | Date) {
-  if (!dateString) return ''
-  
-  const date = new Date(dateString)
-  return date.toLocaleDateString('zh-CN', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
-  })
-}
 </script>
 
 <style scoped>
