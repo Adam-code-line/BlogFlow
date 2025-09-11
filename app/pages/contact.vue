@@ -16,9 +16,7 @@
             </div>
           </div>
           <div class="flex items-center space-x-4">
-            <button class="p-2 rounded-md text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400">
-              <Icon name="heroicons:moon" class="w-5 h-5" />
-            </button>
+            <ThemeToggle />
           </div>
         </div>
       </div>
@@ -117,7 +115,22 @@
               <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8">
                 <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-8">发送消息</h2>
                 
-                <form @submit.prevent="submitForm" class="space-y-6">
+                <form @submit.prevent="handleSubmit" class="space-y-6">
+                  <!-- 成功消息 -->
+                  <div v-if="showSuccessMessage" class="p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
+                    <div class="flex items-center">
+                      <Icon name="heroicons:check-circle" class="w-5 h-5 text-green-600 dark:text-green-400 mr-2" />
+                      <p class="text-green-800 dark:text-green-200 font-medium">消息发送成功！我会尽快回复您。</p>
+                    </div>
+                  </div>
+
+                  <!-- 错误消息 -->
+                  <div v-if="error" class="p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+                    <div class="flex items-center">
+                      <Icon name="heroicons:exclamation-circle" class="w-5 h-5 text-red-600 dark:text-red-400 mr-2" />
+                      <p class="text-red-800 dark:text-red-200 font-medium">{{ error }}</p>
+                    </div>
+                  </div>
                   <!-- 姓名 -->
                   <div>
                     <label for="name" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -194,11 +207,11 @@
                       type="submit"
                       size="lg"
                       color="primary"
-                      :loading="isSubmitting"
-                      :disabled="isSubmitting"
+                      :loading="loading"
+                      :disabled="loading"
                       block
                     >
-                      {{ isSubmitting ? '发送中...' : '发送消息' }}
+                      {{ loading ? '发送中...' : '发送消息' }}
                     </UiButton>
                   </div>
                 </form>
@@ -351,7 +364,12 @@
 </template>
 
 <script setup lang="ts">
-import { createContactFormValidator, handleAsyncFormSubmit } from '~/utils/validate'
+import { useApi, useApiState } from '~/composables/useApi'
+import { createContactFormValidator } from '~/utils/validate'
+
+// 使用API服务
+const { contact: contactApi } = useApi()
+const { loading, error, execute } = useApiState()
 
 // 表单数据
 const form = ref({
@@ -363,9 +381,10 @@ const form = ref({
 
 // 表单验证错误
 const errors = ref<Record<string, string>>({})
+const showSuccessMessage = ref(false)
 
-// 提交状态
-const isSubmitting = ref(false)
+// 创建验证器实例
+const validator = createContactFormValidator()
 
 // 主题选项
 const subjectOptions = [
@@ -376,42 +395,58 @@ const subjectOptions = [
   { label: '其他问题', value: 'other' }
 ]
 
-// 创建表单验证器
-const validator = createContactFormValidator()
+// 表单验证
+const validateForm = () => {
+  const validationErrors = validator.validateForm(form.value)
+  errors.value = validationErrors
+  return Object.keys(validationErrors).length === 0
+}
+
+// 实时字段验证
+const validateField = (fieldName: string) => {
+  const fieldError = validator.validateField(fieldName, form.value[fieldName as keyof typeof form.value])
+  if (fieldError) {
+    errors.value = { ...errors.value, [fieldName]: fieldError }
+  } else {
+    const newErrors = { ...errors.value }
+    delete newErrors[fieldName]
+    errors.value = newErrors
+  }
+}
 
 // 提交表单
-async function submitForm() {
-  const result = await handleAsyncFormSubmit(
-    form.value,
-    validator,
-    async (data) => {
-      // 模拟API调用
-      await new Promise(resolve => setTimeout(resolve, 2000))
-    },
+const submitForm = async () => {
+  const result = await execute(
+    () => contactApi.sendMessage(form.value),
     {
-      onStart: () => {
-        isSubmitting.value = true
-        errors.value = {}
-      },
-      onSuccess: () => {
-        // 重置表单
-        form.value = {
-          name: '',
-          email: '',
-          subject: '',
-          message: ''
-        }
-      },
-      onFinally: () => {
-        isSubmitting.value = false
-      },
       successMessage: '消息发送成功！我会尽快回复您。',
-      errorMessage: '发送失败，请稍后重试。'
+      errorMessage: '发送失败，请稍后重试。',
+      showToast: true
     }
   )
-  
-  if (!result.success && result.errors) {
-    errors.value = result.errors
+
+  if (result) {
+    // 重置表单
+    form.value = {
+      name: '',
+      email: '',
+      subject: '',
+      message: ''
+    }
+    errors.value = {}
+    showSuccessMessage.value = true
+    
+    // 3秒后隐藏成功消息
+    setTimeout(() => {
+      showSuccessMessage.value = false
+    }, 3000)
+  }
+}
+
+// 提交处理
+const handleSubmit = async () => {
+  if (validateForm()) {
+    await submitForm()
   }
 }
 

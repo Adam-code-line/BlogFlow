@@ -44,13 +44,7 @@
           </div>
           
           <div class="flex items-center space-x-4">
-            <UButton
-              icon="i-heroicons-moon"
-              variant="ghost"
-              color="neutral"
-              size="sm"
-              aria-label="切换主题"
-            />
+            <ThemeToggle />
           </div>
         </div>
       </div>

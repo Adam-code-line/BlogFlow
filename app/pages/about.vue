@@ -16,9 +16,7 @@
             </div>
           </div>
           <div class="flex items-center space-x-4">
-            <button class="p-2 rounded-md text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400">
-              <Icon name="heroicons:moon" class="w-5 h-5" />
-            </button>
+            <ThemeToggle />
           </div>
         </div>
       </div>
