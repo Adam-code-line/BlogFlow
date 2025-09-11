@@ -1,27 +1,6 @@
 <template>
   <div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800">
-    <!-- 导航栏 -->
-    <nav class="bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-700 sticky top-0 z-50">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between items-center h-16">
-          <div class="flex items-center">
-            <h1 class="text-2xl font-bold text-gray-900 dark:text-white">BlogFlow</h1>
-          </div>
-          <div class="hidden md:block">
-            <div class="ml-10 flex items-baseline space-x-4">
-              <NuxtLink to="/" class="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium">首页</NuxtLink>
-              <NuxtLink to="/blog" class="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium">博客</NuxtLink>
-              <NuxtLink to="/about" class="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium">关于</NuxtLink>
-              <NuxtLink to="/contact" class="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium">联系</NuxtLink>
-            </div>
-          </div>
-          <div class="flex items-center space-x-4">
-            <ThemeToggle />
-          </div>
-        </div>
-      </div>
-    </nav>
-
+    
     <!-- 主要内容 -->
     <main>
       <!-- Hero 部分 -->
@@ -215,41 +194,6 @@
         </div>
       </section>
     </main>
-
-    <!-- 页脚 -->
-    <footer class="bg-gray-900 text-white py-12">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="grid md:grid-cols-4 gap-8">
-          <div class="md:col-span-2">
-            <h3 class="text-xl font-bold mb-4">BlogFlow</h3>
-            <p class="text-gray-300 mb-4">
-              一个专注于技术分享和知识传播的个人博客平台。
-            </p>
-            <p class="text-gray-400 text-sm">
-              © 2025 BlogFlow. 保留所有权利。
-            </p>
-          </div>
-          <div>
-            <h4 class="font-semibold mb-4">快速链接</h4>
-            <ul class="space-y-2 text-gray-300">
-              <li><a href="#" class="hover:text-white transition-colors">首页</a></li>
-              <li><a href="#" class="hover:text-white transition-colors">博客</a></li>
-              <li><a href="#" class="hover:text-white transition-colors">关于</a></li>
-              <li><a href="#" class="hover:text-white transition-colors">联系</a></li>
-            </ul>
-          </div>
-          <div>
-            <h4 class="font-semibold mb-4">分类</h4>
-            <ul class="space-y-2 text-gray-300">
-              <li><a href="#" class="hover:text-white transition-colors">前端开发</a></li>
-              <li><a href="#" class="hover:text-white transition-colors">Vue.js</a></li>
-              <li><a href="#" class="hover:text-white transition-colors">Nuxt</a></li>
-              <li><a href="#" class="hover:text-white transition-colors">TypeScript</a></li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </footer>
   </div>
 </template>
 
@@ -258,6 +202,8 @@ import type { ContentPost } from '~/types'
 import { useBlogPosts, useFormatDate } from '~/composables/useContent'
 import { DateFormatter, TextFormatter } from '~/utils/format'
 import { useCodeTheme } from '~/composables/useCodeTheme'
+// 明确导入 ThemeToggle 组件
+import ThemeToggle from '~/components/common/ThemeToggle.vue'
 
 // 使用 composables
 const blogAPI = useBlogPosts()

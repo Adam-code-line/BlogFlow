@@ -73,6 +73,23 @@ export default defineNuxtConfig({
     ]
   },
 
+  // 组件自动导入配置
+  components: [
+    {
+      path: '~/components',
+      pathPrefix: false,
+    },
+    {
+      path: '~/components/ui',
+      prefix: 'Ui',
+      pathPrefix: false
+    },
+    {
+      path: '~/components/common',
+      pathPrefix: false
+    }
+  ],
+
   // Nuxt UI 配置 - 禁用字体模块以避免 Google Fonts 问题
   ui: {
     fonts: false         // 禁用 @nuxt/fonts 模块
