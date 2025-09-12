@@ -28,6 +28,7 @@ export interface ContentPost {
   featured?: boolean
   readingTime?: number
   // 内容相关
+  content?: string
   excerpt?: string
   draft?: boolean
   // SEO 相关

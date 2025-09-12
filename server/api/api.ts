@@ -33,6 +33,11 @@ export class BlogApiService {
     return this.api.get(`/posts/category/${category}`)
   }
 
+  // 根据作者获取文章
+  async getPostsByAuthor(authorId: string): Promise<BlogPost[]> {
+    return this.api.get(`/posts/author/${authorId}`)
+  }
+
   // 搜索文章
   async searchPosts(query: string): Promise<BlogPost[]> {
     return this.api.get(`/posts/search?q=${encodeURIComponent(query)}`)
@@ -97,9 +102,19 @@ export class UserApiService {
     return this.api.get('/auth/me')
   }
 
+  // 根据ID获取用户信息
+  async getUserById(userId: string): Promise<User> {
+    return this.api.get(`/users/${userId}`)
+  }
+
   // 更新用户资料
   async updateProfile(userData: Partial<User>): Promise<User> {
     return this.api.put('/auth/profile', userData)
+  }
+
+  // 关注/取消关注用户
+  async followUser(userId: string, action: 'follow' | 'unfollow'): Promise<{ success: boolean }> {
+    return this.api.post(`/users/${userId}/${action}`)
   }
 
   // 用户登出
