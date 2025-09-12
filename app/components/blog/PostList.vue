@@ -234,6 +234,7 @@
 <script setup lang="ts">
 import type { ContentPost } from '~/types'
 import { debounce } from '~/composables/useUtils'
+import { useBlogStore } from '~/stores/blog'
 
 interface PostListProps {
   // 文章数据
@@ -258,6 +259,8 @@ interface PostListProps {
   enableCategoryFilter?: boolean
   // 是否启用排序
   enableSort?: boolean
+  // 是否使用内部状态管理
+  useInternalState?: boolean
 }
 
 interface PostListEmits {
@@ -279,15 +282,64 @@ const props = withDefaults(defineProps<PostListProps>(), {
   enableSearch: true,
   enableCategoryFilter: true,
   enableSort: true,
+  useInternalState: true,
 })
 
 const emit = defineEmits<PostListEmits>()
 
-// 响应式状态
-const searchQuery = ref('')
-const selectedCategory = ref('')
-const currentPage = ref(1)
-const sortBy = ref('publishedAt')
+// 使用 Pinia store
+const blogStore = props.useInternalState ? useBlogStore() : null
+
+// 响应式状态 - 根据是否使用内部状态管理决定数据源
+const searchQuery = computed({
+  get: () => blogStore ? blogStore.searchQuery : localSearchQuery.value,
+  set: (value) => {
+    if (blogStore) {
+      blogStore.searchPosts(value)
+    } else {
+      localSearchQuery.value = value
+    }
+  }
+})
+
+const selectedCategory = computed({
+  get: () => blogStore ? blogStore.selectedCategory : localSelectedCategory.value,
+  set: (value) => {
+    if (blogStore) {
+      blogStore.setCategoryFilter(value)
+    } else {
+      localSelectedCategory.value = value
+    }
+  }
+})
+
+const sortBy = computed({
+  get: () => blogStore ? blogStore.sortBy : localSortBy.value,
+  set: (value) => {
+    if (blogStore) {
+      blogStore.setSortBy(value)
+    } else {
+      localSortBy.value = value
+    }
+  }
+})
+
+const currentPage = computed({
+  get: () => blogStore ? blogStore.pagination.page : localCurrentPage.value,
+  set: (value) => {
+    if (blogStore) {
+      blogStore.setPage(value)
+    } else {
+      localCurrentPage.value = value
+    }
+  }
+})
+
+// 本地状态（当不使用store时）
+const localSearchQuery = ref('')
+const localSelectedCategory = ref('')
+const localCurrentPage = ref(1)
+const localSortBy = ref('publishedAt')
 const viewMode = ref(props.defaultViewMode)
 
 // 内部搜索状态
@@ -303,12 +355,14 @@ const debouncedSearch = debounce((event: Event) => {
 
 // 计算属性
 const availableCategories = computed(() => {
-  const categories = [...new Set(props.posts.map(post => post.category).filter(Boolean))] as string[]
+  const categories = blogStore ? blogStore.categories : 
+    [...new Set(props.posts.map(post => post.category).filter(Boolean))] as string[]
   return categories.sort()
 })
 
 const getCategoryCount = (category: string): number => {
-  return props.posts.filter(post => post.category === category).length
+  const posts = blogStore ? blogStore.posts : props.posts
+  return posts.filter(post => post.category === category).length
 }
 
 const gridClasses = computed(() => {
@@ -321,38 +375,18 @@ const gridClasses = computed(() => {
   return `${baseClasses} ${columnClasses[props.gridColumns]}`
 })
 
-const sortedPosts = computed(() => {
-  let sorted = [...props.posts]
-  
-  switch (sortBy.value) {
-    case 'title':
-      sorted = sorted.sort((a, b) => (a.title || '').localeCompare(b.title || ''))
-      break
-    case 'views':
-      sorted = sorted.sort((a, b) => ((b as any).views || 0) - ((a as any).views || 0))
-      break
-    case 'likes':
-      sorted = sorted.sort((a, b) => ((b as any).likes || 0) - ((a as any).likes || 0))
-      break
-    case 'publishedAt':
-    default:
-      sorted = sorted.sort((a, b) => {
-        const dateA = new Date(a.publishedAt || a.createdAt || 0)
-        const dateB = new Date(b.publishedAt || b.createdAt || 0)
-        return dateB.getTime() - dateA.getTime()
-      })
-      break
+// 当使用store时，直接使用store的计算属性
+const filteredPosts = computed(() => {
+  if (blogStore) {
+    return blogStore.filteredPosts
   }
   
-  return sorted
-})
-
-const filteredPosts = computed(() => {
-  let filtered = sortedPosts.value.filter(post => !post.draft)
+  // 本地筛选逻辑
+  let filtered = [...props.posts].filter(post => !post.draft)
   
   // 搜索筛选
-  if (searchQuery.value) {
-    const query = searchQuery.value.toLowerCase()
+  if (localSearchQuery.value) {
+    const query = localSearchQuery.value.toLowerCase()
     filtered = filtered.filter(post => 
       post.title?.toLowerCase().includes(query) ||
       post.description?.toLowerCase().includes(query) ||
@@ -362,17 +396,38 @@ const filteredPosts = computed(() => {
   }
   
   // 分类筛选
-  if (selectedCategory.value) {
-    filtered = filtered.filter(post => post.category === selectedCategory.value)
+  if (localSelectedCategory.value) {
+    filtered = filtered.filter(post => post.category === localSelectedCategory.value)
   }
+  
+  // 排序
+  filtered.sort((a, b) => {
+    switch (localSortBy.value) {
+      case 'title':
+        return (a.title || '').localeCompare(b.title || '')
+      case 'publishedAt':
+      default:
+        return new Date(b.publishedAt || b.createdAt || 0).getTime() - 
+               new Date(a.publishedAt || a.createdAt || 0).getTime()
+    }
+  })
   
   return filtered
 })
 
-const totalPages = computed(() => Math.ceil(filteredPosts.value.length / props.pageSize))
+const totalPages = computed(() => {
+  if (blogStore) {
+    return blogStore.pagination.pages
+  }
+  return Math.ceil(filteredPosts.value.length / props.pageSize)
+})
 
 const paginatedPosts = computed(() => {
-  const start = (currentPage.value - 1) * props.pageSize
+  if (blogStore) {
+    return blogStore.paginatedPosts
+  }
+  
+  const start = (localCurrentPage.value - 1) * props.pageSize
   const end = start + props.pageSize
   return filteredPosts.value.slice(start, end)
 })
@@ -445,7 +500,9 @@ const handlePostClick = (post: ContentPost) => {
 
 // 监听器
 watch([searchQuery, selectedCategory], () => {
-  currentPage.value = 1
+  if (!blogStore) {
+    localCurrentPage.value = 1
+  }
 })
 
 watch(selectedCategory, (newCategory) => {

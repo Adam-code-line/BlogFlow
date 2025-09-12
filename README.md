@@ -1,10 +1,11 @@
 # BlogFlow
 
-基于 Nuxt 4 和 TypeScript 的现代化博客系统，提供完整的内容管理和用户体验。
+基于 Nuxt 4 + Pinia + TypeScript 的现代化博客系统，提供完整的内容管理和用户体验。
 
 ## ✨ 功能特点
 
 - 🚀 **Nuxt 4.1.1** + **@nuxt/content v3** - 最新技术栈
+- 🔄 **Pinia 状态管理** - 统一的响应式状态管理
 - 🎨 **完整UI组件系统** - 自研UI组件库（Button, Card, Modal等）
 - 📝 **Markdown 博客** - 支持代码高亮和元数据管理
 - 🏷️ **分类标签** - 完整的内容组织系统
@@ -12,7 +13,6 @@
 - ⚡ **TypeScript** - 完整类型安全保障
 - 🛠️ **组件化架构** - 高度模块化，易于维护和扩展
 - 🔍 **搜索功能** - 文章搜索和智能筛选
-- 📊 **分析工具** - 访问统计和用户行为追踪
 - 🌙 **主题切换** - 亮色/暗色模式 + 多种代码主题
 
 ## 🚀 在线预览
@@ -25,27 +25,27 @@
 BlogFlow/
 ├── app/                    # 应用源码
 │   ├── pages/             # 页面路由
-│   │   ├── index.vue      # 首页（精美设计，完整功能）
-│   │   ├── about.vue      # 关于页面（个人信息，技能展示）
-│   │   ├── contact.vue    # 联系页面（表单验证，多种联系方式）
-│   │   └── blog/          # 博客页面
-│   │       ├── index.vue      # 博客列表（搜索，筛选，分页）
-│   │       ├── [slug].vue     # 文章详情（完整展示，相关推荐）
-│   │       └── category/[name].vue # 分类页面
+│   │   ├── index.vue      # 首页
+│   │   ├── about.vue      # 关于页面
+│   │   ├── contact.vue    # 联系页面
+│   │   ├── blog/          # 博客页面
+│   │   └── users/         # 用户社区页面
+│   ├── stores/            # Pinia 状态管理
+│   │   ├── user.ts        # 用户状态（搜索、分页、关注）
+│   │   ├── blog.ts        # 博客状态（文章、分类、搜索）
+│   │   └── ui.ts          # UI状态（主题、通知、加载）
 │   ├── components/        # 可复用组件
 │   │   ├── ui/           # UI基础组件 (Button, Card, Modal)
 │   │   ├── blog/         # 博客组件 (PostCard, PostList)
 │   │   ├── layout/       # 布局组件 (Header, Footer, Sidebar)
 │   │   └── common/       # 通用组件 (Loading, ErrorMessage, ThemeToggle)
-│   ├── composables/       # 组合式函数（完整业务逻辑）
-│   ├── types/            # TypeScript 类型定义（完整类型系统）
-│   ├── layouts/          # 页面布局 (default, blog, admin)
-│   ├── utils/            # 工具函数（格式化，验证，常量）
-│   ├── services/         # API服务层
+│   ├── composables/       # 组合式函数
+│   ├── types/            # TypeScript 类型定义
+│   ├── layouts/          # 页面布局
+│   ├── utils/            # 工具函数
 │   └── assets/           # 静态资源
 ├── content/               # 内容文件
-│   ├── blog/             # 博客文章 (5篇示例文章)
-│   └── pages/            # 静态页面内容
+│   └── blog/             # 博客文章
 ├── public/               # 公共静态资源
 └── server/               # 服务端代码
 ```
@@ -133,39 +133,38 @@ interface BlogPost {
 
 ### 核心框架
 - **Nuxt 4.1.1** - Vue.js元框架
-- **Vue 3.5.21** - 渐进式JavaScript框架
-- **TypeScript 5.9.2** - 类型安全的JavaScript
+- **Vue 3** - 渐进式JavaScript框架
+- **TypeScript** - 类型安全的JavaScript
+
+### 状态管理
+- **Pinia** - Vue 3 官方推荐的状态管理库
+- **响应式状态** - 用户、博客、UI状态统一管理
 
 ### UI和样式
-- **@nuxt/ui 3.3.3** - Nuxt UI组件库
+- **@nuxt/ui** - Nuxt UI组件库
 - **TailwindCSS** - 原子化CSS框架
 - **自研UI组件** - 基于@nuxt/ui的封装组件
 
 ### 内容和数据
-- **@nuxt/content 3.6.3** - 基于文件的内容管理
-- **@nuxt/image 1.11.0** - 图片优化和处理
-- **@vueuse/core 13.9.0** - Vue组合式工具集
-
-### 开发工具
-- **axios 1.11.0** - HTTP客户端
-- **vue-tsc 3.0.6** - Vue TypeScript编译器
+- **@nuxt/content v3** - 基于文件的内容管理
+- **@nuxt/image** - 图片优化和处理
+- **@vueuse/core** - Vue组合式工具集
 
 ## 🎨 UI组件系统
 
-BlogFlow 提供了完整的UI组件系统，基于@nuxt/ui进行封装，提供更好的开发体验：
+BlogFlow 提供了完整的UI组件系统，基于@nuxt/ui进行封装：
 
 ### 基础组件
 ```vue
 <!-- 按钮组件 -->
-<UiButton variant="solid" color="primary" size="lg">
+<UiButton variant="solid" color="primary">
   点击按钮
 </UiButton>
 
 <!-- 卡片组件 -->
-<UiCard variant="shadow" hoverable>
+<UiCard variant="shadow">
   <template #header>卡片头部</template>
   卡片内容
-  <template #footer>卡片底部</template>
 </UiCard>
 
 <!-- 模态框组件 -->
@@ -174,52 +173,56 @@ BlogFlow 提供了完整的UI组件系统，基于@nuxt/ui进行封装，提供�
 </UiModal>
 ```
 
-### 通用组件
-```vue
-<!-- 加载组件 -->
-<Loading type="spinner" size="lg" overlay />
+### 状态管理
+```typescript
+// 使用 Pinia stores
+const userStore = useUserStore()
+const blogStore = useBlogStore()
+const uiStore = useUIStore()
 
-<!-- 错误消息 -->
-<ErrorMessage 
-  type="error" 
-  message="错误信息" 
-  closable 
-  @retry="handleRetry" 
-/>
+// 用户相关操作
+await userStore.fetchUsers()
+userStore.setSearchQuery('关键词')
 
-<!-- 主题切换 -->
-<ThemeToggle />
+// 博客相关操作
+await blogStore.fetchAllPosts()
+blogStore.filterByCategory('技术')
+
+// UI状态管理
+uiStore.toggleTheme()
+uiStore.showSuccess('操作成功')
 ```
 
 ## 🌟 核心特性
 
+### 状态管理
+- Pinia 统一状态管理
+- 用户、博客、UI状态分离
+- 响应式数据流
+
 ### 响应式设计
-- 移动端优先的设计理念
+- 移动端优先设计
 - 流畅的用户体验
 - 完整的触摸支持
 
 ### 主题系统
-- 亮色/暗色模式自动切换
+- 亮色/暗色模式切换
 - 多种代码高亮主题
 - 用户偏好记忆
 
 ### 性能优化
-- 图片懒加载和优化
-- 代码分割和异步加载
+- 组件懒加载
+- 状态缓存机制
 - 服务端渲染(SSR)支持
 
-### SEO优化
-- 完整的meta标签管理
-- 结构化数据支持
-- 自动sitemap生成
+## 📊 项目统计
 
-## � 项目统计
-
-- ✅ **15+** 完整组件
+- ✅ **3** 核心 Pinia Store
+- ✅ **15+** UI 组件
 - ✅ **5** 核心页面
 - ✅ **100%** TypeScript覆盖
 - ✅ **完整** 响应式设计
-- ✅ **SEO** 优化就绪
+- ✅ **统一** 状态管理
 
 ## 🤝 贡献
 
@@ -229,7 +232,8 @@ BlogFlow 提供了完整的UI组件系统，基于@nuxt/ui进行封装，提供�
 1. 使用 TypeScript 进行开发
 2. 遵循组件命名规范（PascalCase）
 3. 使用封装的UI组件（UiButton, UiCard等）
-4. 编写清晰的组件文档
+4. 使用 Pinia stores 管理状态
+5. 编写清晰的组件文档
 
 ### 提交规范
 - feat: 新功能
@@ -246,4 +250,4 @@ MIT License
 
 ---
 
-> 一个现代化的博客系统，专注于性能、用户体验和开发体验。
+> 基于 Nuxt 4 + Pinia + TypeScript 的现代化博客系统，专注于性能、用户体验和开发体验。

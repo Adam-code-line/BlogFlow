@@ -36,6 +36,14 @@
               <span>博客</span>
             </NuxtLink>
             <NuxtLink 
+              to="/users" 
+              class="nav-link"
+              :class="{ 'nav-link-active': $route.path.startsWith('/users') }"
+            >
+              <Icon name="heroicons:users" class="w-4 h-4" />
+              <span>用户社区</span>
+            </NuxtLink>
+            <NuxtLink 
               to="/about" 
               class="nav-link"
               :class="{ 'nav-link-active': $route.path === '/about' }"
@@ -56,6 +64,24 @@
 
         <!-- 右侧操作区 -->
         <div class="flex items-center space-x-3">
+          <!-- 管理员入口 -->
+          <UDropdown 
+            v-if="showAdminEntry" 
+            :items="adminMenuItems"
+            :ui="{ 
+              item: { 
+                base: 'group flex items-center gap-2 w-full',
+                active: 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300',
+                inactive: 'text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800'
+              }
+            }"
+          >
+            <button class="admin-entry-btn">
+              <Icon name="heroicons:cog-6-tooth" class="w-5 h-5" />
+              <span class="hidden sm:inline-block ml-1">管理</span>
+            </button>
+          </UDropdown>
+
           <!-- 搜索按钮 -->
           <button 
             class="p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-all duration-200"
@@ -66,6 +92,37 @@
 
           <!-- 主题切换 -->
           <ThemeToggle />
+
+          <!-- 用户状态 -->
+          <div v-if="isAuthenticated" class="flex items-center space-x-2">
+            <!-- 用户头像下拉菜单 -->
+            <UDropdown :items="userMenuItems">
+              <button class="flex items-center space-x-2 p-1 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+                <img 
+                  :src="user?.avatar || '/images/default-avatar.png'" 
+                  :alt="user?.displayName"
+                  class="w-8 h-8 rounded-full border-2 border-gray-200 dark:border-gray-700"
+                />
+                <span class="hidden sm:block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  {{ user?.displayName }}
+                </span>
+                <Icon name="heroicons:chevron-down" class="w-4 h-4 text-gray-500" />
+              </button>
+            </UDropdown>
+          </div>
+          
+          <!-- 登录按钮 -->
+          <div v-else>
+            <UiButton 
+              size="sm" 
+              variant="outline" 
+              to="/auth/login"
+              class="px-4 py-2"
+            >
+              <Icon name="heroicons:user" class="w-4 h-4 mr-1" />
+              登录
+            </UiButton>
+          </div>
 
           <!-- 移动端菜单按钮 -->
           <button 
@@ -108,6 +165,15 @@
             <span>博客</span>
           </NuxtLink>
           <NuxtLink 
+            to="/users" 
+            class="mobile-nav-link"
+            :class="{ 'mobile-nav-link-active': $route.path.startsWith('/users') }"
+            @click="closeMobileMenu"
+          >
+            <Icon name="heroicons:users" class="w-5 h-5" />
+            <span>用户社区</span>
+          </NuxtLink>
+          <NuxtLink 
             to="/about" 
             class="mobile-nav-link"
             :class="{ 'mobile-nav-link-active': $route.path === '/about' }"
@@ -125,6 +191,42 @@
             <Icon name="heroicons:envelope" class="w-5 h-5" />
             <span>联系</span>
           </NuxtLink>
+          
+          <!-- 管理员入口 - 移动端 -->
+          <div v-if="showAdminEntry" class="pt-2 border-t border-gray-200 dark:border-gray-700">
+            <div class="mb-2">
+              <div class="px-3 py-1 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                管理功能
+              </div>
+            </div>
+            <NuxtLink 
+              to="/admin" 
+              class="mobile-nav-link"
+              :class="{ 'mobile-nav-link-active': $route.path.startsWith('/admin') }"
+              @click="closeMobileMenu"
+            >
+              <Icon name="heroicons:squares-2x2" class="w-5 h-5" />
+              <span>管理面板</span>
+            </NuxtLink>
+            <NuxtLink 
+              to="/admin/posts" 
+              class="mobile-nav-link"
+              :class="{ 'mobile-nav-link-active': $route.path === '/admin/posts' }"
+              @click="closeMobileMenu"
+            >
+              <Icon name="heroicons:document-text" class="w-5 h-5" />
+              <span>文章管理</span>
+            </NuxtLink>
+            <NuxtLink 
+              to="/admin/users" 
+              class="mobile-nav-link"
+              :class="{ 'mobile-nav-link-active': $route.path === '/admin/users' }"
+              @click="closeMobileMenu"
+            >
+              <Icon name="heroicons:users" class="w-5 h-5" />
+              <span>用户管理</span>
+            </NuxtLink>
+          </div>
         </div>
       </div>
     </Transition>
@@ -163,15 +265,66 @@
 </template>
 
 <script setup lang="ts">
-import ThemeToggle from '~/components/common/ThemeToggle.vue'
+import ThemeToggle from '~/components/ui/ThemeToggle.vue'
+
+// 使用认证系统
+const { user, isAuthenticated, canAccessAdmin } = useAuth()
 
 // 响应式状态
 const mobileMenuOpen = ref(false)
 const searchModalOpen = ref(false)
 const searchQuery = ref('')
 
+// 管理员状态 - 基于用户权限判断
+const showAdminEntry = computed(() => canAccessAdmin.value)
+
 // 热门标签数据
 const popularTags = ['Vue.js', 'Nuxt.js', 'TypeScript', '前端开发', '工程化']
+
+// 管理员菜单项
+const adminMenuItems = [
+  [{
+    label: '管理面板',
+    icon: 'i-heroicons-squares-2x2',
+    to: '/admin'
+  }],
+  [{
+    label: '文章管理',
+    icon: 'i-heroicons-document-text',
+    to: '/admin/posts'
+  }, {
+    label: '用户管理',
+    icon: 'i-heroicons-users',
+    to: '/admin/users'
+  }],
+  [{
+    label: '设置',
+    icon: 'i-heroicons-cog-6-tooth',
+    to: '/admin/settings'
+  }]
+]
+
+// 用户菜单项
+const { logout } = useAuth()
+const userMenuItems = [
+  [{
+    label: '个人资料',
+    icon: 'i-heroicons-user-circle',
+    to: '/profile'
+  }],
+  [{
+    label: '设置',
+    icon: 'i-heroicons-cog-6-tooth',
+    to: '/settings'
+  }],
+  [{
+    label: '退出登录',
+    icon: 'i-heroicons-arrow-right-on-rectangle',
+    click: async () => {
+      await logout()
+    }
+  }]
+]
 
 // 方法
 const toggleMobileMenu = () => {
@@ -278,6 +431,40 @@ watch(() => useRoute().path, () => {
 .dark .mobile-nav-link-active {
   color: rgb(96 165 250);
   background-color: rgba(37, 99, 235, 0.2);
+}
+
+/* 管理员入口按钮样式 */
+.admin-entry-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: rgb(37 99 235);
+  background-color: rgb(239 246 255);
+  border: 1px solid rgb(219 234 254);
+  transition: all 0.2s ease-in-out;
+}
+
+.dark .admin-entry-btn {
+  color: rgb(96 165 250);
+  background-color: rgba(37, 99, 235, 0.1);
+  border-color: rgba(37, 99, 235, 0.3);
+}
+
+.admin-entry-btn:hover {
+  color: rgb(29 78 216);
+  background-color: rgb(219 234 254);
+  border-color: rgb(147 197 253);
+  transform: translateY(-1px);
+}
+
+.dark .admin-entry-btn:hover {
+  color: rgb(147 197 253);
+  background-color: rgba(37, 99, 235, 0.2);
+  border-color: rgba(37, 99, 235, 0.5);
 }
 
 /* 背景模糊效果优化 */

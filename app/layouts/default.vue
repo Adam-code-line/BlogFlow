@@ -10,9 +10,17 @@
     
     <!-- 页脚 -->
     <Footer />
+    
+    <!-- 全局UI组件 -->
+    <NotificationToast />
+    <BackToTop />
+    <GlobalLoading />
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 // 默认布局，包含头部和页脚
+import NotificationToast from '~/components/ui/NotificationToast.vue'
+import BackToTop from '~/components/ui/BackToTop.vue'
+import GlobalLoading from '~/components/ui/GlobalLoading.vue'
 </script>

@@ -28,7 +28,14 @@ export default defineNuxtConfig({
   modules: [
     '@nuxt/content',     // 内容管理
     '@nuxt/image',       // 图片优化
-    '@nuxt/ui'           // UI 组件库
+    '@nuxt/ui',          // UI 组件库
+    '@pinia/nuxt',       // Pinia 状态管理
+    '@nuxt/eslint',      // ESLint 代码规范
+    '@vueuse/nuxt'       // VueUse 组合式函数
+    // 暂时移除可能导致问题的模块
+    // '@nuxt/fonts',       // 字体优化
+    // '@nuxtjs/robots',    // robots.txt 生成
+    // '@nuxtjs/sitemap'    // 站点地图生成
   ],
 
 
@@ -90,10 +97,42 @@ export default defineNuxtConfig({
     }
   ],
 
-  // Nuxt UI 配置 - 禁用字体模块以避免 Google Fonts 问题
+  // Nuxt UI 配置 - 禁用外部字体以避免网络问题
   ui: {
-    fonts: false         // 禁用 @nuxt/fonts 模块
+    fonts: false         // 禁用 @nuxt/fonts 自动字体加载
   },
+
+  // Icon 配置 - 使用本地图标
+  icon: {
+    collections: ['heroicons']
+  },
+
+  // ESLint 配置
+  // eslint: {
+  //   config: {
+  //     stylistic: {
+  //       indent: 2,
+  //       quotes: 'single'
+  //     }
+  //   }
+  // },
+
+  // Robots 配置
+  // robots: {
+  //   UserAgent: '*',
+  //   Disallow: ['/admin', '/api'],
+  //   Sitemap: 'https://your-domain.com/sitemap.xml'
+  // },
+
+  // 站点地图配置
+  // sitemap: {
+  //   hostname: 'https://your-domain.com',
+  //   gzip: true,
+  //   routes: async () => {
+  //     // 这里可以动态生成路由
+  //     return ['/about', '/contact']
+  //   }
+  // },
 
   // 图片优化配置
   image: {
@@ -115,7 +154,8 @@ export default defineNuxtConfig({
   // CSS 配置
   css: [
     '~/assets/css/main.css',
-    '~/assets/css/fonts.css'  // 添加字体配置
+    '~/assets/css/fonts.css',     // 添加字体配置
+    '~/assets/css/admin.css'      // 添加管理后台样式
   ],
 
   // 运行时配置

@@ -2,4 +2,7 @@
 @import "@nuxt/ui";
 
 /* 导入自定义样式 */
+@import "./components.css";
 @import "./code-highlight.css";
+/* 暂时注释掉 admin.css 以避免 TailwindCSS 冲突 */
+/* @import "./admin.css"; */

@@ -16,8 +16,8 @@
     <div class="space-y-8">
       <!-- 文章列表组件 -->
       <PostList
-        :posts="allPosts"
-        :loading="false"
+        :posts="blogStore.posts"
+        :loading="blogStore.postsLoading"
         :show-header="false"
         :enable-search="true"
         :enable-category-filter="true"
@@ -31,8 +31,7 @@
 </template>
 
 <script setup lang="ts">
-import type { ContentPost } from '~/types'
-import { useBlogPosts } from '~/composables/useContent'
+import { useBlogStore } from '~/stores/blog'
 import { useCodeTheme } from '~/composables/useCodeTheme'
 
 // 页面元数据
@@ -43,14 +42,14 @@ useSeoMeta({
   ogDescription: '浏览我的最新技术文章和思考，涵盖前端开发、Vue.js、Nuxt.js、TypeScript 等技术主题。'
 })
 
-// 使用 composables
-const blogAPI = useBlogPosts()
+// 使用 Pinia stores
+const blogStore = useBlogStore()
 
 // 使用代码主题功能
 const { initialize: initCodeTheme } = useCodeTheme()
 
 // 获取所有博客文章
-const allPosts = await blogAPI.getAllPosts()
+await blogStore.fetchAllPosts()
 
 // 页面挂载时初始化代码主题
 onMounted(() => {

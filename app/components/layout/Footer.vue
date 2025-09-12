@@ -151,6 +151,11 @@ const quickLinks = [
     icon: 'heroicons:document-text'
   },
   {
+    name: '用户社区',
+    path: '/users',
+    icon: 'heroicons:users'
+  },
+  {
     name: '关于',
     path: '/about',
     icon: 'heroicons:user'
