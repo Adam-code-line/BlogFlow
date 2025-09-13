@@ -48,48 +48,23 @@ export {
   PostPriority,
 } from './blog'
 
-// 用户相关类型
-export type {
-  // 基础类型
-  SocialLinks,
-  UserPreferences,
-  UserStats,
-  UserProfile,
-  
-  // 主要实体
-  BaseUser,
-  User,
-  PublicUser,
-  Author,
-  
-  // 认证相关
-  RegisterData,
-  LoginData,
-  LoginResponse,
-  PasswordResetData,
-  PasswordResetConfirmData,
-  
-  // 查询和响应
-  UserQuery,
-  UsersResponse,
-  UpdateUserData,
-  
-  // 活动和通知
-  UserActivity,
-  UserNotification,
-  UserSession,
-  
-  // 管理相关
-  AdminUserData,
-  UserPermission,
-  RolePermissions,
-  FollowData,
-} from './user'
+// 定义简化的社交链接类型
+export interface SocialLinks {
+  github?: string
+  twitter?: string
+  website?: string
+  linkedin?: string
+  email?: string
+}
 
-export {
-  UserRole,
-  UserStatus,
-} from './user'
+// 定义简化的用户角色枚举
+export enum UserRole {
+  ADMIN = 'admin',
+  AUTHOR = 'author', 
+  EDITOR = 'editor',
+  SUBSCRIBER = 'subscriber',
+  GUEST = 'guest'
+}
 
 // 通用类型定义
 export interface ApiResponse<T = any> {
@@ -226,7 +201,7 @@ export interface SiteConfig {
     email: string
     avatar?: string
     bio?: string
-    socialLinks: import('./user').SocialLinks
+    socialLinks: SocialLinks
   }
   seo: {
     defaultTitle: string
@@ -250,7 +225,7 @@ export interface SiteConfig {
     plausible?: string
     umami?: string
   }
-  social: import('./user').SocialLinks
+  social: SocialLinks
 }
 
 // 导航相关类型
@@ -263,7 +238,7 @@ export interface NavigationItem {
   children?: NavigationItem[]
   order: number
   isVisible: boolean
-  roles?: import('./user').UserRole[]
+  roles?: UserRole[]
 }
 
 export interface BreadcrumbItem {

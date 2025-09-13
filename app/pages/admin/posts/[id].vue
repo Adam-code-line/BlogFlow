@@ -111,69 +111,15 @@
         <!-- 文章内容 -->
         <UCard class="bg-white dark:bg-gray-800">
           <template #header>
-            <div class="flex items-center justify-between">
-              <h3 class="text-lg font-medium text-gray-900 dark:text-white">文章内容</h3>
-              <div class="flex items-center space-x-2">
-                <UButton
-                  variant="ghost"
-                  size="sm"
-                  :class="{ 'bg-blue-50 text-blue-600': editorMode === 'markdown' }"
-                  @click="editorMode = 'markdown'"
-                >
-                  Markdown
-                </UButton>
-                <UButton
-                  variant="ghost"
-                  size="sm"
-                  :class="{ 'bg-blue-50 text-blue-600': editorMode === 'wysiwyg' }"
-                  @click="editorMode = 'wysiwyg'"
-                >
-                  可视化
-                </UButton>
-                <UButton
-                  variant="ghost"
-                  size="sm"
-                  :class="{ 'bg-blue-50 text-blue-600': editorMode === 'preview' }"
-                  @click="editorMode = 'preview'"
-                >
-                  预览
-                </UButton>
-              </div>
-            </div>
+            <h3 class="text-lg font-medium text-gray-900 dark:text-white">文章内容</h3>
           </template>
           
-          <div class="space-y-4">
-            <!-- Markdown 编辑器 -->
-            <div v-if="editorMode === 'markdown'" class="min-h-[500px]">
-              <UTextarea
-                v-model="form.content"
-                placeholder="请输入 Markdown 格式的文章内容..."
-                :rows="25"
-                :ui="{ 
-                  base: 'font-mono text-sm'
-                }"
-              />
-            </div>
-
-            <!-- 可视化编辑器占位 -->
-            <div v-else-if="editorMode === 'wysiwyg'" class="min-h-[500px] border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg flex items-center justify-center">
-              <div class="text-center">
-                <Icon name="i-heroicons-pencil-square" class="h-12 w-12 mx-auto text-gray-400 mb-3" />
-                <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-2">可视化编辑器</h3>
-                <p class="text-gray-500 dark:text-gray-400">富文本编辑器待集成</p>
-                <p class="text-sm text-gray-400 mt-2">推荐使用 Tiptap 或 TinyMCE</p>
-              </div>
-            </div>
-
-            <!-- 预览模式 -->
-            <div v-else-if="editorMode === 'preview'" class="min-h-[500px] border border-gray-200 dark:border-gray-700 rounded-lg p-6">
-              <div class="prose dark:prose-invert max-w-none">
-                <h1>{{ form.title || '文章标题' }}</h1>
-                <p class="text-gray-600 dark:text-gray-400">{{ form.description || '文章描述' }}</p>
-                <div class="mt-6 whitespace-pre-wrap">{{ form.content || '文章内容将在这里显示...' }}</div>
-              </div>
-            </div>
-          </div>
+          <!-- Cherry Markdown 编辑器 -->
+          <CherryMarkdownEditor
+            v-model="form.content"
+            height="600px"
+            placeholder="请输入 Markdown 格式的文章内容..."
+          />
         </UCard>
       </div>
 
@@ -315,6 +261,9 @@
 </template>
 
 <script setup lang="ts">
+// 导入组件
+import CherryMarkdownEditor from '~/components/editor/CherryMarkdownEditor.vue'
+
 // 设置布局
 definePageMeta({
   layout: 'admin'
@@ -334,7 +283,6 @@ useHead({
 // 响应式数据
 const saving = ref(false)
 const publishing = ref(false)
-const editorMode = ref<'markdown' | 'wysiwyg' | 'preview'>('markdown')
 const tagsInput = ref('')
 
 // 表单数据

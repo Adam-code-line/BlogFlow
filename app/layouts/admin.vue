@@ -17,7 +17,9 @@
             <!-- Logo -->
             <div class="flex-shrink-0 flex items-center ml-4 md:ml-0">
               <NuxtLink to="/admin" class="flex items-center space-x-3">
-                <img src="/logo.png" alt="BlogFlow" class="h-8 w-8" />
+                <div class="h-8 w-8 bg-blue-600 rounded-lg flex items-center justify-center">
+                  <Icon name="i-heroicons-document-text" class="h-5 w-5 text-white" />
+                </div>
                 <span class="text-xl font-bold text-gray-900 dark:text-white">BlogFlow Admin</span>
               </NuxtLink>
             </div>
@@ -25,6 +27,15 @@
           
           <!-- 右侧用户菜单 -->
           <div class="flex items-center space-x-4">
+            <!-- 返回前台按钮 -->
+            <NuxtLink
+              to="/"
+              class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200"
+            >
+              <Icon name="i-heroicons-arrow-left" class="w-4 h-4 mr-2" />
+              返回前台
+            </NuxtLink>
+            
             <!-- 主题切换 -->
             <ThemeToggle />
             
@@ -102,29 +113,6 @@
                 >
                   <Icon name="i-heroicons-tag" class="h-5 w-5" />
                   <span>分类标签</span>
-                </NuxtLink>
-              </div>
-              
-              <!-- 用户管理 -->
-              <div class="space-y-1">
-                <div class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider px-3 py-2">
-                  用户管理
-                </div>
-                <NuxtLink
-                  to="/admin/users"
-                  :class="adminMenuItemClass"
-                  @click="sidebarOpen = false"
-                >
-                  <Icon name="i-heroicons-users" class="h-5 w-5" />
-                  <span>用户列表</span>
-                </NuxtLink>
-                <NuxtLink
-                  to="/admin/comments"
-                  :class="adminMenuItemClass"
-                  @click="sidebarOpen = false"
-                >
-                  <Icon name="i-heroicons-chat-bubble-left-ellipsis" class="h-5 w-5" />
-                  <span>评论管理</span>
                 </NuxtLink>
               </div>
               

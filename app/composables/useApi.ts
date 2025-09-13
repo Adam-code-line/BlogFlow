@@ -1,6 +1,5 @@
 import { 
   BlogApiService, 
-  UserApiService, 
   UploadApiService, 
   ContactApiService,
   AnalyticsApiService 
@@ -12,14 +11,12 @@ export const useApi = () => {
 
   // 创建服务实例
   const blog = new BlogApiService($api)
-  const user = new UserApiService($api)
   const upload = new UploadApiService($api)
   const contact = new ContactApiService($api)
   const analytics = new AnalyticsApiService($api)
 
   return {
     blog,
-    user,
     upload,
     contact,
     analytics
@@ -30,12 +27,6 @@ export const useApi = () => {
 export const useBlogApi = () => {
   const { blog } = useApi()
   return blog
-}
-
-// 用户相关API
-export const useUserApi = () => {
-  const { user } = useApi()
-  return user
 }
 
 // 上传相关API

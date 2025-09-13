@@ -9,20 +9,13 @@
     </div>
 
     <!-- 统计卡片 -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       <AdminStatsCard
         title="总文章数"
         :value="stats.totalPosts"
         change="+12%"
         icon="i-heroicons-document-text"
         color="blue"
-      />
-      <AdminStatsCard
-        title="总用户数"
-        :value="stats.totalUsers"
-        change="+8%"
-        icon="i-heroicons-users"
-        color="green"
       />
       <AdminStatsCard
         title="总评论数"
@@ -85,51 +78,6 @@
           </div>
         </div>
       </UCard>
-
-      <!-- 用户活动 -->
-      <UCard class="bg-white dark:bg-gray-800">
-        <template #header>
-          <div class="flex items-center justify-between">
-            <h3 class="text-lg font-medium text-gray-900 dark:text-white">最新用户</h3>
-            <UButton
-              to="/admin/users"
-              variant="ghost"
-              size="sm"
-              trailing-icon="i-heroicons-arrow-right"
-            >
-              查看全部
-            </UButton>
-          </div>
-        </template>
-        
-        <div class="space-y-4">
-          <div
-            v-for="user in recentUsers"
-            :key="user.id"
-            class="flex items-center space-x-4 p-3 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
-          >
-            <UAvatar
-              :src="user.avatar"
-              :alt="user.displayName"
-              size="sm"
-            />
-            <div class="flex-1 min-w-0">
-              <p class="text-sm font-medium text-gray-900 dark:text-white">
-                {{ user.displayName }}
-              </p>
-              <p class="text-xs text-gray-500 dark:text-gray-400">
-                @{{ user.username }}
-              </p>
-            </div>
-            <UBadge
-              :label="user.role"
-              color="primary"
-              variant="soft"
-              size="xs"
-            />
-          </div>
-        </div>
-      </UCard>
     </div>
 
     <!-- 访问统计图表 -->
@@ -164,15 +112,6 @@
           写新文章
         </UButton>
         <UButton
-          to="/admin/users"
-          block
-          size="lg"
-          icon="i-heroicons-users"
-          variant="outline"
-        >
-          管理用户
-        </UButton>
-        <UButton
           to="/admin/comments"
           block
           size="lg"
@@ -197,8 +136,6 @@
 
 <script setup lang="ts">
 import { useBlogStore } from '~/stores/blog'
-import { useUserStore } from '~/stores/user'
-import type { PublicUser } from '~/types/user'
 import type { ContentPost } from '~/types'
 
 // 设置布局和中间件
@@ -209,7 +146,6 @@ definePageMeta({
 
 // Store
 const blogStore = useBlogStore()
-const userStore = useUserStore()
 
 // 页面标题
 useHead({
@@ -219,16 +155,12 @@ useHead({
 // 统计数据
 const stats = ref({
   totalPosts: 0,
-  totalUsers: 0,
   totalComments: 0,
   totalViews: 0
 })
 
 // 最近文章
 const recentPosts = ref<ContentPost[]>([])
-
-// 最新用户
-const recentUsers = ref<PublicUser[]>([])
 
 // 格式化日期
 const formatDate = (date: string | Date) => {
@@ -239,18 +171,6 @@ const formatDate = (date: string | Date) => {
   }).format(new Date(date))
 }
 
-// 获取角色颜色
-const getRoleColor = (role: string) => {
-  const colors = {
-    admin: 'red',
-    author: 'blue',
-    editor: 'green',
-    subscriber: 'gray',
-    guest: 'gray'
-  }
-  return colors[role as keyof typeof colors] || 'gray'
-}
-
 // 加载数据
 const loadDashboardData = async () => {
   try {
@@ -258,14 +178,9 @@ const loadDashboardData = async () => {
     await blogStore.fetchAllPosts()
     recentPosts.value = blogStore.posts.slice(0, 5)
     
-    // 加载用户数据
-    await userStore.fetchUsers({ limit: 5 })
-    recentUsers.value = userStore.users.slice(0, 5)
-    
     // 更新统计数据
     stats.value = {
       totalPosts: blogStore.posts.length,
-      totalUsers: userStore.userPagination.total,
       totalComments: Math.floor(Math.random() * 500) + 100, // 模拟数据
       totalViews: Math.floor(Math.random() * 10000) + 5000 // 模拟数据
     }

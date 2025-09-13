@@ -23,10 +23,6 @@
               <Icon name="heroicons:document-text" class="w-5 h-5 mr-2" />
               阅读博客
             </UiButton>
-            <UiButton size="lg" color="secondary" variant="solid" class="px-8 py-3" to="/users" @click="handleUsersClick">
-              <Icon name="heroicons:users" class="w-5 h-5 mr-2" />
-              用户社区
-            </UiButton>
             <UiButton size="lg" color="neutral" variant="outline" class="px-8 py-3" to="/about" @click="handleAboutClick">
               <Icon name="heroicons:user" class="w-5 h-5 mr-2" />
               了解更多
@@ -48,8 +44,8 @@
               <div class="text-gray-600 dark:text-gray-300">开源项目</div>
             </div>
             <div class="text-center">
-              <div class="text-3xl font-bold text-purple-600 dark:text-purple-400 mb-2">50+</div>
-              <div class="text-gray-600 dark:text-gray-300">社区用户</div>
+              <div class="text-3xl font-bold text-purple-600 dark:text-purple-400 mb-2">100+</div>
+              <div class="text-gray-600 dark:text-gray-300">技术分享</div>
             </div>
             <div class="text-center">
               <div class="text-3xl font-bold text-orange-600 dark:text-orange-400 mb-2">2.5k</div>
@@ -171,46 +167,6 @@
         </div>
       </section>
 
-      <!-- 用户社区 -->
-      <section class="py-20 px-4 sm:px-6 lg:px-8">
-        <div class="max-w-7xl mx-auto">
-          <div class="text-center mb-16">
-            <h2 class="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">用户社区</h2>
-            <p class="text-xl text-gray-600 dark:text-gray-300">发现更多优秀的内容创作者</p>
-          </div>
-          
-          <div class="grid md:grid-cols-3 gap-8 mb-12">
-            <UiCard class="text-center p-8">
-              <Icon name="heroicons:users" class="w-12 h-12 text-blue-600 dark:text-blue-400 mx-auto mb-4" />
-              <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">活跃用户</h3>
-              <p class="text-gray-600 dark:text-gray-300 mb-4">浏览社区中的活跃用户，发现有趣的内容创作者</p>
-              <div class="text-2xl font-bold text-blue-600 dark:text-blue-400">50+</div>
-            </UiCard>
-            
-            <UiCard class="text-center p-8">
-              <Icon name="heroicons:chat-bubble-left-right" class="w-12 h-12 text-green-600 dark:text-green-400 mx-auto mb-4" />
-              <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">技术交流</h3>
-              <p class="text-gray-600 dark:text-gray-300 mb-4">与其他开发者交流技术心得，分享项目经验</p>
-              <div class="text-2xl font-bold text-green-600 dark:text-green-400">100+</div>
-            </UiCard>
-            
-            <UiCard class="text-center p-8">
-              <Icon name="heroicons:star" class="w-12 h-12 text-purple-600 dark:text-purple-400 mx-auto mb-4" />
-              <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">优质内容</h3>
-              <p class="text-gray-600 dark:text-gray-300 mb-4">关注你感兴趣的作者，第一时间获取优质内容</p>
-              <div class="text-2xl font-bold text-purple-600 dark:text-purple-400">200+</div>
-            </UiCard>
-          </div>
-          
-          <div class="text-center">
-            <UiButton size="lg" color="primary" variant="solid" class="px-8 py-3" to="/users" @click="handleUsersClick">
-              <Icon name="heroicons:users" class="w-5 h-5 mr-2" />
-              探索用户社区
-            </UiButton>
-          </div>
-        </div>
-      </section>
-
       <!-- 联系和社交 -->
       <section class="py-20 px-4 sm:px-6 lg:px-8">
         <div class="max-w-4xl mx-auto text-center">
@@ -300,14 +256,6 @@ const handleContactClick = () => {
     action: 'contact',
     category: 'engagement',
     label: 'contact_button'
-  })
-}
-
-const handleUsersClick = () => {
-  $analytics.trackEvent({
-    action: 'navigate',
-    category: 'homepage',
-    label: 'users_community'
   })
 }
 

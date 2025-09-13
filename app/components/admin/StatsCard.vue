@@ -60,6 +60,8 @@
 </template>
 
 <script setup lang="ts">
+import { useAdminNumber } from '~/composables/useAdminUtils'
+
 // 使用封装的工具函数
 const { formatCompactNumber } = useAdminNumber()
 

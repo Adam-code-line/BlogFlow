@@ -316,10 +316,29 @@ const insertTable = () => {
   insertAtCursor(tableMarkdown)
 }
 
-const uploadImage = () => {
-  // 这里实现图片上传逻辑
-  console.log('上传图片')
-  insertAtCursor('![图片描述](图片URL)')
+const uploadImage = async () => {
+  // 创建文件输入框
+  const input = document.createElement('input')
+  input.type = 'file'
+  input.accept = 'image/*'
+  input.onchange = async (event) => {
+    const file = (event.target as HTMLInputElement).files?.[0]
+    if (file) {
+      try {
+        // 这里可以实现真实的图片上传逻辑
+        // 现在使用createObjectURL作为占位
+        const imageUrl = URL.createObjectURL(file)
+        insertAtCursor(`![${file.name}](${imageUrl})`)
+        
+        // 提示用户
+        console.log('图片已插入，实际项目中应该上传到服务器')
+      } catch (error) {
+        console.error('图片上传失败:', error)
+        insertAtCursor('![图片描述](图片URL)')
+      }
+    }
+  }
+  input.click()
 }
 
 const updateCursorPosition = () => {

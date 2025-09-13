@@ -1,4 +1,4 @@
-import type { BlogPost, Category, Tag, User, Comment } from '~/types'
+import type { BlogPost, Category, Tag, Comment } from '~/types'
 
 // 博客API服务
 export class BlogApiService {
@@ -79,55 +79,6 @@ export class BlogApiService {
   }
 }
 
-// 用户API服务
-export class UserApiService {
-  private api: any
-
-  constructor(api: any) {
-    this.api = api
-  }
-
-  // 用户登录
-  async login(credentials: { email: string; password: string }): Promise<{ user: User; token: string }> {
-    return this.api.post('/auth/login', credentials)
-  }
-
-  // 用户注册
-  async register(userData: Partial<User>): Promise<{ user: User; token: string }> {
-    return this.api.post('/auth/register', userData)
-  }
-
-  // 获取当前用户
-  async getCurrentUser(): Promise<User> {
-    return this.api.get('/auth/me')
-  }
-
-  // 根据ID获取用户信息
-  async getUserById(userId: string): Promise<User> {
-    return this.api.get(`/users/${userId}`)
-  }
-
-  // 更新用户资料
-  async updateProfile(userData: Partial<User>): Promise<User> {
-    return this.api.put('/auth/profile', userData)
-  }
-
-  // 关注/取消关注用户
-  async followUser(userId: string, action: 'follow' | 'unfollow'): Promise<{ success: boolean }> {
-    return this.api.post(`/users/${userId}/${action}`)
-  }
-
-  // 用户登出
-  async logout(): Promise<void> {
-    return this.api.post('/auth/logout')
-  }
-
-  // 重置密码
-  async resetPassword(email: string): Promise<void> {
-    return this.api.post('/auth/reset-password', { email })
-  }
-}
-
 // 文件上传服务
 export class UploadApiService {
   private api: any
@@ -189,7 +140,6 @@ export class AnalyticsApiService {
     totalPosts: number
     totalViews: number
     totalComments: number
-    totalUsers: number
   }> {
     return this.api.get('/analytics/stats')
   }

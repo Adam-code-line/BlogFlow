@@ -2,7 +2,14 @@
  * 管理员系统通用工具函数
  */
 
-import { UserRole } from '~/types/user'
+// 定义简化的用户角色枚举
+enum UserRole {
+  ADMIN = 'admin',
+  AUTHOR = 'author',
+  EDITOR = 'editor',
+  SUBSCRIBER = 'subscriber',
+  GUEST = 'guest'
+}
 
 // 日期格式化工具
 export const useAdminDate = () => {
