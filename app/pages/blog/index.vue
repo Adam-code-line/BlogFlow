@@ -33,6 +33,7 @@
 <script setup lang="ts">
 import { useBlogStore } from '~/stores/blog'
 import { useCodeTheme } from '~/composables/useCodeTheme'
+import { initializeSamplePosts } from '~/composables/usePostActions'
 
 // 页面元数据
 useSeoMeta({
@@ -47,6 +48,9 @@ const blogStore = useBlogStore()
 
 // 使用代码主题功能
 const { initialize: initCodeTheme } = useCodeTheme()
+
+// 初始化示例数据（如果需要）
+initializeSamplePosts()
 
 // 获取所有博客文章
 await blogStore.fetchAllPosts()

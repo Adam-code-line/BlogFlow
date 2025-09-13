@@ -8,13 +8,13 @@
           管理您的所有博客文章
         </p>
       </div>
-      <UButton
+      <UiButton
         to="/admin/posts/new"
         icon="i-heroicons-plus"
         size="lg"
       >
         写新文章
-      </UButton>
+      </UiButton>
     </div>
 
     <!-- 搜索和筛选 -->
@@ -62,7 +62,7 @@
     </UCard>
 
     <!-- 文章列表 -->
-    <UCard class="bg-white dark:bg-gray-800">
+    <UiCard class="bg-white dark:bg-gray-800">
       <div class="p-6">
         <!-- 加载状态 -->
         <div v-if="loading" class="flex justify-center py-8">
@@ -74,12 +74,12 @@
           <Icon name="i-heroicons-document-text" class="h-12 w-12 mx-auto text-gray-400 mb-4" />
           <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-2">暂无文章</h3>
           <p class="text-gray-500 dark:text-gray-400 mb-4">开始创建您的第一篇文章吧！</p>
-          <UButton
+          <UiButton
             to="/admin/posts/new"
             icon="i-heroicons-plus"
           >
             写新文章
-          </UButton>
+          </UiButton>
         </div>
         
         <!-- 文章表格 -->
@@ -172,7 +172,7 @@
                 <!-- 操作 -->
                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                   <UDropdown :items="getPostActions(post, index)">
-                    <UButton
+                    <UiButton
                       variant="ghost"
                       size="sm"
                       icon="i-heroicons-ellipsis-horizontal"
@@ -196,7 +196,7 @@
           />
         </div>
       </div>
-    </UCard>
+    </UiCard>
   </div>
 </template>
 

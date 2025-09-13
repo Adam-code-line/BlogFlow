@@ -1,405 +1,453 @@
 <template>
-  <div class="max-w-7xl mx-auto space-y-6">
-    <!-- 页面头部 -->
-    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
-      <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
-        <div class="flex items-center justify-between">
-          <div class="flex items-center space-x-3">
+  <div class="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <!-- 顶部导航栏 -->
+    <div class="sticky top-0 z-50 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-b border-gray-200 dark:border-gray-700">
+      <div class="max-w-7xl mx-auto">
+        <div class="flex items-center justify-between h-16 px-6">
+          <div class="flex items-center space-x-4">
             <UButton
               to="/admin/posts"
               variant="ghost"
               size="sm"
               icon="heroicons:arrow-left"
-              class="text-gray-600 dark:text-gray-400"
+              class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
             >
-              返回
+              返回文章列表
             </UButton>
+            <div class="h-6 border-l border-gray-300 dark:border-gray-600"></div>
             <div>
-              <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
+              <h1 class="text-lg font-semibold text-gray-900 dark:text-white">
                 {{ isNew ? '创建新文章' : '编辑文章' }}
               </h1>
-              <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                {{ isNew ? '开始撰写您的新文章' : '编辑和完善您的文章内容' }}
-              </p>
             </div>
           </div>
           
           <div class="flex items-center space-x-3">
+            <!-- 字数和阅读时间 -->
+            <div class="hidden sm:flex items-center space-x-4 text-sm text-gray-500 dark:text-gray-400">
+              <div class="flex items-center">
+                <Icon name="heroicons:document-text" class="w-4 h-4 mr-1" />
+                {{ wordCount }} 字
+              </div>
+              <div class="flex items-center">
+                <Icon name="heroicons:clock" class="w-4 h-4 mr-1" />
+                {{ readingTime }} 分钟
+              </div>
+            </div>
+            
+            <!-- 保存按钮 -->
             <UButton
               @click="saveAsDraft"
               :loading="saving"
               variant="outline"
               size="sm"
-              icon="heroicons:document"
+              icon="heroicons:document-duplicate"
+              class="hidden sm:flex"
             >
               保存草稿
             </UButton>
+            
+            <!-- 发布按钮 -->
             <UButton
               @click="publishPost"
               :loading="publishing"
               size="sm"
               icon="heroicons:rocket-launch"
+              class="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800"
             >
               {{ isNew ? '发布' : '更新' }}
             </UButton>
           </div>
         </div>
-        
-        <!-- 文章统计 -->
-        <div v-if="!isNew" class="mt-4 flex items-center space-x-6 text-sm text-gray-500 dark:text-gray-400">
-          <div class="flex items-center">
-            <Icon name="heroicons:eye" class="w-4 h-4 mr-1" />
-            {{ stats.views }} 次查看
-          </div>
-          <div class="flex items-center">
-            <Icon name="heroicons:heart" class="w-4 h-4 mr-1" />
-            {{ stats.likes }} 喜欢
-          </div>
-          <div class="flex items-center">
-            <Icon name="heroicons:chat-bubble-left" class="w-4 h-4 mr-1" />
-            {{ stats.comments }} 评论
-          </div>
-          <div class="flex items-center">
-            <Icon name="heroicons:clock" class="w-4 h-4 mr-1" />
-            最后更新于 2小时前
-          </div>
-        </div>
       </div>
     </div>
 
-    <!-- 主要内容区域 - 优化布局比例 -->
-    <div class="grid grid-cols-1 xl:grid-cols-8 gap-6">
-      <!-- 左侧主要内容 -->
-      <div class="xl:col-span-7 space-y-6">
-        <!-- 精简的基本信息卡片 -->
-        <UCard class="bg-white dark:bg-gray-800 border-0 shadow-sm">
-          <template #header>
-            <div class="flex items-center justify-between">
-              <div class="flex items-center space-x-2">
-                <Icon name="heroicons:document-text" class="w-5 h-5 text-blue-600 dark:text-blue-400" />
-                <h2 class="text-lg font-medium text-gray-900 dark:text-white">基本信息</h2>
+    <!-- 主要内容区域 -->
+    <div class="max-w-7xl mx-auto p-6">
+      <div class="grid grid-cols-1 xl:grid-cols-4 gap-6">
+        <!-- 左侧主要内容区域 -->
+        <div class="xl:col-span-3 space-y-6">
+          <!-- 文章基本信息卡片 -->
+          <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+            <div class="p-6">
+              <div class="flex items-center space-x-3 mb-6">
+                <div class="p-2 bg-blue-100 dark:bg-blue-900/20 rounded-lg">
+                  <Icon name="heroicons:document-text" class="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                </div>
+                <h2 class="text-lg font-semibold text-gray-900 dark:text-white">基本信息</h2>
               </div>
-              <div class="text-xs text-gray-500 dark:text-gray-400">
-                字数: {{ wordCount }} · 阅读时间: {{ readingTime }}分钟
+              
+              <div class="space-y-6">
+                <!-- 标题 -->
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    文章标题 <span class="text-red-500">*</span>
+                  </label>
+                  <UInput
+                    v-model="form.title"
+                    placeholder="输入一个吸引人的标题..."
+                    size="lg"
+                    class="text-lg font-medium"
+                    :ui="{ 
+                      base: 'bg-gray-50 dark:bg-gray-700/50 border-gray-200 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-500'
+                    }"
+                  />
+                </div>
+                
+                <!-- 描述和分类 -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      文章描述
+                    </label>
+                    <UTextarea
+                      v-model="form.description"
+                      placeholder="简要描述这篇文章的内容..."
+                      :rows="3"
+                      resize
+                      :ui="{ 
+                        base: 'bg-gray-50 dark:bg-gray-700/50 border-gray-200 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-500'
+                      }"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      分类
+                    </label>
+                    <USelect
+                      v-model="form.category"
+                      :options="categoryOptions"
+                      placeholder="选择分类"
+                      size="lg"
+                      :ui="{ 
+                        base: 'bg-gray-50 dark:bg-gray-700/50 border-gray-200 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-500'
+                      }"
+                    />
+                    
+                    <!-- 标签输入 -->
+                    <div class="mt-4">
+                      <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        标签
+                      </label>
+                      <UInput
+                        v-model="tagsInput"
+                        placeholder="输入标签，用逗号分隔"
+                        @blur="updateTags"
+                        :ui="{ 
+                          base: 'bg-gray-50 dark:bg-gray-700/50 border-gray-200 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-500'
+                        }"
+                      />
+                      <div v-if="form.tags.length" class="flex flex-wrap gap-2 mt-3">
+                        <span
+                          v-for="tag in form.tags"
+                          :key="tag"
+                          class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400"
+                        >
+                          {{ tag }}
+                          <button
+                            @click="removeTag(tag)"
+                            class="ml-1.5 inline-flex items-center justify-center w-4 h-4 rounded-full hover:bg-blue-200 dark:hover:bg-blue-800/50"
+                          >
+                            <Icon name="heroicons:x-mark" class="w-3 h-3" />
+                          </button>
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
-            </div>
-          </template>
-          
-          <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
-            <!-- 标题 -->
-            <div class="lg:col-span-2">
-              <UFormGroup label="文章标题" required>
-                <UInput
-                  v-model="form.title"
-                  placeholder="输入一个吸引人的标题..."
-                  size="lg"
-                  :ui="{ base: 'font-medium' }"
-                />
-              </UFormGroup>
-            </div>
-            
-            <!-- 分类 -->
-            <div>
-              <UFormGroup label="分类">
-                <USelect
-                  v-model="form.category"
-                  :options="categoryOptions"
-                  placeholder="选择分类"
-                  size="lg"
-                />
-              </UFormGroup>
             </div>
           </div>
-          
-          <!-- 描述和标签 -->
-          <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4">
-            <div>
-              <UFormGroup label="文章描述">
-                <UTextarea
-                  v-model="form.description"
-                  placeholder="简要描述这篇文章的内容..."
-                  :rows="2"
-                  resize
+
+          <!-- Markdown 编辑器卡片 -->
+          <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+            <div class="p-6">
+              <div class="flex items-center justify-between mb-6">
+                <div class="flex items-center space-x-3">
+                  <div class="p-2 bg-green-100 dark:bg-green-900/20 rounded-lg">
+                    <Icon name="heroicons:pencil-square" class="w-5 h-5 text-green-600 dark:text-green-400" />
+                  </div>
+                  <h2 class="text-lg font-semibold text-gray-900 dark:text-white">文章内容</h2>
+                </div>
+                
+                <div class="flex items-center space-x-4 text-sm text-gray-500 dark:text-gray-400">
+                  <div class="flex items-center">
+                    <Icon name="heroicons:document-text" class="w-4 h-4 mr-1" />
+                    {{ wordCount }} 字
+                  </div>
+                  <div class="flex items-center">
+                    <Icon name="heroicons:clock" class="w-4 h-4 mr-1" />
+                    {{ readingTime }} 分钟阅读
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Cherry编辑器容器 -->
+              <div class="border border-gray-200 dark:border-gray-600 rounded-xl overflow-hidden bg-gray-50 dark:bg-gray-700/30">
+                <CherryMarkdownEditor
+                  v-model="form.content"
+                  height="600px"
+                  placeholder="在这里编写您的文章内容..."
+                  :ui="{
+                    wrapper: 'rounded-xl overflow-hidden',
+                    editor: 'border-r-2 border-gray-200 dark:border-gray-600',
+                    preview: 'border-l-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800'
+                  }"
                 />
-              </UFormGroup>
+              </div>
+              
+              <!-- 编辑器提示 -->
+              <div class="mt-4 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/10 dark:to-indigo-900/10 border border-blue-200 dark:border-blue-800 rounded-xl">
+                <div class="flex">
+                  <Icon name="heroicons:information-circle" class="w-5 h-5 text-blue-500 mr-3 mt-0.5 flex-shrink-0" />
+                  <div class="text-sm text-blue-700 dark:text-blue-300">
+                    <p class="font-medium mb-2">💡 编辑器使用提示：</p>
+                    <ul class="space-y-1 text-xs opacity-90">
+                      <li>• 左侧编辑，右侧预览，支持实时同步</li>
+                      <li>• 使用工具栏快速插入 Markdown 元素</li>
+                      <li>• 支持表格、代码块、图片等丰富内容</li>
+                      <li>• Ctrl/Cmd + S 快速保存草稿</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
             </div>
-            
-            <div>
-              <UFormGroup label="标签">
-                <UInput
-                  v-model="tagsInput"
-                  placeholder="输入标签，用逗号分隔"
-                  @blur="updateTags"
-                />
-                <div v-if="form.tags.length" class="flex flex-wrap gap-1 mt-2">
-                  <UBadge
-                    v-for="tag in form.tags"
-                    :key="tag"
-                    variant="soft"
+          </div>
+        </div>
+
+        <!-- 右侧边栏 -->
+        <div class="space-y-6">
+          <!-- 发布状态 -->
+          <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+            <div class="p-6">
+              <div class="flex items-center space-x-3 mb-4">
+                <div class="p-2 bg-purple-100 dark:bg-purple-900/20 rounded-lg">
+                  <Icon name="heroicons:rocket-launch" class="w-5 h-5 text-purple-600 dark:text-purple-400" />
+                </div>
+                <h3 class="font-semibold text-gray-900 dark:text-white">发布设置</h3>
+              </div>
+              
+              <div class="space-y-4">
+                <!-- 发布时间 -->
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    发布时间
+                  </label>
+                  <UInput
+                    v-model="form.publishedAt"
+                    type="datetime-local"
                     size="sm"
+                    :ui="{ 
+                      base: 'bg-gray-50 dark:bg-gray-700/50 border-gray-200 dark:border-gray-600 focus:border-purple-500 focus:ring-purple-500'
+                    }"
+                  />
+                </div>
+
+                <!-- URL别名 -->
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    URL别名
+                  </label>
+                  <UInput
+                    v-model="form.slug"
+                    placeholder="自动生成"
+                    size="sm"
+                    :ui="{ 
+                      base: 'bg-gray-50 dark:bg-gray-700/50 border-gray-200 dark:border-gray-600 focus:border-purple-500 focus:ring-purple-500'
+                    }"
+                  />
+                </div>
+
+                <!-- 特色文章开关 -->
+                <div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700/30 rounded-lg">
+                  <div class="flex items-center space-x-3">
+                    <Icon name="heroicons:star" class="w-4 h-4 text-yellow-500" />
+                    <span class="text-sm font-medium text-gray-700 dark:text-gray-300">特色文章</span>
+                  </div>
+                  <UToggle
+                    v-model="form.featured"
+                    size="sm"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 封面图片 -->
+          <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+            <div class="p-6">
+              <div class="flex items-center space-x-3 mb-4">
+                <div class="p-2 bg-green-100 dark:bg-green-900/20 rounded-lg">
+                  <Icon name="heroicons:photo" class="w-5 h-5 text-green-600 dark:text-green-400" />
+                </div>
+                <h3 class="font-semibold text-gray-900 dark:text-white">封面图片</h3>
+              </div>
+              
+              <!-- 图片预览 -->
+              <div v-if="form.cover" class="mb-4 relative group">
+                <img 
+                  :src="form.cover" 
+                  alt="封面预览" 
+                  class="w-full h-32 object-cover rounded-xl border border-gray-200 dark:border-gray-600" 
+                />
+                <button
+                  @click="removeCover"
+                  class="absolute top-2 right-2 p-1.5 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
+                >
+                  <Icon name="heroicons:trash" class="w-4 h-4" />
+                </button>
+              </div>
+              
+              <!-- 上传区域 -->
+              <div class="space-y-3">
+                <UInput
+                  v-model="form.cover"
+                  placeholder="输入图片URL"
+                  size="sm"
+                  :ui="{ 
+                    base: 'bg-gray-50 dark:bg-gray-700/50 border-gray-200 dark:border-gray-600 focus:border-green-500 focus:ring-green-500'
+                  }"
+                />
+                
+                <div class="grid grid-cols-2 gap-2">
+                  <UButton
+                    variant="outline"
+                    size="xs"
+                    icon="heroicons:cloud-arrow-up"
+                    @click="triggerFileUpload"
+                    :loading="uploading"
+                    block
                   >
-                    {{ tag }}
-                  </UBadge>
+                    {{ uploading ? '上传中...' : '上传' }}
+                  </UButton>
+                  
+                  <UButton
+                    variant="outline"
+                    size="xs"
+                    icon="heroicons:sparkles"
+                    @click="selectFromUnsplash"
+                    block
+                  >
+                    随机图片
+                  </UButton>
                 </div>
-              </UFormGroup>
-            </div>
-          </div>
-        </UCard>
-
-        <!-- 文章内容编辑器 -->
-        <UCard class="bg-white dark:bg-gray-800">
-          <template #header>
-            <div class="flex items-center justify-between">
-              <div class="flex items-center space-x-2">
-                <Icon name="heroicons:pencil-square" class="w-5 h-5 text-green-600 dark:text-green-400" />
-                <h3 class="text-lg font-medium text-gray-900 dark:text-white">文章内容</h3>
-              </div>
-              <div class="flex items-center space-x-4 text-sm text-gray-500 dark:text-gray-400">
-                <div class="flex items-center">
-                  <Icon name="heroicons:document-text" class="w-4 h-4 mr-1" />
-                  {{ wordCount }} 字
-                </div>
-                <div class="flex items-center">
-                  <Icon name="heroicons:clock" class="w-4 h-4 mr-1" />
-                  {{ readingTime }} 分钟阅读
-                </div>
-              </div>
-            </div>
-          </template>
-          
-          <div class="space-y-4">
-            <!-- Markdown 编辑器 -->
-            <div class="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
-              <CherryMarkdownEditor
-                v-model="form.content"
-                height="600px"
-                placeholder="在这里编写您的文章内容..."
-              />
-            </div>
-            
-            <!-- 编辑器提示 -->
-            <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
-              <div class="flex">
-                <Icon name="heroicons:information-circle" class="w-5 h-5 text-blue-500 mr-2 mt-0.5" />
-                <div class="text-sm text-blue-700 dark:text-blue-300">
-                  <p class="font-medium">编辑器提示：</p>
-                  <ul class="mt-1 list-disc list-inside space-y-1 text-xs">
-                    <li>支持实时预览，左侧编辑右侧预览，中间有清晰的分割线</li>
-                    <li>使用工具栏快速插入各种 Markdown 元素</li>
-                    <li>支持表格、代码块、图片等丰富内容</li>
-                    <li>按 Ctrl+S 快速保存草稿</li>
-                  </ul>
+                
+                <!-- 隐藏的文件输入 -->
+                <input
+                  ref="fileInputRef"
+                  type="file"
+                  accept="image/*"
+                  @change="handleFileUpload"
+                  class="hidden"
+                />
+                
+                <!-- 上传进度 -->
+                <div v-if="uploadProgress > 0 && uploadProgress < 100" class="mt-3">
+                  <div class="bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                    <div 
+                      class="bg-gradient-to-r from-green-500 to-green-600 h-2 rounded-full transition-all duration-300"
+                      :style="{ width: uploadProgress + '%' }"
+                    ></div>
+                  </div>
+                  <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">上传进度: {{ uploadProgress }}%</p>
                 </div>
               </div>
             </div>
           </div>
-        </UCard>
-      </div>
 
-      <!-- 优化的右侧边栏 -->
-      <div class="space-y-4">
-        <!-- 封面图片设置 -->
-        <UCard class="bg-white dark:bg-gray-800">
-          <template #header>
-            <div class="flex items-center space-x-2">
-              <Icon name="heroicons:photo" class="w-5 h-5 text-green-600 dark:text-green-400" />
-              <h3 class="text-base font-medium text-gray-900 dark:text-white">封面图片</h3>
+          <!-- SEO优化 -->
+          <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+            <div class="p-6">
+              <div class="flex items-center space-x-3 mb-4">
+                <div class="p-2 bg-orange-100 dark:bg-orange-900/20 rounded-lg">
+                  <Icon name="heroicons:magnifying-glass" class="w-5 h-5 text-orange-600 dark:text-orange-400" />
+                </div>
+                <h3 class="font-semibold text-gray-900 dark:text-white">SEO优化</h3>
+              </div>
+              
+              <div class="space-y-4">
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    SEO描述
+                  </label>
+                  <UTextarea
+                    v-model="form.metaDescription"
+                    placeholder="150字以内的SEO描述"
+                    :rows="2"
+                    size="sm"
+                    :ui="{ 
+                      base: 'bg-gray-50 dark:bg-gray-700/50 border-gray-200 dark:border-gray-600 focus:border-orange-500 focus:ring-orange-500'
+                    }"
+                  />
+                  <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                    {{ form.metaDescription?.length || 0 }}/150
+                  </p>
+                </div>
+                
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    关键词
+                  </label>
+                  <UInput
+                    v-model="form.keywords"
+                    placeholder="用逗号分隔关键词"
+                    size="sm"
+                    :ui="{ 
+                      base: 'bg-gray-50 dark:bg-gray-700/50 border-gray-200 dark:border-gray-600 focus:border-orange-500 focus:ring-orange-500'
+                    }"
+                  />
+                </div>
+              </div>
             </div>
-          </template>
-          
+          </div>
+
+          <!-- 操作按钮组 -->
           <div class="space-y-3">
-            <!-- 图片URL输入 -->
-            <UInput
-              v-model="form.cover"
-              placeholder="输入图片URL或点击上传"
-              size="sm"
-            />
+            <UButton
+              @click="publishPost"
+              :loading="publishing"
+              size="lg"
+              block
+              icon="heroicons:rocket-launch"
+              class="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 font-semibold"
+            >
+              {{ isNew ? '发布文章' : '更新文章' }}
+            </UButton>
             
-            <!-- 上传和选择按钮 -->
-            <div class="flex space-x-2">
-              <!-- 文件上传按钮 -->
+            <UButton
+              @click="saveAsDraft"
+              :loading="saving"
+              size="lg"
+              variant="outline"
+              block
+              icon="heroicons:document-duplicate"
+              class="border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500"
+            >
+              保存草稿
+            </UButton>
+            
+            <div v-if="!isNew" class="grid grid-cols-2 gap-2 pt-2">
+              <UButton
+                color="error"
+                variant="outline"
+                size="sm"
+                icon="heroicons:trash"
+                block
+              >
+                删除
+              </UButton>
               <UButton
                 variant="outline"
-                size="xs"
-                icon="heroicons:cloud-arrow-up"
-                @click="triggerFileUpload"
-                :loading="uploading"
-                class="flex-1"
-              >
-                {{ uploading ? '上传中...' : '上传' }}
-              </UButton>
-              
-              <!-- 隐藏的文件输入 -->
-              <input
-                ref="fileInputRef"
-                type="file"
-                accept="image/*"
-                @change="handleFileUpload"
-                class="hidden"
-              />
-              
-              <!-- Unsplash选择按钮 -->
-              <UButton
-                variant="ghost"
-                size="xs"
-                icon="heroicons:sparkles"
-                @click="selectFromUnsplash"
-                class="flex-1"
-              >
-                选图
-              </UButton>
-            </div>
-            
-            <!-- 图片预览 -->
-            <div v-if="form.cover" class="mt-3 relative group">
-              <img 
-                :src="form.cover" 
-                alt="封面预览" 
-                class="w-full h-20 object-cover rounded-lg border border-gray-200 dark:border-gray-700" 
-              />
-              <!-- 删除按钮 -->
-              <button
-                @click="removeCover"
-                class="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
-              >
-                <Icon name="heroicons:x-mark" class="w-3 h-3" />
-              </button>
-            </div>
-            
-            <!-- 上传进度 -->
-            <div v-if="uploadProgress > 0 && uploadProgress < 100" class="mt-2">
-              <div class="bg-gray-200 rounded-full h-2">
-                <div 
-                  class="bg-blue-600 h-2 rounded-full transition-all duration-300"
-                  :style="{ width: uploadProgress + '%' }"
-                ></div>
-              </div>
-              <p class="text-xs text-gray-500 mt-1">上传进度: {{ uploadProgress }}%</p>
-            </div>
-          </div>
-        </UCard>
-
-        <!-- 发布设置 -->
-        <UCard class="bg-white dark:bg-gray-800">
-          <template #header>
-            <div class="flex items-center space-x-2">
-              <Icon name="heroicons:cog-6-tooth" class="w-5 h-5 text-blue-600 dark:text-blue-400" />
-              <h3 class="text-base font-medium text-gray-900 dark:text-white">发布设置</h3>
-            </div>
-          </template>
-          
-          <div class="space-y-3">
-            <!-- 发布时间 -->
-            <div>
-              <UFormGroup label="发布时间" size="sm">
-                <UInput
-                  v-model="form.publishedAt"
-                  type="datetime-local"
-                  size="sm"
-                />
-              </UFormGroup>
-            </div>
-
-            <!-- URL别名 -->
-            <div>
-              <UFormGroup label="URL别名" size="sm">
-                <UInput
-                  v-model="form.slug"
-                  placeholder="自动生成"
-                  size="sm"
-                />
-              </UFormGroup>
-            </div>
-
-            <!-- 特色文章 -->
-            <div class="flex items-center justify-between py-2">
-              <span class="text-sm font-medium text-gray-700 dark:text-gray-300">特色文章</span>
-              <UToggle
-                v-model="form.featured"
                 size="sm"
-              />
+                icon="heroicons:eye"
+                block
+                :to="`/blog/${form.slug}`"
+                target="_blank"
+              >
+                预览
+              </UButton>
             </div>
-          </div>
-        </UCard>
-
-        <!-- SEO设置 -->
-        <UCard class="bg-white dark:bg-gray-800">
-          <template #header>
-            <div class="flex items-center space-x-2">
-              <Icon name="heroicons:magnifying-glass" class="w-5 h-5 text-purple-600 dark:text-purple-400" />
-              <h3 class="text-base font-medium text-gray-900 dark:text-white">SEO优化</h3>
-            </div>
-          </template>
-          
-          <div class="space-y-3">
-            <div>
-              <UFormGroup label="SEO描述" size="sm">
-                <UTextarea
-                  v-model="form.metaDescription"
-                  placeholder="150字以内"
-                  :rows="2"
-                  size="sm"
-                />
-              </UFormGroup>
-            </div>
-            
-            <div>
-              <UFormGroup label="关键词" size="sm">
-                <UInput
-                  v-model="form.keywords"
-                  placeholder="用逗号分隔"
-                  size="sm"
-                />
-              </UFormGroup>
-            </div>
-          </div>
-        </UCard>
-
-        <!-- 操作按钮 -->
-        <div class="space-y-2">
-          <UButton
-            @click="publishPost"
-            :loading="publishing"
-            size="sm"
-            color="primary"
-            variant="solid"
-            block
-            icon="heroicons:rocket-launch"
-          >
-            {{ isNew ? '发布文章' : '更新文章' }}
-          </UButton>
-          
-          <UButton
-            @click="saveAsDraft"
-            :loading="saving"
-            size="sm"
-            color="neutral"
-            variant="soft"
-            block
-            icon="heroicons:document"
-          >
-            保存草稿
-          </UButton>
-          
-          <div v-if="!isNew" class="flex space-x-2 pt-2">
-            <UButton
-              color="error"
-              variant="ghost"
-              size="xs"
-              icon="heroicons:trash"
-              class="flex-1"
-            >
-              删除
-            </UButton>
-            <UButton
-              color="neutral"
-              variant="ghost"
-              size="xs"
-              icon="heroicons:eye"
-              class="flex-1"
-            >
-              预览
-            </UButton>
           </div>
         </div>
       </div>
@@ -489,6 +537,11 @@ const updateTags = () => {
       .map(tag => tag.trim())
       .filter(tag => tag.length > 0)
   }
+}
+
+const removeTag = (tag: string) => {
+  form.value.tags = form.value.tags.filter(t => t !== tag)
+  tagsInput.value = form.value.tags.join(', ')
 }
 
 const uploadCover = () => {
@@ -718,19 +771,14 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-/* 自定义样式 */
-.grid-transition {
-  transition: grid-template-columns 0.3s ease;
-}
-
-/* 美化滚动条 */
+/* 自定义滚动条样式 */
 :deep(.cherry-editor-wrapper) {
   scrollbar-width: thin;
   scrollbar-color: rgb(203 213 225) transparent;
 }
 
 :deep(.cherry-editor-wrapper::-webkit-scrollbar) {
-  width: 6px;
+  width: 8px;
 }
 
 :deep(.cherry-editor-wrapper::-webkit-scrollbar-track) {
@@ -739,23 +787,27 @@ onMounted(async () => {
 
 :deep(.cherry-editor-wrapper::-webkit-scrollbar-thumb) {
   background-color: rgb(203 213 225);
-  border-radius: 3px;
+  border-radius: 4px;
+  border: 2px solid transparent;
+  background-clip: content-box;
 }
 
 :deep(.cherry-editor-wrapper::-webkit-scrollbar-thumb:hover) {
   background-color: rgb(148 163 184);
 }
 
-/* Cherry编辑器分割线样式增强 */
+/* Cherry编辑器优化样式 */
 :deep(.cherry) {
   border: none !important;
-  border-radius: 8px !important;
+  border-radius: 12px !important;
   overflow: hidden !important;
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1) !important;
 }
 
-/* 增强编辑器分割线 */
+/* 增强编辑器分割线和布局 */
 :deep(.cherry-editor) {
   border-right: 2px solid #e5e7eb !important;
+  background: #ffffff !important;
 }
 
 :deep(.cherry-previewer) {
@@ -763,7 +815,7 @@ onMounted(async () => {
   background: #fafafa !important;
 }
 
-/* 暗色模式下的分割线 */
+/* 暗色模式适配 */
 :deep(.dark .cherry-editor) {
   border-right-color: #374151 !important;
   background: #1f2937 !important;
@@ -774,25 +826,87 @@ onMounted(async () => {
   background: #111827 !important;
 }
 
-/* 工具栏样式 */
+/* 工具栏美化 */
 :deep(.cherry-toolbar) {
   border-bottom: 1px solid #e5e7eb !important;
   background: #ffffff !important;
+  padding: 8px 12px !important;
 }
 
 :deep(.dark .cherry-toolbar) {
   border-bottom-color: #374151 !important;
-  background: #111827 !important;
+  background: #1f2937 !important;
 }
 
-/* 响应式调整 */
+/* 编辑器内容区域 */
+:deep(.cherry-editor .CodeMirror) {
+  font-size: 14px !important;
+  line-height: 1.6 !important;
+  padding: 16px !important;
+}
+
+:deep(.cherry-previewer .cherry-markdown) {
+  padding: 16px !important;
+  font-size: 14px !important;
+  line-height: 1.6 !important;
+}
+
+/* 响应式优化 */
 @media (max-width: 1279px) {
-  .xl\:grid-cols-8 {
-    grid-template-columns: 1fr;
+  :deep(.cherry) {
+    height: 500px !important;
+  }
+}
+
+@media (max-width: 768px) {
+  :deep(.cherry) {
+    height: 400px !important;
   }
   
-  .xl\:col-span-7 {
-    grid-column: span 1;
+  :deep(.cherry-editor),
+  :deep(.cherry-previewer) {
+    border: none !important;
   }
+}
+
+/* 动画和过渡效果 */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+/* 卡片悬停效果 */
+.hover-card {
+  transition: all 0.2s ease;
+}
+
+.hover-card:hover {
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  transform: translateY(-1px);
+}
+
+/* 渐变背景 */
+.gradient-bg {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+/* 自定义徽章样式 */
+.custom-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.custom-badge:hover {
+  transform: scale(1.05);
 }
 </style>

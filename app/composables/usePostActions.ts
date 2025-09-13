@@ -235,9 +235,22 @@ export function initializeSamplePosts(): void {
 - 📱 响应式布局
 - 🌙 暗色模式支持
 
+## 代码示例
+
+\`\`\`javascript
+// 这是一个代码示例
+function hello() {
+  console.log('Hello, BlogFlow!');
+}
+\`\`\`
+
+## 引用
+
+> 这是一个引用示例，用来展示Markdown的引用功能。
+
 您可以在管理后台创建、编辑和删除文章。
 
-祝您使用愉快！`,
+**祝您使用愉快！**`,
         category: '系统',
         tags: ['欢迎', '指南'],
         cover: 'https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?w=800&h=400&fit=crop',
@@ -249,6 +262,45 @@ export function initializeSamplePosts(): void {
         views: 128,
         likes: 15,
         comments: 3
+      },
+      {
+        id: '2',
+        title: '这是标题',
+        description: '这是描述',
+        content: `# 这是标题
+
+这是文章的主要内容。
+
+## 副标题
+
+这里是更多的内容，包含：
+
+1. 列表项目1
+2. 列表项目2
+3. 列表项目3
+
+### 更小的标题
+
+**粗体文本** 和 *斜体文本*
+
+\`\`\`html
+<div>这是代码块</div>
+\`\`\`
+
+> 这是一个引用块
+
+[这是一个链接](https://example.com)`,
+        category: '技术',
+        tags: ['测试', 'Markdown'],
+        cover: 'https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=800&h=400&fit=crop',
+        featured: false,
+        slug: 'zhe-shi-biao-ti',
+        publishedAt: new Date().toISOString(),
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        views: 50,
+        likes: 5,
+        comments: 1
       }
     ]
     

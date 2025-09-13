@@ -91,11 +91,11 @@ const baseClasses = computed(() => [
 // 变体样式
 const variantClasses = computed(() => {
   const variants = {
-    default: 'border border-gray-200 dark:border-gray-700',
-    bordered: 'border-2 border-gray-200 dark:border-gray-700',
-    shadow: 'shadow-md hover:shadow-lg',
-    elevated: 'shadow-lg hover:shadow-xl',
-    flat: 'border border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-900'
+    default: 'border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md transition-shadow duration-300',
+    bordered: 'border-2 border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 transition-colors duration-300',
+    shadow: 'shadow-md hover:shadow-lg transition-shadow duration-300',
+    elevated: 'shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300',
+    flat: 'border border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-300'
   }
   return variants[props.variant]
 })

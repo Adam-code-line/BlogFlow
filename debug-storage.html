@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>BlogFlow Debug - LocalStorage 检查</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .debug-section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        .json-content { background: #f5f5f5; padding: 10px; border-radius: 3px; white-space: pre-wrap; font-family: monospace; }
+        button { background: #007bff; color: white; border: none; padding: 8px 16px; margin: 5px; border-radius: 4px; cursor: pointer; }
+        button:hover { background: #0056b3; }
+    </style>
+</head>
+<body>
+    <h1>BlogFlow LocalStorage 调试工具</h1>
+    
+    <div class="debug-section">
+        <h2>当前 localStorage 数据</h2>
+        <button onclick="checkStorage()">检查存储数据</button>
+        <button onclick="clearStorage()">清空存储</button>
+        <button onclick="addTestPost()">添加测试文章</button>
+        <div id="storage-content" class="json-content">点击"检查存储数据"查看内容</div>
+    </div>
+
+    <div class="debug-section">
+        <h2>测试文章创建</h2>
+        <button onclick="createTestArticle()">创建测试文章</button>
+        <div id="test-result" class="json-content"></div>
+    </div>
+
+    <script>
+        function checkStorage() {
+            const data = localStorage.getItem('blogflow_posts');
+            const content = document.getElementById('storage-content');
+            
+            if (data) {
+                try {
+                    const parsed = JSON.parse(data);
+                    content.textContent = JSON.stringify(parsed, null, 2);
+                    console.log('文章数据:', parsed);
+                } catch (e) {
+                    content.textContent = '数据解析错误: ' + e.message;
+                }
+            } else {
+                content.textContent = '无数据';
+            }
+        }
+
+        function clearStorage() {
+            localStorage.removeItem('blogflow_posts');
+            document.getElementById('storage-content').textContent = '存储已清空';
+        }
+
+        function addTestPost() {
+            const testPost = {
+                id: Date.now().toString(),
+                title: '测试文章 - ' + new Date().toLocaleTimeString(),
+                description: '这是一篇用于测试的文章描述',
+                content: `# 测试文章标题
+
+这是测试文章的内容。
+
+## 子标题
+
+- 列表项 1
+- 列表项 2  
+- 列表项 3
+
+**粗体文本** 和 *斜体文本*
+
+\`\`\`javascript
+console.log('Hello, World!');
+\`\`\`
+
+> 这是一个引用
+
+[链接示例](https://example.com)`,
+                category: '测试',
+                tags: ['测试', 'Debug'],
+                cover: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=400&fit=crop',
+                featured: false,
+                slug: 'test-post-' + Date.now(),
+                publishedAt: new Date().toISOString(),
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString(),
+                views: 0,
+                likes: 0,
+                comments: 0
+            };
+
+            const posts = JSON.parse(localStorage.getItem('blogflow_posts') || '[]');
+            posts.push(testPost);
+            localStorage.setItem('blogflow_posts', JSON.stringify(posts));
+            
+            document.getElementById('storage-content').textContent = '测试文章已添加，刷新页面查看';
+            console.log('测试文章已添加:', testPost);
+        }
+
+        function createTestArticle() {
+            const testData = {
+                title: 'Rich Content 测试文章',
+                description: '包含丰富内容的测试文章',
+                content: `# Rich Content 测试文章
+
+这是一篇包含丰富内容的测试文章，用于验证 Markdown 渲染功能。
+
+## 文本格式
+
+**粗体文本** 和 *斜体文本* 以及 ***粗斜体***
+
+~~删除线文本~~
+
+## 列表
+
+### 无序列表
+- 第一项
+- 第二项
+  - 子项 1
+  - 子项 2
+- 第三项
+
+### 有序列表
+1. 第一步
+2. 第二步
+3. 第三步
+
+## 代码块
+
+\`\`\`javascript
+function helloWorld() {
+    console.log("Hello, World!");
+    return "Success";
+}
+
+helloWorld();
+\`\`\`
+
+## 引用
+
+> 这是一个引用块
+> 
+> 可以包含多行内容
+
+## 链接和图片
+
+[GitHub](https://github.com)
+
+![示例图片](https://via.placeholder.com/300x200)
+
+## 表格
+
+| 名称 | 年龄 | 城市 |
+|------|------|------|
+| 张三 | 25   | 北京 |
+| 李四 | 30   | 上海 |
+
+## 分割线
+
+---
+
+这就是测试内容的结尾。`,
+                category: '测试',
+                tags: ['测试', 'Markdown', 'Rich Content'],
+                slug: 'rich-content-test',
+                cover: 'https://images.unsplash.com/photo-1499750310107-5fef28a66643?w=800&h=400&fit=crop'
+            };
+
+            const posts = JSON.parse(localStorage.getItem('blogflow_posts') || '[]');
+            
+            // 检查是否已存在
+            const existing = posts.find(p => p.slug === testData.slug);
+            if (existing) {
+                document.getElementById('test-result').textContent = '测试文章已存在';
+                return;
+            }
+
+            // 添加完整数据
+            const fullPost = {
+                id: Date.now().toString(),
+                ...testData,
+                publishedAt: new Date().toISOString(),
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString(),
+                views: Math.floor(Math.random() * 1000),
+                likes: Math.floor(Math.random() * 100),
+                comments: Math.floor(Math.random() * 50)
+            };
+
+            posts.push(fullPost);
+            localStorage.setItem('blogflow_posts', JSON.stringify(posts));
+            
+            document.getElementById('test-result').textContent = JSON.stringify(fullPost, null, 2);
+            console.log('Rich Content 测试文章已创建:', fullPost);
+        }
+
+        // 页面加载时自动检查
+        window.onload = function() {
+            checkStorage();
+        };
+    </script>
+</body>
+</html>
