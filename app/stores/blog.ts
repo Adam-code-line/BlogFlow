@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import type { ContentPost } from '~/types'
 import { useBlogPosts } from '~/composables/useContent'
+import { getPostsAction } from '~/composables/usePostActions'
 
 interface BlogState {
   // 文章列表
@@ -149,15 +150,41 @@ export const useBlogStore = defineStore('blog', {
       this.postsError = null
       
       try {
-        const blogAPI = useBlogPosts()
-        const posts = await blogAPI.getAllPosts()
-        this.posts = posts
+        // 优先从localStorage获取前端创建的文章
+        let localPosts: any[] = []
+        try {
+          localPosts = await getPostsAction()
+          console.log('从localStorage加载的文章:', localPosts)
+        } catch (error) {
+          console.warn('Failed to load posts from localStorage:', error)
+        }
+        
+        // 如果有本地文章，使用本地文章，否则使用Content API
+        if (localPosts.length > 0) {
+          // 转换格式以匹配ContentPost接口
+          this.posts = localPosts.map(post => ({
+            ...post,
+            path: `/blog/${post.slug}`,
+            _path: `/blog/${post.slug}`,
+            body: post.content,
+            excerpt: post.description,
+            readingTime: Math.ceil(post.content.split(/\s+/).length / 200),
+            author: 'Admin'
+          })) as ContentPost[]
+        } else {
+          // 使用Content API作为后备
+          const blogAPI = useBlogPosts()
+          const posts = await blogAPI.getAllPosts()
+          this.posts = posts
+        }
         
         // 更新分类和标签
         this.updateCategoriesAndTags()
         
         // 更新分页信息
         this.updatePagination()
+        
+        console.log('文章加载完成:', this.posts.length, '篇文章')
       } catch (error) {
         this.postsError = '获取文章列表失败'
         console.error('Failed to fetch posts:', error)
