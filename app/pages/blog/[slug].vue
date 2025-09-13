@@ -101,16 +101,7 @@
       </div>
 
       <!-- 文章正文 -->
-      <article class="prose prose-lg dark:prose-invert max-w-none prose-headings:font-bold prose-a:text-blue-600 prose-a:no-underline hover:prose-a:underline prose-code:text-sm prose-pre:bg-gray-100 dark:prose-pre:bg-gray-800">
-        <!-- 调试信息 -->
-        <div class="bg-yellow-100 dark:bg-yellow-900 p-4 rounded-lg mb-4 text-sm">
-          <h4 class="font-bold">🐛 调试信息</h4>
-          <p><strong>文章对象存在:</strong> {{ !!post }}</p>
-          <p><strong>content 字段:</strong> {{ post?.content ? '存在 (' + post.content.length + ' 字符)' : '不存在' }}</p>
-          <p><strong>title:</strong> {{ post?.title || '无' }}</p>
-          <p><strong>description:</strong> {{ post?.description || '无' }}</p>
-        </div>
-        
+      <article class="prose prose-lg dark:prose-invert max-w-none prose-headings:font-bold prose-h1:text-4xl prose-h2:text-3xl prose-h3:text-2xl prose-h4:text-xl prose-h5:text-lg prose-h6:text-base">
         <!-- 渲染 Markdown 内容 -->
         <div v-if="post?.content" v-html="renderMarkdown(post.content)" />
         <!-- 备选方案：如果有路径信息，使用 ContentRenderer -->
@@ -368,5 +359,54 @@ function copyUrl() {
   line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+}
+
+/* 确保标题层级样式 */
+:deep(.prose h1) {
+  font-size: 2.25rem !important;
+  line-height: 2.5rem !important;
+  font-weight: 700 !important;
+  margin-top: 2rem !important;
+  margin-bottom: 1.5rem !important;
+}
+
+:deep(.prose h2) {
+  font-size: 1.875rem !important;
+  line-height: 2.25rem !important;
+  font-weight: 600 !important;
+  margin-top: 1.5rem !important;
+  margin-bottom: 1rem !important;
+}
+
+:deep(.prose h3) {
+  font-size: 1.5rem !important;
+  line-height: 2rem !important;
+  font-weight: 600 !important;
+  margin-top: 1.25rem !important;
+  margin-bottom: 0.75rem !important;
+}
+
+:deep(.prose h4) {
+  font-size: 1.25rem !important;
+  line-height: 1.75rem !important;
+  font-weight: 600 !important;
+  margin-top: 1rem !important;
+  margin-bottom: 0.5rem !important;
+}
+
+:deep(.prose h5) {
+  font-size: 1.125rem !important;
+  line-height: 1.75rem !important;
+  font-weight: 600 !important;
+  margin-top: 0.75rem !important;
+  margin-bottom: 0.5rem !important;
+}
+
+:deep(.prose h6) {
+  font-size: 1rem !important;
+  line-height: 1.5rem !important;
+  font-weight: 600 !important;
+  margin-top: 0.5rem !important;
+  margin-bottom: 0.25rem !important;
 }
 </style>

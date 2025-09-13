@@ -102,6 +102,7 @@ const initCherry = async () => {
     
     // 等待Cherry资源加载完成
     const loaded = await loadCherryAssets()
+    
     if (!loaded || !(window as any).Cherry) {
       throw new Error('Cherry Markdown not available')
     }
@@ -111,6 +112,7 @@ const initCherry = async () => {
 
     // 创建Cherry实例
     const Cherry = (window as any).Cherry
+    
     cherryInstance = new Cherry({
       id: editorId,
       value: props.modelValue || '',
@@ -128,7 +130,7 @@ const initCherry = async () => {
         bubble: ['bold', 'italic', 'strikethrough', 'sub', 'sup', 'quote'],
         float: ['h1', 'h2', 'h3', '|', 'checklist', 'quote', 'quickTable', 'code']
       },
-      callbacks: {
+      callback: {
         afterChange: (text: string) => {
           emit('update:modelValue', text)
           emit('change', text)
@@ -137,7 +139,6 @@ const initCherry = async () => {
     })
 
     loading.value = false
-    console.log('Cherry Markdown editor initialized successfully')
   } catch (err) {
     console.error('Cherry Editor initialization failed:', err)
     error.value = true

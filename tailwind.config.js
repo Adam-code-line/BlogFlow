@@ -42,8 +42,66 @@ export default {
           '"Source Han Serif SC"',
           'serif'
         ]
-      }
+      },
+      typography: {
+        DEFAULT: {
+          css: {
+            maxWidth: 'none',
+            color: 'inherit',
+            a: {
+              color: '#3b82f6',
+              '&:hover': {
+                color: '#1d4ed8',
+              },
+            },
+            h1: {
+              fontSize: '2.25rem',
+              lineHeight: '2.5rem',
+              fontWeight: '700',
+              marginTop: '2rem',
+              marginBottom: '1.5rem',
+            },
+            h2: {
+              fontSize: '1.875rem',
+              lineHeight: '2.25rem',
+              fontWeight: '600',
+              marginTop: '1.5rem',
+              marginBottom: '1rem',
+            },
+            h3: {
+              fontSize: '1.5rem',
+              lineHeight: '2rem',
+              fontWeight: '600',
+              marginTop: '1.25rem',
+              marginBottom: '0.75rem',
+            },
+            h4: {
+              fontSize: '1.25rem',
+              lineHeight: '1.75rem',
+              fontWeight: '600',
+              marginTop: '1rem',
+              marginBottom: '0.5rem',
+            },
+            h5: {
+              fontSize: '1.125rem',
+              lineHeight: '1.75rem',
+              fontWeight: '600',
+              marginTop: '0.75rem',
+              marginBottom: '0.5rem',
+            },
+            h6: {
+              fontSize: '1rem',
+              lineHeight: '1.5rem',
+              fontWeight: '600',
+              marginTop: '0.5rem',
+              marginBottom: '0.25rem',
+            },
+          },
+        },
+      },
     }
   },
-  plugins: []
+  plugins: [
+    require('@tailwindcss/typography'),
+  ]
 }

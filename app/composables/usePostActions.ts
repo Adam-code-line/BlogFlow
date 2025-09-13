@@ -77,12 +77,20 @@ export async function createPostAction(postData: PostData): Promise<PostData> {
     
     const posts = getStoredPosts()
     
-    // 生成文章数据
+    // 确保所有必需字段都存在
     const newPost: PostData = {
       id: Date.now().toString(),
-      ...postData,
+      title: postData.title,
+      description: postData.description || '',
+      content: postData.content || '', // 确保 content 字段存在
+      cover: postData.cover || '',
+      category: postData.category || '',
+      tags: postData.tags || [],
       slug: postData.slug || generateSlug(postData.title),
       publishedAt: postData.publishedAt || new Date().toISOString(),
+      featured: postData.featured || false,
+      metaDescription: postData.metaDescription || '',
+      keywords: postData.keywords || '',
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       views: 0,
@@ -96,11 +104,10 @@ export async function createPostAction(postData: PostData): Promise<PostData> {
     // 保存到本地存储
     savePostsToStorage(posts)
     
-    console.log('文章创建成功:', newPost)
     return newPost
     
   } catch (error) {
-    console.error('创建文章失败:', error)
+    console.error('❌ 创建文章失败:', error)
     throw new Error('创建文章失败，请重试')
   }
 }
@@ -120,23 +127,44 @@ export async function updatePostAction(postId: string, postData: Partial<PostDat
       throw new Error('文章不存在')
     }
     
-    // 更新文章数据
+    const existingPost = posts[postIndex]
+    if (!existingPost) {
+      throw new Error('文章数据异常')
+    }
+    
+    // 更新文章数据 - 确保所有必需字段都存在
     const updatedPost: PostData = {
-      ...posts[postIndex],
-      ...postData,
+      id: postId,
+      title: postData.title ?? existingPost.title,
+      description: postData.description ?? existingPost.description,
+      content: postData.content ?? existingPost.content, // 确保 content 字段不丢失
+      cover: postData.cover ?? existingPost.cover,
+      category: postData.category ?? existingPost.category,
+      tags: postData.tags ?? existingPost.tags,
+      slug: postData.slug ?? existingPost.slug,
+      publishedAt: postData.publishedAt ?? existingPost.publishedAt,
+      featured: postData.featured ?? existingPost.featured,
+      metaDescription: postData.metaDescription ?? existingPost.metaDescription,
+      keywords: postData.keywords ?? existingPost.keywords,
+      views: postData.views ?? existingPost.views,
+      likes: postData.likes ?? existingPost.likes,
+      comments: postData.comments ?? existingPost.comments,
+      createdAt: existingPost.createdAt,
       updatedAt: new Date().toISOString()
-    } as PostData
+    }
+    
+    console.log('📝 更新后数据:', updatedPost)
+    console.log('📝 Content 字段长度:', updatedPost.content?.length || 0)
     
     posts[postIndex] = updatedPost
     
     // 保存到本地存储
     savePostsToStorage(posts)
     
-    console.log('文章更新成功:', updatedPost)
     return updatedPost
     
   } catch (error) {
-    console.error('更新文章失败:', error)
+    console.error('❌ 更新文章失败:', error)
     throw new Error('更新文章失败，请重试')
   }
 }
@@ -191,7 +219,6 @@ export async function deletePostAction(postId: string): Promise<boolean> {
     
     savePostsToStorage(filteredPosts)
     
-    console.log('文章删除成功:', postId)
     return true
     
   } catch (error) {
@@ -206,7 +233,6 @@ export async function deletePostAction(postId: string): Promise<boolean> {
 export function clearAllPosts(): void {
   if (process.client) {
     localStorage.removeItem(POSTS_STORAGE_KEY)
-    console.log('所有文章已清空')
   }
 }
 
@@ -304,7 +330,7 @@ function hello() {
       }
     ]
     
+    // 强制保存到 localStorage，确保 content 字段不丢失
     savePostsToStorage(samplePosts)
-    console.log('示例文章已初始化')
   }
 }

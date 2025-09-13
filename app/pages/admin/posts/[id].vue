@@ -194,6 +194,7 @@
                     editor: 'border-r-2 border-gray-200 dark:border-gray-600',
                     preview: 'border-l-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800'
                   }"
+                  ref="cherryEditorRef"
                 />
               </div>
               
@@ -482,6 +483,9 @@ const saving = ref(false)
 const publishing = ref(false)
 const tagsInput = ref('')
 
+// Cherry 编辑器引用
+const cherryEditorRef = ref<any>(null)
+
 // 文件上传相关
 const uploading = ref(false)
 const uploadProgress = ref(0)
@@ -637,22 +641,26 @@ const saveAsDraft = debounce(async () => {
     // 更新标签
     updateTags()
     
+    console.log('💾 保存草稿 - 表单数据:', form.value)
+    console.log('💾 Content 字段:', form.value.content)
+    console.log('💾 Content 长度:', form.value.content?.length || 0)
+    
     // 使用前端模拟的保存逻辑
     const postData = { ...form.value }
     
     if (isNew) {
       const result = await createPostAction(postData)
-      console.log('草稿保存成功:', result)
+      console.log('✅ 草稿保存成功:', result)
       // 保存后跳转到编辑页面，但是路由参数需要修改
       await router.push(`/admin/posts/${result.id}`)
     } else {
       await updatePostAction(postId, postData)
-      console.log('草稿更新成功')
+      console.log('✅ 草稿更新成功')
     }
     
-    console.log('草稿保存成功')
+    console.log('✅ 草稿保存完成')
   } catch (error) {
-    console.error('保存失败:', error)
+    console.error('❌ 保存失败:', error)
   } finally {
     saving.value = false
   }
@@ -664,6 +672,10 @@ const publishPost = throttle(async () => {
     // 更新标签
     updateTags()
     
+    console.log('🚀 发布文章 - 表单数据:', form.value)
+    console.log('🚀 Content 字段:', form.value.content)
+    console.log('🚀 Content 长度:', form.value.content?.length || 0)
+    
     // 发布文章逻辑
     const postData = { 
       ...form.value,
@@ -672,17 +684,17 @@ const publishPost = throttle(async () => {
     
     if (isNew) {
       const result = await createPostAction(postData)
-      console.log('文章发布成功:', result)
+      console.log('✅ 文章发布成功:', result)
     } else {
       await updatePostAction(postId, postData)
-      console.log('文章更新成功')
+      console.log('✅ 文章更新成功')
     }
     
-    console.log('文章发布成功')
+    console.log('✅ 文章发布完成')
     // 跳转到文章列表
     await router.push('/admin/posts')
   } catch (error) {
-    console.error('发布失败:', error)
+    console.error('❌ 发布失败:', error)
   } finally {
     publishing.value = false
   }
@@ -750,13 +762,17 @@ watch(() => form.value.title, (newTitle) => {
 // 监听内容变化，自动保存草稿
 const autoSave = debounce(() => {
   if (form.value.title || form.value.content) {
-    console.log('自动保存草稿...')
     // 这里可以实现自动保存逻辑，但不显示loading状态
   }
 }, 3000) // 3秒后自动保存
 
 watch([() => form.value.title, () => form.value.content, () => form.value.description], () => {
   autoSave()
+})
+
+// 额外监听只针对 content 字段的变化
+watch(() => form.value.content, (newContent, oldContent) => {
+  // 这里可以添加内容变化的处理逻辑
 })
 
 // 页面挂载时初始化表单
