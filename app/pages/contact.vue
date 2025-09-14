@@ -6,10 +6,10 @@
       <section class="py-20 px-4 sm:px-6 lg:px-8">
         <div class="max-w-4xl mx-auto text-center">
           <h1 class="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6">
-            联系我
+            {{ contactConfig.title }}
           </h1>
           <p class="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto mb-12">
-            有任何问题或想法？我很期待与你的交流和合作
+            {{ contactConfig.description }}
           </p>
         </div>
       </section>
@@ -32,8 +32,7 @@
                   </div>
                   <div>
                     <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-1">邮箱</h3>
-                    <p class="text-gray-600 dark:text-gray-300">hello@blogflow.dev</p>
-                    <p class="text-gray-600 dark:text-gray-300">work@blogflow.dev</p>
+                    <p class="text-gray-600 dark:text-gray-300">{{ author.email }}</p>
                   </div>
                 </div>
 
@@ -47,9 +46,14 @@
                   <div>
                     <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-1">社交媒体</h3>
                     <div class="space-y-1">
-                      <a href="#" class="text-blue-600 dark:text-blue-400 hover:underline block">GitHub</a>
-                      <a href="#" class="text-blue-600 dark:text-blue-400 hover:underline block">LinkedIn</a>
-                      <a href="#" class="text-blue-600 dark:text-blue-400 hover:underline block">Twitter</a>
+                      <a v-for="social in socialLinks" :key="social.name" 
+                         :href="social.href" 
+                         :class="social.color" 
+                         class="hover:underline block"
+                         target="_blank"
+                         rel="noopener noreferrer">
+                        {{ social.name }}
+                      </a>
                     </div>
                   </div>
                 </div>
@@ -63,7 +67,7 @@
                   </div>
                   <div>
                     <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-1">响应时间</h3>
-                    <p class="text-gray-600 dark:text-gray-300">通常在24-48小时内回复</p>
+                    <p class="text-gray-600 dark:text-gray-300">通常在{{ contactConfig.responseTime }}回复</p>
                   </div>
                 </div>
 
@@ -71,17 +75,19 @@
                 <div class="border-t border-gray-200 dark:border-gray-700 pt-6">
                   <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">关注我</h3>
                   <div class="flex space-x-4">
-                    <a href="#" class="flex items-center justify-center w-10 h-10 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors">
-                      <Icon name="simple-icons:github" class="w-5 h-5" />
-                    </a>
-                    <a href="#" class="flex items-center justify-center w-10 h-10 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-                      <Icon name="simple-icons:linkedin" class="w-5 h-5" />
-                    </a>
-                    <a href="#" class="flex items-center justify-center w-10 h-10 bg-blue-400 text-white rounded-lg hover:bg-blue-500 transition-colors">
-                      <Icon name="simple-icons:twitter" class="w-5 h-5" />
-                    </a>
-                    <a href="#" class="flex items-center justify-center w-10 h-10 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">
-                      <Icon name="simple-icons:youtube" class="w-5 h-5" />
+                    <a v-for="social in socialLinks.slice(0, 4)" 
+                       :key="social.name"
+                       :href="social.href" 
+                       :title="social.name"
+                       class="flex items-center justify-center w-10 h-10 rounded-lg transition-colors"
+                       :class="social.name === 'GitHub' ? 'bg-gray-900 text-white hover:bg-gray-800' :
+                               social.name === 'LinkedIn' ? 'bg-blue-600 text-white hover:bg-blue-700' :
+                               social.name === 'Twitter' ? 'bg-blue-400 text-white hover:bg-blue-500' :
+                               social.name === 'Email' ? 'bg-red-600 text-white hover:bg-red-700' :
+                               'bg-gray-600 text-white hover:bg-gray-700'"
+                       target="_blank"
+                       rel="noopener noreferrer">
+                      <Icon :name="social.icon" class="w-5 h-5" />
                     </a>
                   </div>
                 </div>
@@ -302,8 +308,15 @@
 </template>
 
 <script setup lang="ts">
+import { useAuthorInfo, usePageConfig, useFormattedSocialLinks } from '~/composables/useSiteConfig'
 import { useApi, useApiState } from '~/composables/useApi'
 import { createContactFormValidator } from '~/utils/validate'
+
+// 从全局配置获取数据
+const author = useAuthorInfo()
+const pageConfig = usePageConfig()
+const socialLinks = useFormattedSocialLinks()
+const contactConfig = computed(() => pageConfig.value.contact)
 
 // 使用API服务
 const { contact: contactApi } = useApi()

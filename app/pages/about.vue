@@ -7,15 +7,15 @@
         <div class="max-w-4xl mx-auto">
           <div class="text-center mb-16">
             <div class="mb-8">
-              <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&h=200&fit=crop&crop=face" 
-                   alt="头像" 
+              <img :src="author.avatar" 
+                   :alt="author.name + '的头像'" 
                    class="w-40 h-40 rounded-full mx-auto mb-6 border-4 border-white shadow-xl">
             </div>
             <h1 class="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6">
-              关于我
+              关于{{ author.name }}
             </h1>
             <p class="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-              一名充满热情的全栈开发者，专注于现代Web技术和用户体验设计
+              {{ author.bio }}
             </p>
           </div>
 
@@ -23,35 +23,17 @@
           <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 md:p-12">
             <div class="prose prose-lg dark:prose-invert max-w-none">
               <h2 class="text-2xl font-bold mb-4">个人简介</h2>
-              <p class="mb-6">
-                你好！我是一名充满热情的全栈开发者，专注于现代Web技术和用户体验设计。我相信技术的力量能够改变世界，让生活变得更美好。
-              </p>
+              <div class="mb-6 space-y-4">
+                <p><strong>姓名：</strong>{{ author.name }}</p>
+                <p><strong>职业：</strong>{{ author.profession }}</p>
+                <p v-if="author.company"><strong>公司：</strong>{{ author.company }}</p>
+                <p><strong>地点：</strong>{{ author.location }}</p>
+                <p><strong>个人介绍：</strong>{{ author.bio }}</p>
+              </div>
               
-              <h2 class="text-2xl font-bold mb-4">个人理念</h2>
-              <p class="mb-4">我坚信：</p>
-              <ul class="mb-6">
-                <li><strong>代码质量至上</strong>: 编写可维护、可扩展的代码</li>
-                <li><strong>用户体验优先</strong>: 以用户为中心的产品思维</li>
-                <li><strong>持续学习</strong>: 在快速变化的技术世界中保持学习热情</li>
-                <li><strong>知识分享</strong>: 通过博客、开源项目回馈社区</li>
-              </ul>
-
-              <h2 class="text-2xl font-bold mb-4">开源贡献</h2>
-              <p class="mb-4">我积极参与开源社区，贡献了多个项目：</p>
-              <ul class="mb-6">
-                <li><strong>Vue生态工具</strong>: 维护多个Vue相关的工具库</li>
-                <li><strong>Nuxt模块</strong>: 开发了几个实用的Nuxt模块</li>
-                <li><strong>UI组件库</strong>: 参与维护团队内部的组件库</li>
-              </ul>
-
               <h2 class="text-2xl font-bold mb-4">个人兴趣</h2>
-              <p class="mb-4">除了编程，我还喜欢：</p>
               <ul class="mb-6">
-                <li>📚 <strong>阅读</strong>: 技术书籍、科幻小说、哲学思考</li>
-                <li>🎵 <strong>音乐</strong>: 古典音乐、爵士乐欣赏</li>
-                <li>🎨 <strong>设计</strong>: UI/UX设计、平面设计</li>
-                <li>🌍 <strong>旅行</strong>: 探索不同的文化和风景</li>
-                <li>📷 <strong>摄影</strong>: 记录生活中的美好瞬间</li>
+                <li v-for="interest in aboutConfig.interests" :key="interest">{{ interest }}</li>
               </ul>
             </div>
           </div>
@@ -156,51 +138,20 @@
             
             <!-- 时间线项目 -->
             <div class="space-y-12">
-              <div class="relative flex items-start">
+              <div v-for="(timeline, index) in aboutConfig.timeline" :key="index" class="relative flex items-start">
                 <div class="absolute left-6 w-4 h-4 bg-blue-600 rounded-full border-4 border-white dark:border-gray-800"></div>
                 <div class="ml-16">
                   <UiCard>
                     <div class="p-6">
                       <div class="flex items-center justify-between mb-2">
-                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">高级前端工程师</h3>
-                        <UBadge label="2022-至今" color="primary" />
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">{{ timeline.title }}</h3>
+                        <UBadge :label="timeline.year" color="primary" />
+                      </div>
+                      <div v-if="timeline.company" class="text-sm text-gray-600 dark:text-gray-400 mb-1">
+                        {{ timeline.company }}{{ timeline.location ? ` · ${timeline.location}` : '' }}
                       </div>
                       <p class="text-gray-600 dark:text-gray-300">
-                        负责大型SPA应用的架构设计和开发，建立前端开发规范和最佳实践。
-                      </p>
-                    </div>
-                  </UiCard>
-                </div>
-              </div>
-
-              <div class="relative flex items-start">
-                <div class="absolute left-6 w-4 h-4 bg-green-600 rounded-full border-4 border-white dark:border-gray-800"></div>
-                <div class="ml-16">
-                  <UiCard>
-                    <div class="p-6">
-                      <div class="flex items-center justify-between mb-2">
-                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">全栈开发工程师</h3>
-                        <UBadge label="2020-2022" color="success" />
-                      </div>
-                      <p class="text-gray-600 dark:text-gray-300">
-                        独立负责多个项目的全栈开发，积累了丰富的用户体验优化经验。
-                      </p>
-                    </div>
-                  </UiCard>
-                </div>
-              </div>
-
-              <div class="relative flex items-start">
-                <div class="absolute left-6 w-4 h-4 bg-purple-600 rounded-full border-4 border-white dark:border-gray-800"></div>
-                <div class="ml-16">
-                  <UiCard>
-                    <div class="p-6">
-                      <div class="flex items-center justify-between mb-2">
-                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">计算机科学学士</h3>
-                        <UBadge label="2016-2020" color="secondary" />
-                      </div>
-                      <p class="text-gray-600 dark:text-gray-300">
-                        主修计算机科学与技术，毕业设计：基于Vue.js的在线学习平台。
+                        {{ timeline.description }}
                       </p>
                     </div>
                   </UiCard>
@@ -233,13 +184,24 @@
 </template>
 
 <script setup lang="ts">
+import { useAuthorInfo, usePageConfig, useSocialLinks, useFormattedSocialLinks, useCurrentYear } from '~/composables/useSiteConfig'
+
+// 从全局配置获取数据
+const author = useAuthorInfo()
+const pageConfig = usePageConfig()
+const socialLinks = useFormattedSocialLinks()
+const currentYear = useCurrentYear()
+
+// 获取关于页面特定配置
+const aboutConfig = computed(() => pageConfig.value.about)
+
 // 设置页面元数据
 useSeoMeta({
   title: '关于我 - BlogFlow',
   ogTitle: '关于我 - BlogFlow',
-  description: '了解更多关于BlogFlow博主的信息，包括技术背景、工作经历和个人理念。',
-  ogDescription: '了解更多关于BlogFlow博主的信息，包括技术背景、工作经历和个人理念。',
-  ogImage: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=1200&h=630&fit=crop&crop=face',
+  description: author.value.bio,
+  ogDescription: author.value.bio,
+  ogImage: author.value.avatar,
   twitterCard: 'summary_large_image',
 })
 </script>
