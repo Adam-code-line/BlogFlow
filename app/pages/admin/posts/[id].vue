@@ -459,7 +459,7 @@
 <script setup lang="ts">
 // 导入组件
 import CherryMarkdownEditor from '~/components/editor/CherryMarkdownEditor.vue'
-import { debounce, throttle } from '~/composables/useUtils'
+import { useUtils } from '~/composables/useFormatters'
 import { createPostAction, updatePostAction, getPostByIdAction, type PostData } from '~/composables/usePostActions'
 
 // 设置布局
@@ -472,6 +472,9 @@ const route = useRoute()
 const router = useRouter()
 const postId = (route.params as any).id as string || 'new'
 const isNew = postId === 'new'
+
+// 工具函数
+const { debounce, throttle } = useUtils()
 
 // 页面标题
 useHead({

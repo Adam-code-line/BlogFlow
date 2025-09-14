@@ -164,12 +164,15 @@
 </template>
 
 <script setup lang="ts">
-import { DateFormatter } from '~/utils/format'
 import { useAuthorInfo, useSocialLinks } from '~/composables/useSiteConfig'
+import { useFormatters } from '~/composables/useFormatters'
 
 // 从全局配置获取作者信息
 const author = useAuthorInfo()
 const socialLinks = useSocialLinks()
+
+// 使用统一的格式化函数
+const { formatDate } = useFormatters()
 
 // 作者信息 - 使用全局配置
 const authorInfo = computed(() => ({
@@ -293,11 +296,6 @@ const archiveData = [
   { period: '2023-10', label: '2023年10月', count: 7 },
   { period: '2023-09', label: '2023年9月', count: 4 }
 ]
-
-// 格式化日期
-const formatDate = (date: string) => {
-  return DateFormatter.toRelative(date)
-}
 </script>
 
 <style scoped>

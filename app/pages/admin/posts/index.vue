@@ -203,6 +203,11 @@
 <script setup lang="ts">
 import { useBlogStore } from '~/stores/blog'
 import type { ContentPost } from '~/types'
+import { useFormatters, useUtils } from '~/composables/useFormatters'
+
+// 使用统一的格式化函数
+const { formatDateShort } = useFormatters()
+const { debounce } = useUtils()
 
 // 设置布局
 definePageMeta({
@@ -252,13 +257,7 @@ const sortOptions = [
 
 // 方法
 const formatDate = (date: string | Date) => {
-  return new Intl.DateTimeFormat('zh-CN', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit'
-  }).format(new Date(date))
+  return formatDateShort(date)
 }
 
 const getPostStatus = (post: ContentPost) => {
@@ -315,7 +314,7 @@ const deletePost = async (post: ContentPost, index: number) => {
 }
 
 // 事件处理
-const handleSearch = useDebounceFn(() => {
+const handleSearch = debounce(() => {
   blogStore.searchQuery = searchQuery.value
   currentPage.value = 1
 }, 300)
@@ -343,15 +342,6 @@ const loadPosts = async () => {
     console.error('加载文章失败:', error)
   } finally {
     loading.value = false
-  }
-}
-
-// 防抖函数
-function useDebounceFn(fn: Function, delay: number) {
-  let timeoutId: NodeJS.Timeout
-  return (...args: any[]) => {
-    clearTimeout(timeoutId)
-    timeoutId = setTimeout(() => fn(...args), delay)
   }
 }
 

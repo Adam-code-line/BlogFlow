@@ -244,8 +244,11 @@
 
 <script setup lang="ts">
 import type { ContentPost } from '~/types'
-import { formatters } from '~/utils/format'
-import { safeJsonParse } from '~/composables/useUtils'
+import { useFormatters, useUtils } from '~/composables/useFormatters'
+
+// 使用统一的工具函数
+const { formatDate, formatNumber, getExcerpt } = useFormatters()
+const { safeJsonParse } = useUtils()
 
 export interface PostDetailProps {
   // 文章数据
@@ -335,28 +338,18 @@ const shareOptions = [
   }
 ]
 
-// 使用已有的格式化工具函数
-const formatDate = (date: string | Date | undefined): string => {
-  if (!date) return ''
-  return formatters.date.toChinese(date)
-}
-
-const formatNumber = (num: number): string => {
-  return formatters.number.toShort(num)
-}
-
 // 获取当前页面URL - 使用工具函数优化
 const getCurrentUrl = (): string => {
   if (process.client) {
-    return formatters.url.ensureProtocol(window.location.href)
+    return window.location.href
   }
-  return formatters.url.ensureProtocol(`blogflow.example.com${props.post.path}`)
+  return `blogflow.example.com${props.post.path}`
 }
 
 // 生成文章摘要 - 使用工具函数
-const getExcerpt = (): string => {
+const getPostExcerpt = (): string => {
   if (props.post.excerpt) return props.post.excerpt
-  if (props.post.content) return formatters.text.excerpt(props.post.content, 150)
+  if (props.post.content) return getExcerpt(props.post.content, 150)
   return props.post.description || ''
 }
 
@@ -380,7 +373,7 @@ const toggleShareMenu = () => {
 const handleShare = async (shareOption: any) => {
   const url = getCurrentUrl()
   const title = props.post.title || 'BlogFlow'
-  const description = getExcerpt()
+  const description = getPostExcerpt()
 
   showShareMenu.value = false
 

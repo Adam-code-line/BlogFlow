@@ -88,32 +88,3 @@ export const useBlogPosts = () => {
     }
   }
 }
-
-/**
- * 格式化日期的工具函数
- */
-export const useFormatDate = () => {
-  return {
-    formatDate(dateString: string | Date): string {
-      if (!dateString) return ''
-      
-      const date = new Date(dateString)
-      return date.toLocaleDateString('zh-CN', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
-      })
-    },
-
-    formatDateShort(dateString: string | Date): string {
-      if (!dateString) return ''
-      
-      const date = new Date(dateString)
-      return date.toLocaleDateString('zh-CN', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric'
-      })
-    }
-  }
-}

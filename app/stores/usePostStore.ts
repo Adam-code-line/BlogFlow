@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { debounce } from '~/composables/useUtils'
+import { useUtils } from '~/composables/useFormatters'
 
 interface PostForm {
   title: string
@@ -73,6 +73,9 @@ export const usePostStore = defineStore('post', () => {
     return currentPost.value.title.trim() !== '' && 
            currentPost.value.content.trim() !== ''
   })
+
+  // 工具函数
+  const { debounce } = useUtils()
 
   // 防抖的自动保存
   const autoSave = debounce(async () => {

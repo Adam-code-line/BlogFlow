@@ -201,16 +201,16 @@
 
 <script setup lang="ts">
 import type { ContentPost } from '~/types'
-import { useBlogPosts, useFormatDate } from '~/composables/useContent'
-import { DateFormatter, TextFormatter } from '~/utils/format'
+import { useBlogPosts } from '~/composables/useContent'
+import { useFormatters } from '~/composables/useFormatters'
 import { useCodeTheme } from '~/composables/useCodeTheme'
 import { useAuthorInfo } from '~/composables/useSiteConfig'
 // 明确导入 ThemeToggle 组件
-import ThemeToggle from '~/components/common/ThemeToggle.vue'
+import ThemeToggle from '~/components/ui/ThemeToggle.vue'
 
 // 使用 composables
 const blogAPI = useBlogPosts()
-const { formatDate: originalFormatDate } = useFormatDate()
+const { formatDate, getReadingTime, getExcerpt } = useFormatters()
 const author = useAuthorInfo()
 
 // 获取分析工具实例
@@ -221,20 +221,6 @@ const { initialize: initCodeTheme } = useCodeTheme()
 
 // 获取精选文章（最新的3篇文章）
 const featuredPosts = await blogAPI.getFeaturedPosts(3)
-
-// 格式化函数
-const formatDate = (date: string | Date) => {
-  const dateStr = typeof date === 'string' ? date : date.toISOString()
-  return DateFormatter.toRelative(dateStr)
-}
-
-const getReadingTime = (content: string) => {
-  return TextFormatter.readingTime(content)
-}
-
-const getExcerpt = (content: string, maxLength = 120) => {
-  return TextFormatter.excerpt(content, maxLength)
-}
 
 // Analytics 事件处理函数
 const handleBlogClick = () => {

@@ -181,6 +181,10 @@
 
 <script setup lang="ts">
 import type { ContentPost } from '~/types'
+import { useFormatters } from '~/composables/useFormatters'
+
+// 使用统一的格式化函数
+const { formatDate, formatNumber } = useFormatters()
 
 interface PostCardProps {
   // 文章数据
@@ -221,28 +225,6 @@ const cardClasses = computed(() => {
   
   return baseClasses.join(' ')
 })
-
-// 格式化日期
-function formatDate(dateString: string | Date | undefined): string {
-  if (!dateString) return ''
-  
-  const date = new Date(dateString)
-  return date.toLocaleDateString('zh-CN', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
-  })
-}
-
-// 格式化数字
-const formatNumber = (num: number): string => {
-  if (num >= 1000000) {
-    return (num / 1000000).toFixed(1) + 'M'
-  } else if (num >= 1000) {
-    return (num / 1000).toFixed(1) + 'K'
-  }
-  return num.toString()
-}
 
 // 点击事件处理
 const handleClick = () => {

@@ -247,6 +247,7 @@
 
 <script setup lang="ts">
 import { useAuthorInfo, usePageConfig, useFormattedSocialLinks } from '~/composables/useSiteConfig'
+import { useIconHandler } from '~/composables/useFormatters'
 
 // 从全局配置获取数据
 const author = useAuthorInfo()
@@ -254,17 +255,8 @@ const pageConfig = usePageConfig()
 const socialLinks = useFormattedSocialLinks()
 const contactConfig = computed(() => pageConfig.value.contact)
 
-// 社交媒体背景颜色映射
-const getSocialBgClass = (socialName: string): string => {
-  const bgClasses = {
-    'GitHub': 'bg-gray-900',
-    'Twitter': 'bg-blue-400',
-    'LinkedIn': 'bg-blue-600',
-    'Email': 'bg-red-600',
-    'Website': 'bg-green-600'
-  }
-  return bgClasses[socialName as keyof typeof bgClasses] || 'bg-gray-600'
-}
+// 使用统一的图标处理
+const { getSocialBgClass } = useIconHandler()
 
 // 处理邮件链接点击
 const handleEmailClick = () => {

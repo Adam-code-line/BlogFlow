@@ -34,7 +34,7 @@
 
 <script setup lang="ts">
 import { sleep, retry } from '~/composables/useUtils'
-import Loading from '~/components/common/Loading.vue'
+import Loading from '~/components/ui/Loading.vue'
 import ErrorMessage from '~/components/common/ErrorMessage.vue'
 
 interface Props {

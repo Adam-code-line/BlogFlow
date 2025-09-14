@@ -188,7 +188,8 @@
 
 <script setup lang="ts">
 import type { ContentPost } from '~/types'
-import { useBlogPosts, useFormatDate } from '~/composables/useContent'
+import { useBlogPosts } from '~/composables/useContent'
+import { useFormatters } from '~/composables/useFormatters'
 import { useCodeTheme } from '~/composables/useCodeTheme'
 import { getPostsAction } from '~/composables/usePostActions'
 import { useUIStore } from '~/stores/ui'
@@ -206,7 +207,7 @@ const error = ref<string | null>(null)
 
 // 使用 composables
 const blogAPI = useBlogPosts()
-const { formatDate } = useFormatDate()
+const { formatDate } = useFormatters()
 const { renderMarkdown } = useMarkdown()
 
 // 获取插件实例

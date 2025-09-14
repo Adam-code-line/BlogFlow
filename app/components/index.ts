@@ -1,6 +1,6 @@
 // 组件统一导出
-export { default as ThemeToggle } from './common/ThemeToggle.vue'
-export { default as Loading } from './common/Loading.vue'
+export { default as ThemeToggle } from './ui/ThemeToggle.vue'
+export { default as Loading } from './ui/Loading.vue'
 export { default as ErrorMessage } from './common/ErrorMessage.vue'
 
 // UI 组件

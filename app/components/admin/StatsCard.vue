@@ -12,7 +12,7 @@
               v-if="iconAvailable"
               :name="icon" 
               class="h-6 w-6" 
-              @error="handleIconError"
+              @error="handleMainIconError"
             />
             <LocalIcon 
               v-else
@@ -60,10 +60,11 @@
 </template>
 
 <script setup lang="ts">
-import { useAdminNumber } from '~/composables/useAdminUtils'
+import { useFormatters, useIconHandler } from '~/composables/useFormatters'
 
-// 使用封装的工具函数
-const { formatCompactNumber } = useAdminNumber()
+// 使用统一的工具函数
+const { formatNumberWithCommas } = useFormatters()
+const { handleIconError, getLocalIconName } = useIconHandler()
 
 interface Props {
   title: string
@@ -83,32 +84,15 @@ const trendIconAvailable = ref(true)
 
 // 使用封装的格式化函数
 const formattedValue = computed(() => {
-  return formatCompactNumber(props.value)
+  return formatNumberWithCommas(props.value)
 })
 
 // 图标错误处理
-const handleIconError = () => {
+const handleMainIconError = () => {
   iconAvailable.value = false
 }
 
 const handleTrendIconError = () => {
   trendIconAvailable.value = false
-}
-
-// 将 Heroicons 名称转换为本地图标名称
-const getLocalIconName = (iconName: string): string => {
-  const iconMap: Record<string, string> = {
-    'i-heroicons-document-text': 'document-text',
-    'i-heroicons-users': 'users',
-    'i-heroicons-chat-bubble-left-ellipsis': 'chat',
-    'i-heroicons-eye': 'eye',
-    'i-heroicons-home': 'home',
-    'i-heroicons-user': 'user',
-    'i-heroicons-plus': 'plus',
-    'i-heroicons-pencil': 'edit',
-    'i-heroicons-trash': 'trash'
-  }
-  
-  return iconMap[iconName] || 'user'
 }
 </script>

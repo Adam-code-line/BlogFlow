@@ -233,8 +233,11 @@
 
 <script setup lang="ts">
 import type { ContentPost } from '~/types'
-import { debounce } from '~/composables/useUtils'
+import { useFormatters, useUtils } from '~/composables/useFormatters'
 import { useBlogStore } from '~/stores/blog'
+
+// 使用统一的工具函数
+const { debounce } = useUtils()
 
 interface PostListProps {
   // 文章数据

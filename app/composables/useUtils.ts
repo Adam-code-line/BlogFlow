@@ -4,43 +4,6 @@
  */
 
 /**
- * 防抖函数
- * @param func 要防抖的函数
- * @param wait 等待时间（毫秒）
- * @returns 防抖后的函数
- */
-export function debounce<T extends (...args: any[]) => any>(
-  func: T,
-  wait: number
-): (...args: Parameters<T>) => void {
-  let timeout: NodeJS.Timeout
-  return (...args: Parameters<T>) => {
-    clearTimeout(timeout)
-    timeout = setTimeout(() => func(...args), wait)
-  }
-}
-
-/**
- * 节流函数
- * @param func 要节流的函数
- * @param limit 限制时间（毫秒）
- * @returns 节流后的函数
- */
-export function throttle<T extends (...args: any[]) => any>(
-  func: T,
-  limit: number
-): (...args: Parameters<T>) => void {
-  let inThrottle: boolean
-  return (...args: Parameters<T>) => {
-    if (!inThrottle) {
-      func(...args)
-      inThrottle = true
-      setTimeout(() => inThrottle = false, limit)
-    }
-  }
-}
-
-/**
  * 深度克隆对象
  * @param obj 要克隆的对象
  * @returns 克隆后的对象
@@ -62,55 +25,11 @@ export function deepClone<T>(obj: T): T {
 }
 
 /**
- * 生成随机字符串
- * @param length 字符串长度
- * @param chars 可选字符集
- * @returns 随机字符串
- */
-export function generateRandomString(
-  length: number = 8,
-  chars: string = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
-): string {
-  let result = ''
-  for (let i = 0; i < length; i++) {
-    result += chars.charAt(Math.floor(Math.random() * chars.length))
-  }
-  return result
-}
-
-/**
  * 生成唯一ID
  * @returns 唯一ID字符串
  */
 export function generateUniqueId(): string {
   return Date.now().toString(36) + Math.random().toString(36).substr(2)
-}
-
-/**
- * 格式化文件大小
- * @param bytes 字节数
- * @param decimals 小数位数
- * @returns 格式化后的文件大小
- */
-export function formatFileSize(bytes: number, decimals: number = 2): string {
-  if (bytes === 0) return '0 Bytes'
-
-  const k = 1024
-  const dm = decimals < 0 ? 0 : decimals
-  const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']
-
-  const i = Math.floor(Math.log(bytes) / Math.log(k))
-
-  return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i]
-}
-
-/**
- * 格式化数字，添加千分符
- * @param num 要格式化的数字
- * @returns 格式化后的数字字符串
- */
-export function formatNumber(num: number): string {
-  return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
 }
 
 /**

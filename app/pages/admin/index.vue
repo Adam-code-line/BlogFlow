@@ -137,6 +137,10 @@
 <script setup lang="ts">
 import { useBlogStore } from '~/stores/blog'
 import type { ContentPost } from '~/types'
+import { useFormatters } from '~/composables/useFormatters'
+
+// 使用统一的格式化函数
+const { formatDateShort } = useFormatters()
 
 // 设置布局和中间件
 definePageMeta({
@@ -164,11 +168,7 @@ const recentPosts = ref<ContentPost[]>([])
 
 // 格式化日期
 const formatDate = (date: string | Date) => {
-  return new Intl.DateTimeFormat('zh-CN', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric'
-  }).format(new Date(date))
+  return formatDateShort(date)
 }
 
 // 加载数据
