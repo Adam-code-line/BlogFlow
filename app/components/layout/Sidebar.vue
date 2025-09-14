@@ -20,20 +20,7 @@
           <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed mb-4">{{ authorInfo.bio }}</p>
           
           <!-- 统计信息 -->
-          <div class="grid grid-cols-3 gap-4 mb-4">
-            <div class="text-center">
-              <div class="text-lg font-bold text-gray-900 dark:text-white">{{ stats.posts }}</div>
-              <div class="text-xs text-gray-500 dark:text-gray-400">文章</div>
-            </div>
-            <div class="text-center">
-              <div class="text-lg font-bold text-gray-900 dark:text-white">{{ stats.views }}</div>
-              <div class="text-xs text-gray-500 dark:text-gray-400">浏览</div>
-            </div>
-            <div class="text-center">
-              <div class="text-lg font-bold text-gray-900 dark:text-white">{{ stats.likes }}</div>
-              <div class="text-xs text-gray-500 dark:text-gray-400">点赞</div>
-            </div>
-          </div>
+          <StatisticsDisplay variant="sidebar" class="mb-4" />
 
           <!-- 社交链接 -->
           <div class="flex justify-center space-x-2">
@@ -137,10 +124,12 @@ import { useAuthorInfo, useSocialLinks } from '~/composables/useSiteConfig'
 import { useFormatters } from '~/composables/useFormatters'
 import { getPostsAction } from '~/composables/usePostActions'
 import type { PostData } from '~/composables/usePostActions'
+import { useStatisticsStore } from '~/stores/statistics'
 
 // 从全局配置获取作者信息
 const author = useAuthorInfo()
 const socialLinks = useSocialLinks()
+const statisticsStore = useStatisticsStore()
 
 // 使用统一的格式化函数
 const { formatDate } = useFormatters()
@@ -154,6 +143,8 @@ const loadPosts = async () => {
   try {
     loading.value = true
     posts.value = await getPostsAction()
+    // 更新统计数据
+    await statisticsStore.fetchStatistics()
   } catch (error) {
     console.error('获取文章失败:', error)
   } finally {
@@ -175,13 +166,6 @@ const authorInfo = computed(() => ({
     }
     // 其他社交媒体链接已移除，只保留GitHub
   ]
-}))
-
-// 动态统计数据
-const stats = computed(() => ({
-  posts: posts.value.length,
-  views: '12.5k',
-  likes: '2.1k'
 }))
 
 // 热门文章

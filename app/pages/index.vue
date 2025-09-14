@@ -34,24 +34,7 @@
       <!-- 统计信息 -->
       <section class="py-16 bg-white dark:bg-gray-800">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
-            <div class="text-center">
-              <div class="text-3xl font-bold text-blue-600 dark:text-blue-400 mb-2">42</div>
-              <div class="text-gray-600 dark:text-gray-300">技术文章</div>
-            </div>
-            <div class="text-center">
-              <div class="text-3xl font-bold text-green-600 dark:text-green-400 mb-2">15</div>
-              <div class="text-gray-600 dark:text-gray-300">开源项目</div>
-            </div>
-            <div class="text-center">
-              <div class="text-3xl font-bold text-purple-600 dark:text-purple-400 mb-2">100+</div>
-              <div class="text-gray-600 dark:text-gray-300">技术分享</div>
-            </div>
-            <div class="text-center">
-              <div class="text-3xl font-bold text-orange-600 dark:text-orange-400 mb-2">2.5k</div>
-              <div class="text-gray-600 dark:text-gray-300">访问量</div>
-            </div>
-          </div>
+          <StatisticsDisplay variant="homepage" />
         </div>
       </section>
 
@@ -273,7 +256,7 @@ const handleSocialClick = (platform: string) => {
 }
 
 // 页面加载时追踪
-onMounted(() => {
+onMounted(async () => {
   // 初始化代码主题
   initCodeTheme()
   
