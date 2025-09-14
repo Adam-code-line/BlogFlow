@@ -2,8 +2,60 @@
   <NuxtLayout name="blog">
     <!-- 加载状态 -->
     <div v-if="loading" class="max-w-4xl mx-auto px-4 py-8">
-      <UiSkeleton variant="card" class="mb-8" />
-      <UiSkeleton :lines="10" class="space-y-4" />
+      <!-- 文章头部骨架屏 -->
+      <div class="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 mb-8">
+        <div class="px-4 py-8 sm:py-12">
+          <!-- 返回按钮骨架 -->
+          <div class="mb-6">
+            <div class="w-32 h-10 bg-gray-200 dark:bg-gray-700 rounded-lg animate-pulse"></div>
+          </div>
+          
+          <!-- 标题骨架 -->
+          <div class="space-y-3 mb-6">
+            <div class="h-8 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
+            <div class="h-8 bg-gray-200 dark:bg-gray-700 rounded w-3/4 animate-pulse"></div>
+          </div>
+          
+          <!-- 元信息骨架 -->
+          <div class="flex items-center space-x-4 mb-6">
+            <div class="w-12 h-12 bg-gray-200 dark:bg-gray-700 rounded-full animate-pulse"></div>
+            <div class="space-y-2">
+              <div class="h-4 w-24 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
+              <div class="h-3 w-32 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
+            </div>
+          </div>
+          
+          <!-- 描述骨架 -->
+          <div class="space-y-2 mb-6">
+            <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
+            <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-2/3 animate-pulse"></div>
+          </div>
+          
+          <!-- 标签骨架 -->
+          <div class="flex space-x-2">
+            <div class="h-6 w-16 bg-gray-200 dark:bg-gray-700 rounded-full animate-pulse"></div>
+            <div class="h-6 w-20 bg-gray-200 dark:bg-gray-700 rounded-full animate-pulse"></div>
+            <div class="h-6 w-12 bg-gray-200 dark:bg-gray-700 rounded-full animate-pulse"></div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 文章内容骨架屏 -->
+      <div class="space-y-4">
+        <!-- 封面图骨架 -->
+        <div class="w-full h-96 bg-gray-200 dark:bg-gray-700 rounded-xl animate-pulse mb-8"></div>
+        
+        <!-- 文章内容骨架 -->
+        <div class="space-y-4">
+          <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
+          <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
+          <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/4 animate-pulse"></div>
+          <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
+          <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-5/6 animate-pulse"></div>
+          <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
+          <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-2/3 animate-pulse"></div>
+        </div>
+      </div>
     </div>
     
     <!-- 错误状态 -->
@@ -217,8 +269,31 @@ const { $analytics, $codeHighlight } = useNuxtApp()
 const { initialize: initCodeTheme } = useCodeTheme()
 
 // 获取文章数据 - 修复点不开的问题
-let post: ContentPost | null = null
-try {
+const post = ref<ContentPost | null>(null)
+
+// 加载文章函数
+const loadPost = async () => {
+  loading.value = true
+  error.value = null
+  
+  try {
+    // 最小加载时间，确保骨架屏显示效果
+    const [postData] = await Promise.all([
+      getPostData(),
+      new Promise(resolve => setTimeout(resolve, 800))
+    ])
+    
+    post.value = postData
+  } catch (err) {
+    console.error('获取文章失败:', err)
+    error.value = '抱歉，未找到该文章'
+  } finally {
+    loading.value = false
+  }
+}
+
+// 获取文章数据的具体逻辑
+const getPostData = async (): Promise<ContentPost | null> => {
   // 优先从localStorage获取文章
   const posts = await getPostsAction()
   console.log('🔍 当前所有文章:', posts)
@@ -232,7 +307,7 @@ try {
     console.log('📝 文章内容预览:', foundPost.content?.substring(0, 100) + '...')
     
     // 转换为ContentPost格式
-    post = {
+    return {
       ...foundPost,
       path: `/blog/${foundPost.slug}`,
       _path: `/blog/${foundPost.slug}`,
@@ -245,16 +320,11 @@ try {
         avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=48&h=48&fit=crop&crop=face'
       }
     } as ContentPost
-    
-    console.log('✅ 转换后的文章对象:', post)
   } else {
     console.log('❌ 未找到文章，尝试备用方案')
     // 备用方案：使用Content API
-    post = await blogAPI.getPostBySlug(slug.value)
+    return await blogAPI.getPostBySlug(slug.value)
   }
-} catch (err) {
-  console.error('获取文章失败:', err)
-  post = null
 }
 
 // 获取所有文章用于计算相邻文章
@@ -300,21 +370,24 @@ const trackShare = (platform: string) => {
   $analytics.trackEvent({
     action: 'share',
     category: 'article',
-    label: `${platform}: ${post?.title}`
+    label: `${platform}: ${post.value?.title}`
   })
 }
 
 // 页面加载和代码高亮
-onMounted(() => {
+onMounted(async () => {
+  // 加载文章
+  await loadPost()
+  
   // 初始化代码主题
   initCodeTheme()
   
   // 追踪文章阅读
-  if (post && post.title) {
-    $analytics.trackArticleRead(post.title, post.category || 'blog')
+  if (post.value && post.value.title) {
+    $analytics.trackArticleRead(post.value.title, post.value.category || 'blog')
     $analytics.trackPageView({
       path: route.path,
-      title: `${post.title} - BlogFlow`,
+      title: `${post.value.title} - BlogFlow`,
       referrer: document.referrer
     })
   }
@@ -328,11 +401,11 @@ onMounted(() => {
 
 // 动态SEO
 useSeoMeta({
-  title: post?.title,
-  description: post?.description,
-  ogTitle: post?.title,
-  ogDescription: post?.description,
-  ogImage: post?.cover,
+  title: computed(() => post.value?.title),
+  description: computed(() => post.value?.description),
+  ogTitle: computed(() => post.value?.title),
+  ogDescription: computed(() => post.value?.description),
+  ogImage: computed(() => post.value?.cover),
 })
 
 // 复制链接功能 - 集成Toast通知
@@ -343,7 +416,7 @@ function copyUrl() {
       $analytics.trackEvent({
         action: 'copy_link',
         category: 'article',
-        label: post?.title
+        label: post.value?.title
       })
     }).catch((err) => {
       console.error('复制失败:', err)

@@ -9,21 +9,13 @@
     </div>
 
     <!-- 统计卡片 -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
       <AdminStatsCard
         title="总文章数"
         :value="stats.totalPosts"
         change="+12%"
         icon="i-heroicons-document-text"
         color="blue"
-      />
-      <AdminStatsCard
-        title="总评论数"
-        :value="stats.totalComments"
-        change="-3%"
-        change-direction="down"
-        icon="i-heroicons-chat-bubble-left-ellipsis"
-        color="purple"
       />
       <AdminStatsCard
         title="总访问量"
@@ -101,7 +93,7 @@
         <h3 class="text-lg font-medium text-gray-900 dark:text-white">快速操作</h3>
       </template>
       
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div class="grid grid-cols-2 gap-4">
         <UButton
           to="/admin/posts/new"
           block
@@ -110,15 +102,6 @@
           variant="outline"
         >
           写新文章
-        </UButton>
-        <UButton
-          to="/admin/comments"
-          block
-          size="lg"
-          icon="i-heroicons-chat-bubble-left-ellipsis"
-          variant="outline"
-        >
-          审核评论
         </UButton>
         <UButton
           to="/admin/settings"
@@ -159,7 +142,6 @@ useHead({
 // 统计数据
 const stats = ref({
   totalPosts: 0,
-  totalComments: 0,
   totalViews: 0
 })
 
@@ -181,7 +163,6 @@ const loadDashboardData = async () => {
     // 更新统计数据
     stats.value = {
       totalPosts: blogStore.posts.length,
-      totalComments: Math.floor(Math.random() * 500) + 100, // 模拟数据
       totalViews: Math.floor(Math.random() * 10000) + 5000 // 模拟数据
     }
   } catch (error) {

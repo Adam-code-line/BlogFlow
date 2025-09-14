@@ -35,7 +35,7 @@ export const useFormatters = () => {
 
   /**
    * 格式化数字为简短格式 (1K, 1M)
-   */
+   */ 
   const formatNumber = (num: number): string => {
     return formatters.number.toShort(num)
   }

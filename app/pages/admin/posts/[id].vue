@@ -512,8 +512,7 @@ const form = ref({
 // 统计数据
 const stats = ref({
   views: 1250,
-  likes: 89,
-  comments: 23
+  likes: 89
 })
 
 // 计算属性

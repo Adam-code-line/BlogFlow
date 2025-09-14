@@ -64,13 +64,21 @@
           </div>
           
           <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <!-- 加载状态：显示骨架屏 -->
+            <template v-if="loading">
+              <div v-for="i in 3" :key="i" class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+                <Skeleton variant="post-card" />
+              </div>
+            </template>
+            
             <!-- 文章卡片 -->
-            <UiCard 
-              v-for="post in featuredPosts" 
-              :key="post.path"
-              class="hover:shadow-xl transition-shadow duration-300"
-              hoverable
-            >
+            <template v-else>
+              <UiCard 
+                v-for="post in featuredPosts" 
+                :key="post.path"
+                class="hover:shadow-xl transition-shadow duration-300"
+                hoverable
+              >
               <template #header>
                 <div v-if="post.cover" class="aspect-video overflow-hidden">
                   <NuxtImg
@@ -120,6 +128,7 @@
                 </div>
               </div>
             </UiCard>
+            </template>
           </div>
 
           <div class="text-center mt-12">
@@ -176,23 +185,14 @@
           </p>
           
           <div class="flex justify-center space-x-6 mb-12">
-            <a href="#" @click="handleSocialClick('github')" class="flex items-center justify-center w-12 h-12 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors">
+            <a :href="siteConfig.social.github" @click="handleSocialClick('github')" class="flex items-center justify-center w-12 h-12 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors" target="_blank" rel="noopener noreferrer">
               <Icon name="simple-icons:github" class="w-6 h-6" />
-            </a>
-            <a href="#" @click="handleSocialClick('twitter')" class="flex items-center justify-center w-12 h-12 bg-blue-400 text-white rounded-full hover:bg-blue-500 transition-colors">
-              <Icon name="simple-icons:twitter" class="w-6 h-6" />
-            </a>
-            <a href="#" @click="handleSocialClick('linkedin')" class="flex items-center justify-center w-12 h-12 bg-blue-700 text-white rounded-full hover:bg-blue-800 transition-colors">
-              <Icon name="simple-icons:linkedin" class="w-6 h-6" />
-            </a>
-            <a href="#" @click="handleSocialClick('gmail')" class="flex items-center justify-center w-12 h-12 bg-red-600 text-white rounded-full hover:bg-red-700 transition-colors">
-              <Icon name="simple-icons:gmail" class="w-6 h-6" />
             </a>
           </div>
           
-          <UiButton size="lg" color="primary" variant="solid" class="px-8 py-3" @click="handleContactClick">
+          <!-- <UiButton size="lg" color="primary" variant="solid" class="px-8 py-3" @click="handleContactClick">
             发送邮件
-          </UiButton>
+          </UiButton> -->
         </div>
       </section>
     </main>
@@ -204,7 +204,7 @@ import type { ContentPost } from '~/types'
 import { useBlogPosts } from '~/composables/useContent'
 import { useFormatters } from '~/composables/useFormatters'
 import { useCodeTheme } from '~/composables/useCodeTheme'
-import { useAuthorInfo } from '~/composables/useSiteConfig'
+import { useAuthorInfo, useSiteConfig } from '~/composables/useSiteConfig'
 // 明确导入 ThemeToggle 组件
 import ThemeToggle from '~/components/ui/ThemeToggle.vue'
 
@@ -212,6 +212,7 @@ import ThemeToggle from '~/components/ui/ThemeToggle.vue'
 const blogAPI = useBlogPosts()
 const { formatDate, getReadingTime, getExcerpt } = useFormatters()
 const author = useAuthorInfo()
+const siteConfig = useSiteConfig()
 
 // 获取分析工具实例
 const { $analytics } = useNuxtApp()
@@ -219,8 +220,25 @@ const { $analytics } = useNuxtApp()
 // 使用代码主题功能
 const { initialize: initCodeTheme } = useCodeTheme()
 
-// 获取精选文章（最新的3篇文章）
-const featuredPosts = await blogAPI.getFeaturedPosts(3)
+// 响应式状态
+const loading = ref(true)
+const featuredPosts = ref<ContentPost[]>([])
+
+// 异步获取精选文章
+const loadFeaturedPosts = async () => {
+  try {
+    loading.value = true
+    const posts = await blogAPI.getFeaturedPosts(3)
+    featuredPosts.value = posts
+  } catch (error) {
+    console.error('获取精选文章失败:', error)
+  } finally {
+    // 模拟最小加载时间，展示骨架屏效果
+    setTimeout(() => {
+      loading.value = false
+    }, 800)
+  }
+}
 
 // Analytics 事件处理函数
 const handleBlogClick = () => {
@@ -248,13 +266,19 @@ const handleContactClick = () => {
 }
 
 const handleSocialClick = (platform: string) => {
-  $analytics.trackLinkClick(`https://${platform}.com/profile`, `${platform} Profile`)
+  const socialUrl = siteConfig.social[platform as keyof typeof siteConfig.social]
+  if (socialUrl) {
+    $analytics.trackLinkClick(socialUrl, `${platform} Profile`)
+  }
 }
 
 // 页面加载时追踪
 onMounted(() => {
   // 初始化代码主题
   initCodeTheme()
+  
+  // 加载精选文章
+  loadFeaturedPosts()
   
   // 追踪页面访问
   $analytics.trackPageView({

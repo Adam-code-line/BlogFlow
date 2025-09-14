@@ -66,10 +66,6 @@
               <Icon name="heroicons:heart" class="w-4 h-4" />
               <span>{{ formatNumber((post as any).likes) }}</span>
             </div>
-            <div v-if="(post as any).comments" class="flex items-center space-x-1">
-              <Icon name="heroicons:chat-bubble-left" class="w-4 h-4" />
-              <span>{{ formatNumber((post as any).comments) }}</span>
-            </div>
           </div>
 
           <!-- 分享按钮 -->

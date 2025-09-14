@@ -61,8 +61,6 @@ export const useAdminRole = () => {
     const accessMap: Record<string, UserRole[]> = {
       'admin': [UserRole.ADMIN],
       'posts': [UserRole.ADMIN, UserRole.AUTHOR, UserRole.EDITOR],
-      'users': [UserRole.ADMIN],
-      'comments': [UserRole.ADMIN, UserRole.EDITOR],
       'dashboard': [UserRole.ADMIN, UserRole.AUTHOR, UserRole.EDITOR]
     }
     

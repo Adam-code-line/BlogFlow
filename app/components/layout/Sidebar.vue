@@ -105,37 +105,6 @@
         </div>
       </div>
 
-      <!-- 最新评论 -->
-      <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-        <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center">
-          <Icon name="heroicons:chat-bubble-left-ellipsis" class="w-5 h-5 text-green-500 mr-2" />
-          最新评论
-        </h3>
-        <div class="space-y-4">
-          <div 
-            v-for="comment in recentComments" 
-            :key="comment.id"
-            class="border-l-2 border-gray-200 dark:border-gray-600 pl-3"
-          >
-            <div class="flex items-center space-x-2 mb-1">
-              <img 
-                :src="comment.author.avatar" 
-                :alt="comment.author.name"
-                class="w-6 h-6 rounded-full"
-              >
-              <span class="text-sm font-medium text-gray-900 dark:text-white">{{ comment.author.name }}</span>
-            </div>
-            <p class="text-sm text-gray-600 dark:text-gray-400 line-clamp-2">{{ comment.content }}</p>
-            <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">
-              {{ formatDate(comment.date) }} • 
-              <NuxtLink :to="`/blog/${comment.postSlug}`" class="hover:text-blue-600 dark:hover:text-blue-400">
-                {{ comment.postTitle }}
-              </NuxtLink>
-            </div>
-          </div>
-        </div>
-      </div>
-
       <!-- 归档时间线 -->
       <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
         <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center">
@@ -166,6 +135,8 @@
 <script setup lang="ts">
 import { useAuthorInfo, useSocialLinks } from '~/composables/useSiteConfig'
 import { useFormatters } from '~/composables/useFormatters'
+import { getPostsAction } from '~/composables/usePostActions'
+import type { PostData } from '~/composables/usePostActions'
 
 // 从全局配置获取作者信息
 const author = useAuthorInfo()
@@ -173,6 +144,22 @@ const socialLinks = useSocialLinks()
 
 // 使用统一的格式化函数
 const { formatDate } = useFormatters()
+
+// 响应式数据
+const posts = ref<PostData[]>([])
+const loading = ref(true)
+
+// 获取文章数据
+const loadPosts = async () => {
+  try {
+    loading.value = true
+    posts.value = await getPostsAction()
+  } catch (error) {
+    console.error('获取文章失败:', error)
+  } finally {
+    loading.value = false
+  }
+}
 
 // 作者信息 - 使用全局配置
 const authorInfo = computed(() => ({
@@ -183,33 +170,19 @@ const authorInfo = computed(() => ({
   socials: [
     {
       name: 'GitHub',
-      url: socialLinks.value.github || 'https://github.com',
+      url: socialLinks.value.github || 'https://github.com/Adam-code-line',
       icon: 'simple-icons:github'
-    },
-    {
-      name: 'Twitter', 
-      url: socialLinks.value.twitter || 'https://twitter.com',
-      icon: 'simple-icons:twitter'
-    },
-    {
-      name: 'LinkedIn',
-      url: socialLinks.value.linkedin || 'https://linkedin.com',
-      icon: 'simple-icons:linkedin'
-    },
-    {
-      name: 'Email',
-      url: `mailto:${author.value.email}` || 'mailto:contact@blogflow.com',
-      icon: 'heroicons:envelope'
     }
+    // 其他社交媒体链接已移除，只保留GitHub
   ]
 }))
 
-// 统计数据
-const stats = {
-  posts: 42,
+// 动态统计数据
+const stats = computed(() => ({
+  posts: posts.value.length,
   views: '12.5k',
   likes: '2.1k'
-}
+}))
 
 // 热门文章
 const popularPosts = [
@@ -251,51 +224,38 @@ const popularTags = [
   { name: '性能优化', count: 5 }
 ]
 
-// 最新评论
-const recentComments = [
-  {
-    id: '1',
-    author: {
-      name: '张三',
-      avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=50&h=50&fit=crop&crop=face'
-    },
-    content: '这篇文章写得很详细，对我的项目很有帮助！',
-    date: '2024-01-20',
-    postTitle: 'Vue 3 组合式API指南',
-    postSlug: 'vue3-composition-api-guide'
-  },
-  {
-    id: '2',
-    author: {
-      name: '李四',
-      avatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=50&h=50&fit=crop&crop=face'
-    },
-    content: '能否详细介绍一下TypeScript的高级类型？',
-    date: '2024-01-19',
-    postTitle: 'TypeScript 最佳实践',
-    postSlug: 'typescript-best-practices'
-  },
-  {
-    id: '3',
-    author: {
-      name: '王五',
-      avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=50&h=50&fit=crop&crop=face'
-    },
-    content: '期待更多关于前端工程化的文章！',
-    date: '2024-01-18',
-    postTitle: '前端工程化指南',
-    postSlug: 'frontend-engineering-guide'
-  }
-]
+// 动态归档数据 - 基于实际文章数据
+const archiveData = computed(() => {
+  if (!posts.value.length) return []
+  
+  const archives = new Map<string, number>()
+  
+  posts.value.forEach(post => {
+    if (post.publishedAt) {
+      const date = new Date(post.publishedAt)
+      const period = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`
+      const label = `${date.getFullYear()}年${date.getMonth() + 1}月`
+      archives.set(period, (archives.get(period) || 0) + 1)
+    }
+  })
+  
+  return Array.from(archives.entries())
+    .map(([period, count]) => {
+      const [year, month] = period.split('-')
+      return {
+        period,
+        label: `${year}年${parseInt(month || '1')}月`,
+        count
+      }
+    })
+    .sort((a, b) => b.period.localeCompare(a.period))
+    .slice(0, 6) // 只显示最近6个月
+})
 
-// 归档数据
-const archiveData = [
-  { period: '2024-01', label: '2024年1月', count: 8 },
-  { period: '2023-12', label: '2023年12月', count: 6 },
-  { period: '2023-11', label: '2023年11月', count: 5 },
-  { period: '2023-10', label: '2023年10月', count: 7 },
-  { period: '2023-09', label: '2023年9月', count: 4 }
-]
+// 页面挂载时加载数据
+onMounted(() => {
+  loadPosts()
+})
 </script>
 
 <style scoped>

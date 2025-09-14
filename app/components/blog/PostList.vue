@@ -125,8 +125,29 @@
       </button>
     </div>
 
+    <!-- 加载状态 - 骨架屏 -->
+    <div v-if="loading">
+      <!-- 网格视图骨架屏 -->
+      <div v-if="viewMode === 'grid'" :class="gridClasses">
+        <Skeleton 
+          v-for="i in pageSize" 
+          :key="`skeleton-${i}`"
+          variant="post-card"
+        />
+      </div>
+      
+      <!-- 列表视图骨架屏 -->
+      <div v-else class="space-y-4">
+        <Skeleton 
+          v-for="i in pageSize" 
+          :key="`skeleton-${i}`"
+          variant="post-list"
+        />
+      </div>
+    </div>
+
     <!-- 文章列表/网格 -->
-    <div v-if="paginatedPosts.length > 0">
+    <div v-else-if="paginatedPosts.length > 0">
       <!-- 网格视图 -->
       <div v-if="viewMode === 'grid'" :class="gridClasses">
         <PostCard 
@@ -151,7 +172,7 @@
     </div>
 
     <!-- 空状态 -->
-    <div v-else-if="!loading" class="text-center py-16">
+    <div v-else class="text-center py-16">
       <Icon 
         :name="searchQuery || selectedCategory ? 'heroicons:magnifying-glass' : 'heroicons:document-text'"
         class="w-16 h-16 text-gray-400 mx-auto mb-4" 
@@ -219,15 +240,6 @@
         </Button>
       </div>
     </div>
-
-    <!-- 加载状态 -->
-    <Loading 
-      v-if="loading"
-      :overlay="false"
-      :centered="true"
-      text="正在加载文章..."
-      size="lg"
-    />
   </div>
 </template>
 

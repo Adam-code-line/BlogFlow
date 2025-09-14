@@ -84,12 +84,6 @@
 
           <!-- 法律链接和工具 -->
           <div class="flex items-center space-x-6 text-sm">
-            <NuxtLink to="/privacy" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors duration-200">
-              隐私政策
-            </NuxtLink>
-            <NuxtLink to="/terms" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors duration-200">
-              使用条款
-            </NuxtLink>
             <button 
               @click="scrollToTop"
               class="flex items-center space-x-1 text-gray-500 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 transition-colors duration-200"
@@ -118,24 +112,25 @@ const currentYear = new Date().getFullYear()
 const socialLinks = [
   {
     name: 'GitHub',
-    url: 'https://github.com',
+    url: 'https://github.com/Adam-code-line',
     icon: 'simple-icons:github'
-  },
-  {
-    name: 'Twitter',
-    url: 'https://twitter.com',
-    icon: 'simple-icons:twitter'
-  },
-  {
-    name: 'LinkedIn',
-    url: 'https://linkedin.com',
-    icon: 'simple-icons:linkedin'
-  },
-  {
-    name: 'RSS',
-    url: '/rss.xml',
-    icon: 'heroicons:rss'
   }
+  // 其他社交媒体链接已移除，只保留GitHub
+  // {
+  //   name: 'Twitter',
+  //   url: 'https://twitter.com',
+  //   icon: 'simple-icons:twitter'
+  // },
+  // {
+  //   name: 'LinkedIn',
+  //   url: 'https://linkedin.com',
+  //   icon: 'simple-icons:linkedin'
+  // },
+  // {
+  //   name: 'RSS',
+  //   url: '/rss.xml',
+  //   icon: 'heroicons:rss'
+  // }
 ]
 
 // 快速链接
@@ -151,11 +146,6 @@ const quickLinks = [
     icon: 'heroicons:document-text'
   },
   {
-    name: '用户社区',
-    path: '/users',
-    icon: 'heroicons:users'
-  },
-  {
     name: '关于',
     path: '/about',
     icon: 'heroicons:user'
@@ -164,11 +154,6 @@ const quickLinks = [
     name: '联系',
     path: '/contact',
     icon: 'heroicons:envelope'
-  },
-  {
-    name: '归档',
-    path: '/archive',
-    icon: 'heroicons:archive-box'
   }
 ]
 

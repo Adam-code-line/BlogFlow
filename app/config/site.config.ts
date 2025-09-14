@@ -34,8 +34,8 @@ export const siteConfig: SiteConfig = {
   // 注意：只填写你实际使用的平台，不用的可以删除或注释
   social: {
     github: 'https://github.com/Adam-code-line',
-    email: 'mailto:your.email@example.com',
-    // 可选的社交媒体平台
+    email: 'mailto:your.email@example.com'
+    // 可选的社交媒体平台（已删除不使用的）
     // twitter: 'https://twitter.com/yourusername',
     // linkedin: 'https://linkedin.com/in/yourusername',
     // wechat: 'your-wechat-id',

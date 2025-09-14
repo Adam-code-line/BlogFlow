@@ -1,21 +1,137 @@
 <template>
   <div :class="containerClasses">
-    <div
-      v-for="line in lines"
-      :key="line"
-      :class="[
-        'bg-gray-200 dark:bg-gray-700 rounded',
-        animationClass,
-        getLineClass(line)
-      ]"
-    ></div>
+    <!-- 文章卡片骨架屏 -->
+    <template v-if="variant === 'post-card'">
+      <div class="space-y-4">
+        <!-- 封面图 -->
+        <div class="w-full h-48 bg-gray-200 dark:bg-gray-700 rounded-lg animate-pulse"></div>
+        <!-- 内容区 -->
+        <div class="space-y-3 p-4">
+          <!-- 分类标签 -->
+          <div class="w-20 h-5 bg-gray-200 dark:bg-gray-700 rounded-full animate-pulse"></div>
+          <!-- 标题 -->
+          <div class="space-y-2">
+            <div class="w-full h-6 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
+            <div class="w-3/4 h-6 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
+          </div>
+          <!-- 描述 -->
+          <div class="space-y-2">
+            <div class="w-full h-4 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
+            <div class="w-full h-4 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
+            <div class="w-2/3 h-4 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
+          </div>
+          <!-- 底部信息 -->
+          <div class="flex items-center justify-between pt-4 border-t border-gray-100 dark:border-gray-600">
+            <div class="flex items-center space-x-2">
+              <div class="w-6 h-6 bg-gray-200 dark:bg-gray-700 rounded-full animate-pulse"></div>
+              <div class="w-16 h-4 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
+            </div>
+            <div class="flex items-center space-x-4">
+              <div class="w-12 h-4 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
+              <div class="w-12 h-4 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </template>
+
+    <!-- 文章列表骨架屏 -->
+    <template v-else-if="variant === 'post-list'">
+      <div class="flex gap-4 p-4">
+        <!-- 缩略图 -->
+        <div class="w-24 h-24 bg-gray-200 dark:bg-gray-700 rounded-lg animate-pulse flex-shrink-0"></div>
+        <!-- 内容 -->
+        <div class="flex-1 space-y-2">
+          <div class="w-3/4 h-5 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
+          <div class="w-full h-4 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
+          <div class="w-2/3 h-4 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
+          <div class="flex items-center justify-between mt-3">
+            <div class="w-20 h-3 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
+            <div class="w-16 h-3 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
+          </div>
+        </div>
+      </div>
+    </template>
+
+    <!-- 首页Hero区域骨架屏 -->
+    <template v-else-if="variant === 'hero-section'">
+      <div class="text-center space-y-6 py-20">
+        <!-- 头像 -->
+        <div class="w-32 h-32 bg-gray-200 dark:bg-gray-700 rounded-full mx-auto animate-pulse"></div>
+        <!-- 标题 -->
+        <div class="space-y-4">
+          <div class="w-3/4 h-8 bg-gray-200 dark:bg-gray-700 rounded mx-auto animate-pulse"></div>
+          <div class="w-2/3 h-8 bg-gray-200 dark:bg-gray-700 rounded mx-auto animate-pulse"></div>
+        </div>
+        <!-- 描述 -->
+        <div class="space-y-2 max-w-2xl mx-auto">
+          <div class="w-full h-5 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
+          <div class="w-4/5 h-5 bg-gray-200 dark:bg-gray-700 rounded mx-auto animate-pulse"></div>
+        </div>
+        <!-- 按钮 -->
+        <div class="flex justify-center gap-4">
+          <div class="w-32 h-12 bg-gray-200 dark:bg-gray-700 rounded-lg animate-pulse"></div>
+          <div class="w-32 h-12 bg-gray-200 dark:bg-gray-700 rounded-lg animate-pulse"></div>
+        </div>
+      </div>
+    </template>
+
+    <!-- 侧边栏骨架屏 -->
+    <template v-else-if="variant === 'sidebar'">
+      <div class="space-y-6">
+        <!-- 作者信息卡片 -->
+        <div class="bg-white dark:bg-gray-800 rounded-xl p-6 space-y-4 border border-gray-200 dark:border-gray-700">
+          <div class="w-16 h-16 bg-gray-200 dark:bg-gray-700 rounded-full mx-auto animate-pulse"></div>
+          <div class="w-3/4 h-5 bg-gray-200 dark:bg-gray-700 rounded mx-auto animate-pulse"></div>
+          <div class="w-full h-4 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
+          <div class="flex justify-center space-x-2">
+            <div class="w-8 h-8 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
+          </div>
+        </div>
+        
+        <!-- 热门文章 -->
+        <div class="bg-white dark:bg-gray-800 rounded-xl p-6 space-y-4 border border-gray-200 dark:border-gray-700">
+          <div class="w-24 h-5 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
+          <div class="space-y-3">
+            <div v-for="i in 3" :key="i" class="space-y-2">
+              <div class="w-full h-4 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
+              <div class="w-16 h-3 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- 归档 -->
+        <div class="bg-white dark:bg-gray-800 rounded-xl p-6 space-y-4 border border-gray-200 dark:border-gray-700">
+          <div class="w-20 h-5 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
+          <div class="space-y-2">
+            <div v-for="i in 5" :key="i" class="flex justify-between items-center">
+              <div class="w-20 h-4 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
+              <div class="w-8 h-4 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </template>
+
+    <!-- 通用骨架屏 -->
+    <template v-else>
+      <div
+        v-for="(line, index) in lines"
+        :key="index"
+        :class="[
+          'bg-gray-200 dark:bg-gray-700 rounded',
+          animationClass,
+          getLineClass(index)
+        ]"
+      ></div>
+    </template>
   </div>
 </template>
 
 <script setup lang="ts">
 interface SkeletonProps {
   // 骨架屏类型
-  variant?: 'text' | 'card' | 'avatar' | 'image' | 'button' | 'custom'
+  variant?: 'text' | 'card' | 'avatar' | 'image' | 'button' | 'custom' | 'post-card' | 'post-list' | 'hero-section' | 'sidebar'
   // 行数（用于text类型）
   lines?: number
   // 宽度
