@@ -167,13 +167,7 @@
                 
                 <!-- 操作 -->
                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                  <UDropdown :items="getPostActions(post, index)">
-                    <UButton
-                      variant="ghost"
-                      size="sm"
-                      icon="i-heroicons-ellipsis-horizontal"
-                    />
-                  </UDropdown>
+                  <SimpleActionMenu :actions="getPostActions(post, index)" />
                 </td>
               </tr>
             </tbody>
@@ -194,13 +188,21 @@
       </div>
     </UiCard>
 
-    <!-- 使用封装的删除确认对话框 -->
-    <AdminDeleteConfirmDialog
+    <!-- 使用新的居中删除确认对话框 -->
+    <CenteredDeleteDialog
       v-model="deleteDialogOpen"
       :item="deleteTarget?.item"
       item-type="文章"
       :on-confirm="executeDelete"
       @cancel="cancelDelete"
+    />
+
+    <!-- 删除成功通知 -->
+    <DeleteSuccessNotification
+      v-if="showSuccessNotification"
+      :title="successNotification.title"
+      :message="successNotification.message"
+      @close="hideSuccessNotification"
     />
   </div>
 </template>
@@ -210,7 +212,9 @@ import { useBlogStore } from '~/stores/blog'
 import type { ContentPost } from '~/types'
 import { useFormatters, useUtils } from '~/composables/useFormatters'
 import { usePostDelete } from '~/composables/useDelete'
-import AdminDeleteConfirmDialog from '~/components/admin/DeleteConfirmDialog.vue'
+import CenteredDeleteDialog from '~/components/admin/CenteredDeleteDialog.vue'
+import SimpleActionMenu from '~/components/ui/SimpleActionMenu.vue'
+import DeleteSuccessNotification from '~/components/ui/DeleteSuccessNotification.vue'
 
 // 使用统一的格式化函数
 const { formatDateShort } = useFormatters()
@@ -239,6 +243,13 @@ const sortBy = ref('publishedAt')
 const currentPage = ref(1)
 const pageSize = ref(10)
 
+// 成功通知相关
+const showSuccessNotification = ref(false)
+const successNotification = ref({
+  title: '',
+  message: ''
+})
+
 // 加载数据
 const loadPosts = async () => {
   loading.value = true
@@ -256,8 +267,13 @@ const loadPosts = async () => {
 }
 
 // 删除功能
-const { executeDelete, deleteDialogOpen, deleteTarget, cancelDelete, confirmDelete } = usePostDelete({
-  onRefresh: loadPosts
+const { executeDelete, deleteDialogOpen, deleteTarget, cancelDelete, confirmDelete, forceReset } = usePostDelete({
+  onRefresh: loadPosts,
+  onSuccess: (item, itemName) => {
+    if (itemName) {
+      showDeleteSuccessNotification(itemName)
+    }
+  }
 })
 
 // 计算属性
@@ -301,23 +317,27 @@ const getStatusColor = (post: ContentPost) => {
   return status === '已发布' ? 'success' : 'warning'
 }
 
-const getPostActions = (post: ContentPost, index: number) => [
-  [{
-    label: '查看',
-    icon: 'i-heroicons-eye',
-    click: () => viewPost(post)
-  }],
-  [{
-    label: '编辑',
-    icon: 'i-heroicons-pencil',
-    click: () => editPost(post)
-  }],
-  [{
-    label: '删除',
-    icon: 'i-heroicons-trash',
-    click: () => deletePost(post, index)
-  }]
-]
+const getPostActions = (post: ContentPost, index: number) => {
+  const actions = [
+    [{
+      label: '查看',
+      icon: 'i-heroicons-eye',
+      click: () => viewPost(post)
+    }],
+    [{
+      label: '编辑',
+      icon: 'i-heroicons-pencil',
+      click: () => editPost(post)
+    }],
+    [{
+      label: '删除',
+      icon: 'i-heroicons-trash',
+      click: () => deletePost(post, index)
+    }]
+  ]
+  
+  return actions
+}
 
 const viewPost = (post: ContentPost) => {
   // 在新标签页打开文章
@@ -330,6 +350,12 @@ const editPost = (post: ContentPost) => {
 }
 
 const deletePost = async (post: ContentPost, index: number) => {
+  // 增加防御性检查
+  if (!post || !post.title) {
+    console.warn('deletePost: 无效的文章对象', post)
+    return
+  }
+  
   // 使用 confirmDelete 方法打开删除确认对话框
   confirmDelete(post, 'post', index)
 }
@@ -352,6 +378,19 @@ const handleStatusChange = () => {
 
 const handleSortChange = () => {
   blogStore.sortBy = sortBy.value
+}
+
+// 成功通知处理
+const showDeleteSuccessNotification = (itemName: string) => {
+  successNotification.value = {
+    title: '删除成功',
+    message: `文章"${itemName}"已成功删除`
+  }
+  showSuccessNotification.value = true
+}
+
+const hideSuccessNotification = () => {
+  showSuccessNotification.value = false
 }
 
 // 页面挂载时加载数据

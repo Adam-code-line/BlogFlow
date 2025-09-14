@@ -12,7 +12,7 @@ export interface DeleteTarget {
 }
 
 export interface UseDeleteOptions {
-  onSuccess?: (item: any) => void
+  onSuccess?: (item: any, itemName?: string) => void
   onError?: (error: Error, item: any) => void
   onRefresh?: () => Promise<void>
   showToast?: boolean
@@ -31,6 +31,13 @@ export const useDelete = (options: UseDeleteOptions = {}) => {
    * 打开删除确认对话框
    */
   const confirmDelete = (item: any, type: string = 'post', index?: number) => {
+    // 增加防御性检查
+    if (!item) {
+      console.warn('confirmDelete: item参数为空，忽略删除操作')
+      return
+    }
+    
+    console.log('confirmDelete: 准备删除', { item, type, index })
     deleteTarget.value = { item, index, type }
     deleteDialogOpen.value = true
   }
@@ -39,8 +46,19 @@ export const useDelete = (options: UseDeleteOptions = {}) => {
    * 取消删除操作
    */
   const cancelDelete = () => {
+    console.log('cancelDelete: 取消删除操作')
     deleteTarget.value = null
     deleteDialogOpen.value = false
+  }
+
+  /**
+   * 强制重置所有状态（调试用）
+   */
+  const forceReset = () => {
+    console.log('forceReset: 强制重置删除状态')
+    deleteTarget.value = null
+    deleteDialogOpen.value = false
+    deleting.value = false
   }
 
   /**
@@ -57,12 +75,11 @@ export const useDelete = (options: UseDeleteOptions = {}) => {
 
       // 显示成功消息
       if (options.showToast !== false) {
-        const toast = useToast()
-        toast.add({
-          title: '删除成功',
-          description: getSuccessMessage(item, deleteTarget.value?.type || 'post'),
-          color: 'success'
-        })
+        // 简单的成功回调，由调用方处理UI
+        if (options.onSuccess) {
+          const itemName = item.title || item.name || item.label || '项目'
+          options.onSuccess(item, itemName)
+        }
       }
 
       // 执行成功回调
@@ -80,12 +97,9 @@ export const useDelete = (options: UseDeleteOptions = {}) => {
 
       // 显示错误消息
       if (options.showToast !== false) {
-        const toast = useToast()
-        toast.add({
-          title: '删除失败',
-          description: error instanceof Error ? error.message : '删除时发生未知错误',
-          color: 'error'
-        })
+        const { useUIStore } = await import('~/stores/ui')
+        const uiStore = useUIStore()
+        uiStore.showError('删除失败', error instanceof Error ? error.message : '删除时发生未知错误')
       }
 
       // 执行错误回调
@@ -201,6 +215,7 @@ export const useDelete = (options: UseDeleteOptions = {}) => {
     confirmDelete,
     cancelDelete,
     executeDelete,
+    forceReset,
 
     // 工具方法
     getItemTypeName
