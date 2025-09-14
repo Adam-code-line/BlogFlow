@@ -202,14 +202,10 @@ const searchQuery = ref('')
 const popularTags = ['Vue.js', 'Nuxt.js', 'TypeScript', '前端开发', '工程化']
 
 // 管理员访问控制
+const auth = await import('~/composables/useAuth').then(m => m.useAuth())
+
 const isAdmin = computed(() => {
-  // 简单的IP检查或者可以使用其他方式
-  // 这里可以根据实际需要调整
-  return process.client && (
-    localStorage.getItem('admin_access') === 'true' ||
-    location.hostname === 'localhost' ||
-    location.hostname === '127.0.0.1'
-  )
+  return auth.canAccessAdmin.value
 })
 
 // 管理员菜单项
