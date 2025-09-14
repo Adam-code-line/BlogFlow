@@ -7,8 +7,8 @@
       <section class="py-20 px-4 sm:px-6 lg:px-8">
         <div class="max-w-7xl mx-auto text-center">
           <div class="mb-8">
-            <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face" 
-                 alt="头像" 
+            <img :src="author.avatar" 
+                 :alt="author.name" 
                  class="w-32 h-32 rounded-full mx-auto mb-6 border-4 border-white shadow-lg">
           </div>
           <h1 class="text-4xl md:text-6xl font-bold text-gray-900 dark:text-white mb-6">
@@ -204,12 +204,14 @@ import type { ContentPost } from '~/types'
 import { useBlogPosts, useFormatDate } from '~/composables/useContent'
 import { DateFormatter, TextFormatter } from '~/utils/format'
 import { useCodeTheme } from '~/composables/useCodeTheme'
+import { useAuthorInfo } from '~/composables/useSiteConfig'
 // 明确导入 ThemeToggle 组件
 import ThemeToggle from '~/components/common/ThemeToggle.vue'
 
 // 使用 composables
 const blogAPI = useBlogPosts()
 const { formatDate: originalFormatDate } = useFormatDate()
+const author = useAuthorInfo()
 
 // 获取分析工具实例
 const { $analytics } = useNuxtApp()

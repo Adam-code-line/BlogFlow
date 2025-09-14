@@ -4,7 +4,7 @@
  */
 
 import { siteConfig } from '~/config/site.config'
-import type { SiteConfig, AuthorInfo, SocialLinks, NavigationConfig, PagesConfig, SEOConfig } from '../types/site'
+import type { SiteConfig, AuthorInfo, SocialLinks, NavigationConfig, PagesConfig, SEOConfig } from '~/types/site'
 
 /**
  * 获取完整的站点配置

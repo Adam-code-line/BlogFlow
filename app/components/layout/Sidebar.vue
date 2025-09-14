@@ -165,36 +165,41 @@
 
 <script setup lang="ts">
 import { DateFormatter } from '~/utils/format'
+import { useAuthorInfo, useSocialLinks } from '~/composables/useSiteConfig'
 
-// 作者信息
-const authorInfo = {
-  name: 'BlogFlow',
-  title: '全栈开发者',
-  bio: '专注于现代Web开发技术，分享前端、后端和架构相关的经验与思考。',
-  avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&h=200&fit=crop&crop=face',
+// 从全局配置获取作者信息
+const author = useAuthorInfo()
+const socialLinks = useSocialLinks()
+
+// 作者信息 - 使用全局配置
+const authorInfo = computed(() => ({
+  name: author.value.name,
+  title: author.value.profession || '全栈开发者',
+  bio: author.value.bio,
+  avatar: author.value.avatar,
   socials: [
     {
       name: 'GitHub',
-      url: 'https://github.com',
+      url: socialLinks.value.github || 'https://github.com',
       icon: 'simple-icons:github'
     },
     {
-      name: 'Twitter',
-      url: 'https://twitter.com',
+      name: 'Twitter', 
+      url: socialLinks.value.twitter || 'https://twitter.com',
       icon: 'simple-icons:twitter'
     },
     {
       name: 'LinkedIn',
-      url: 'https://linkedin.com',
+      url: socialLinks.value.linkedin || 'https://linkedin.com',
       icon: 'simple-icons:linkedin'
     },
     {
       name: 'Email',
-      url: 'mailto:contact@blogflow.com',
+      url: `mailto:${author.value.email}` || 'mailto:contact@blogflow.com',
       icon: 'heroicons:envelope'
     }
   ]
-}
+}))
 
 // 统计数据
 const stats = {

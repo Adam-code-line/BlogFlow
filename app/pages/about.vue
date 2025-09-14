@@ -21,9 +21,9 @@
 
           <!-- 内容区域 -->
           <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 md:p-12">
-            <div class="prose prose-lg dark:prose-invert max-w-none">
+            <div class="prose prose-lg dark:prose-invert max-w-none selectable">
               <h2 class="text-2xl font-bold mb-4">个人简介</h2>
-              <div class="mb-6 space-y-4">
+              <div class="mb-6 space-y-4 selectable">
                 <p><strong>姓名：</strong>{{ author.name }}</p>
                 <p><strong>职业：</strong>{{ author.profession }}</p>
                 <p v-if="author.company"><strong>公司：</strong>{{ author.company }}</p>

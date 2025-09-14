@@ -1,0 +1,69 @@
+/* 全局样式：防止文本意外选中 */
+
+/* 禁用所有文本选择（除了特定元素） */
+* {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* 允许在特定元素中选择文本 */
+.selectable,
+input,
+textarea,
+[contenteditable="true"],
+.prose,
+.prose *,
+pre,
+code,
+.markdown-content,
+.markdown-content * {
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  -ms-user-select: text;
+  user-select: text;
+}
+
+/* 链接和按钮的交互优化 */
+a,
+button,
+[role="button"] {
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* 移除iOS点击高亮 */
+a,
+button,
+input,
+textarea,
+select {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+}
+
+/* 标题和导航不应该被选中 */
+h1, h2, h3, h4, h5, h6,
+nav,
+nav *,
+header,
+header *,
+.nav-link,
+.mobile-nav-link {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* 确保卡片内容可以正常选择 */
+.card-content,
+.post-content,
+.article-content {
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  -ms-user-select: text;
+  user-select: text;
+}

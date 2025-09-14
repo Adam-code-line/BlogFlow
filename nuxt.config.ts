@@ -155,7 +155,8 @@ export default defineNuxtConfig({
   css: [
     '~/assets/css/main.css',
     '~/assets/css/fonts.css',     // 添加字体配置
-    '~/assets/css/admin.css'      // 添加管理后台样式
+    '~/assets/css/admin.css',     // 添加管理后台样式
+    '~/assets/css/custom.css'     // 添加自定义样式（防止文本选择）
   ],
 
   // 运行时配置

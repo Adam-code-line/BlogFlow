@@ -8,38 +8,45 @@ import type { SiteConfig } from '~/types/site'
 
 // 默认配置 - 用户可以修改这里的值来自定义站点
 export const siteConfig: SiteConfig = {
+  // ====== 站点基本信息 ======
   site: {
-    name: 'BlogFlow',
-    title: 'BlogFlow - 现代化博客系统',
-    description: '基于 Nuxt.js 构建的现代化博客系统，专注于优雅的设计和卓越的用户体验',
-    url: 'https://blogflow.example.com',
+    name: 'Adam的个人博客',
+    title: 'Adam的个人博客 - 分享前端开发经验',
+    description: '专注于前端开发的技术分享博客',
+    url: 'https://adam-blog.com',
     logo: '/logo.png',
     favicon: '/favicon.ico'
   },
-  
+
+  // ====== 个人信息 ======
   author: {
-    name: '您的姓名',
-    avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&h=200&fit=crop&crop=face',
-    bio: '一名充满热情的全栈开发者，专注于现代Web技术和用户体验设计',
-    location: '中国，北京',
-    website: 'https://yourwebsite.com',
-    email: 'your.email@example.com',
-    profession: '全栈开发工程师',
-    company: '您的公司名称'
+    name: 'Adam',
+    avatar: '/images/avatar.jpg',
+    bio: '一名热爱技术的前端工程师，专注于用户体验和代码质量',
+    location: '中国，大连',
+    website: 'https://adam-blog.com',
+    email: 'adam@example.com',
+    profession: '学生',
+    company: '大连理工大学'
   },
-  
+
+  // ====== 社交媒体链接 ======
+  // 注意：只填写你实际使用的平台，不用的可以删除或注释
   social: {
-    github: 'https://github.com/yourusername',
-    twitter: 'https://twitter.com/yourusername',
-    linkedin: 'https://linkedin.com/in/yourusername',
+    github: 'https://github.com/Adam-code-line',
     email: 'mailto:your.email@example.com',
-    // 可选的中文社交媒体
+    // 可选的社交媒体平台
+    // twitter: 'https://twitter.com/yourusername',
+    // linkedin: 'https://linkedin.com/in/yourusername',
     // wechat: 'your-wechat-id',
     // weibo: 'https://weibo.com/yourusername',
     // zhihu: 'https://zhihu.com/people/yourusername',
-    // juejin: 'https://juejin.cn/user/yourusername'
+    // juejin: 'https://juejin.cn/user/yourusername',
+    // telegram: 'https://t.me/yourusername',
+    // discord: 'https://discord.gg/yourinvite'
   },
-  
+
+  // ====== 导航菜单 ======
   navigation: {
     header: [
       { name: '首页', href: '/' },
@@ -68,13 +75,14 @@ export const siteConfig: SiteConfig = {
       }
     ]
   },
-  
+
+  // ====== 页面内容配置 ======
   pages: {
     home: {
       hero: {
-        title: '欢迎来到我的博客',
-        subtitle: '分享技术，记录成长',
-        description: '在这里，我会分享我的技术见解、学习心得和生活感悟。与你一起探索技术的无限可能。',
+        title: '欢迎来到我的技术博客',
+        subtitle: '分享前端开发经验与思考',
+        description: '在这里，我会分享我的技术见解、项目经验和学习心得',
         backgroundImage: 'https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=1920&h=1080&fit=crop',
         ctaText: '开始阅读',
         ctaLink: '/blog'
@@ -82,77 +90,71 @@ export const siteConfig: SiteConfig = {
       features: [
         {
           title: '技术分享',
-          description: '分享最新的前端技术、开发经验和最佳实践',
+          description: '分享最新的前端技术和开发经验',
           icon: 'heroicons:code-bracket'
         },
         {
-          title: '学习记录',
-          description: '记录学习过程中的思考和总结，与你一起成长',
+          title: '项目经验',
+          description: '记录实际项目中的问题解决方案',
           icon: 'heroicons:academic-cap'
         },
         {
-          title: '生活感悟',
-          description: '分享工作之余的思考和对生活的感悟',
+          title: '学习笔记',
+          description: '持续学习新技术，分享学习心得',
           icon: 'heroicons:heart'
         }
       ]
     },
-    
+
     about: {
       timeline: [
         {
           year: '2024',
-          title: '高级前端工程师',
-          description: '专注于 Vue.js 生态系统和现代前端架构设计',
-          company: '某知名互联网公司',
-          location: '北京'
+          title: '学生',
+          description: '学习前端基础知识',
+          company: '大连理工大学',
+          location: '大连'
         },
         {
-          year: '2022',
-          title: '前端工程师',
-          description: '负责大型 Web 应用的开发和维护，积累了丰富的项目经验',
-          company: '某科技公司',
-          location: '上海'
-        },
-        {
-          year: '2020',
-          title: '初级前端开发',
-          description: '开始前端开发之路，学习现代前端技术栈',
-          company: '某创业公司',
-          location: '深圳'
+          year: '2025',
+          title: '学生',
+          description: '学习前端框架和工具',
+          company: '大连理工大学',
+          location: '大连'
         }
       ],
       skills: {
-        frontend: ['Vue.js', 'React', 'TypeScript', 'JavaScript', 'HTML5', 'CSS3', 'Sass/SCSS', 'Tailwind CSS'],
-        backend: ['Node.js', 'Express', 'Fastify', 'PostgreSQL', 'MongoDB', 'Redis'],
-        tools: ['Git', 'Docker', 'Webpack', 'Vite', 'ESLint', 'Prettier', 'Jest', 'Cypress']
+        frontend: ['Vue.js', 'Nuxt.js', 'TypeScript'],
+        backend: ['Node.js', 'Java', 'MySQL'],
+        tools: ['Git', 'Docker', 'VS Code']
       },
       interests: [
-        '📚 阅读技术书籍和科幻小说',
-        '🎵 古典音乐和爵士乐欣赏',
-        '🎨 UI/UX设计和平面设计',
-        '🌍 探索不同的文化和风景',
-        '📷 记录生活中的美好瞬间'
+        '📚 阅读技术博客',
+        '🎵 听音乐',
+        '🏃 打羽毛球'
       ]
     },
-    
+
+    // 联系页配置
     contact: {
       title: '联系我',
-      description: '如果你有任何问题、建议或者想要合作，请随时联系我。我会在24小时内回复你的消息。',
-      formEndpoint: '/api/contact', // 可选：联系表单提交端点
+      description: '如果你有任何问题或合作意向，欢迎联系我',
+      formEndpoint: '/api/contact',
       responseTime: '24小时内'
     }
   },
-  
+
+  // ====== SEO 配置 ======
   seo: {
-    defaultTitle: 'BlogFlow',
-    titleTemplate: '%s - BlogFlow',
-    defaultDescription: '基于 Nuxt.js 构建的现代化博客系统，专注于优雅的设计和卓越的用户体验',
+    defaultTitle: 'Adam的个人博客',
+    titleTemplate: '%s - Adam的个人博客',
+    defaultDescription: '欢迎来到我的个人博客',
     defaultImage: 'https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=1200&h=630&fit=crop',
     twitterCard: 'summary_large_image',
     locale: 'zh-CN'
   },
-  
+
+  // ====== 功能开关 ======
   features: {
     darkMode: true,
     comments: true,
@@ -162,5 +164,22 @@ export const siteConfig: SiteConfig = {
   }
 }
 
-// 导出默认配置
+// 导出配置
 export default siteConfig
+
+/* 
+配置完成后的后续步骤：
+
+1. 保存此文件
+2. 重启开发服务器：npm run dev
+3. 访问各个页面检查配置是否正确应用
+4. 根据需要调整样式和内容
+5. 准备部署到生产环境
+
+常见问题：
+- 图片无法显示：检查图片URL是否有效
+- 链接无法访问：确保社交媒体链接正确
+- 样式问题：检查图标名称是否正确
+
+如需帮助，请参考 SITE_CONFIG_GUIDE.md 文档
+*/

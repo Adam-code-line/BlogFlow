@@ -15,33 +15,33 @@
 export const siteConfig = {
   // ====== 站点基本信息 ======
   site: {
-    name: 'Adam的个人博客',                    // 例如：'小明的技术博客'
-    title: 'Adam的个人博客 - 分享前端开发经验',                  // 例如：'小明的技术博客 - 分享前端开发经验'
-    description: '专注于前端开发的技术分享博客',      // 例如：'专注于前端开发、Vue.js、TypeScript的技术分享博客'
-    url: 'https://adam-blog.com',                    // 例如：'https://xiaoming-blog.com'
+    name: '请修改：你的博客名称',                    // 例如：'小明的技术博客'
+    title: '请修改：你的博客标题',                  // 例如：'小明的技术博客 - 分享前端开发经验'
+    description: '请修改：博客描述（用于SEO）',      // 例如：'专注于前端开发、Vue.js、TypeScript的技术分享博客'
+    url: 'https://请修改.com',                    // 例如：'https://xiaoming-blog.com'
     logo: '/logo.png',                           // 你的Logo文件路径
     favicon: '/favicon.ico'                      // 你的网站图标
   },
   
   // ====== 个人信息 ======
   author: {
-    name: 'Adam',                       // 例如：'张小明'
+    name: '请修改：你的姓名',                       // 例如：'张小明'
     avatar: '请修改：头像图片URL',                  // 建议使用 200x200 尺寸的图片
-    bio: '一名热爱技术的前端工程师，专注于用户体验和代码质量',             // 例如：'一名热爱技术的前端工程师，专注于用户体验和代码质量'
-    location: '中国，大连',                    // 例如：'中国，上海'
-    website: '...',                   // 例如：'https://xiaoming.dev'
-    email: '...',                     // 例如：'hello@xiaoming.dev'
-    profession: '学生',                    // 例如：'前端工程师'
-    company: '大连理工大学'             // 例如：'某科技公司' 或留空
+    bio: '请修改：个人简介（1-2句话）',             // 例如：'一名热爱技术的前端工程师，专注于用户体验和代码质量'
+    location: '请修改：所在地',                    // 例如：'中国，上海'
+    website: '请修改：个人网站',                   // 例如：'https://xiaoming.dev'
+    email: '请修改：邮箱地址',                     // 例如：'hello@xiaoming.dev'
+    profession: '请修改：职业',                    // 例如：'前端工程师'
+    company: '请修改：公司名称（可选）'             // 例如：'某科技公司' 或留空
   },
   
   // ====== 社交媒体链接 ======
   // 注意：只填写你实际使用的平台，不用的可以删除或注释
   social: {
-    github: 'https://github.com/Adam-code-line',                  // 例如：'https://github.com/xiaoming'
+    github: '请修改：GitHub链接',                  // 例如：'https://github.com/xiaoming'
     // twitter: '你的Twitter链接',                 // 例如：'https://twitter.com/xiaoming'
     // linkedin: '你的LinkedIn链接',               // 例如：'https://linkedin.com/in/xiaoming'
-    email: '...',                     // 例如：'mailto:hello@xiaoming.dev'
+    email: '请修改：邮箱链接',                     // 例如：'mailto:hello@xiaoming.dev'
     
     // 中文社交媒体（根据需要启用）
     // wechat: '你的微信号',                       // 例如：'xiaoming_dev'
@@ -91,10 +91,10 @@ export const siteConfig = {
     // 首页配置
     home: {
       hero: {
-        title: '欢迎来到我的技术博客',                  // 例如：'欢迎来到我的技术博客'
-        subtitle: '分享前端开发经验与思考',              // 例如：'分享前端开发经验与思考'
-        description: '在这里，我会分享我的技术见解、项目经验和学习心得',            // 例如：'在这里，我会分享我的技术见解、项目经验和学习心得'
-        backgroundImage: 'https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=1920&h=1080&fit=crop',      // 例如：'https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=1920&h=1080&fit=crop'
+        title: '请修改：首页主标题',                  // 例如：'欢迎来到我的技术博客'
+        subtitle: '请修改：首页副标题',              // 例如：'分享前端开发经验与思考'
+        description: '请修改：首页描述',            // 例如：'在这里，我会分享我的技术见解、项目经验和学习心得'
+        backgroundImage: '请修改：背景图片URL',      // 例如：'https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=1920&h=1080&fit=crop'
         ctaText: '开始阅读',                       // 行动按钮文本
         ctaLink: '/blog'                          // 行动按钮链接
       },
@@ -102,18 +102,18 @@ export const siteConfig = {
       // 首页特色模块
       features: [
         {
-          title: '技术分享',                 // 例如：'技术分享'
-          description: '分享最新的前端技术和开发经验',          // 例如：'分享最新的前端技术和开发经验'
+          title: '请修改：特色1标题',                 // 例如：'技术分享'
+          description: '请修改：特色1描述',          // 例如：'分享最新的前端技术和开发经验'
           icon: 'heroicons:code-bracket'           // 图标名称
         },
         {
-          title: '项目经验',                 // 例如：'项目经验'
-          description: '记录实际项目中的问题解决方案',          // 例如：'记录实际项目中的问题解决方案'
+          title: '请修改：特色2标题',                 // 例如：'项目经验'
+          description: '请修改：特色2描述',          // 例如：'记录实际项目中的问题解决方案'
           icon: 'heroicons:academic-cap'
         },
         {
-          title: '学习笔记',                 // 例如：'学习笔记'
-          description: '持续学习新技术，分享学习心得',          // 例如：'持续学习新技术，分享学习心得'
+          title: '请修改：特色3标题',                 // 例如：'学习笔记'
+          description: '请修改：特色3描述',          // 例如：'持续学习新技术，分享学习心得'
           icon: 'heroicons:heart'
         }
       ]
@@ -124,18 +124,18 @@ export const siteConfig = {
       // 职业时间线
       timeline: [
         {
-          year: '2024',                      // 例如：'2024'
-          title: '学生',                 // 例如：'高级前端工程师'
-          description: '学习前端基础知识',           // 例如：'负责大型Web应用的前端架构设计和开发'
-          company: '大连理工大学',               // 例如：'某科技公司'
-          location: '大连'               // 例如：'上海'
+          year: '请修改：年份',                      // 例如：'2024'
+          title: '请修改：职位标题',                 // 例如：'高级前端工程师'
+          description: '请修改：工作描述',           // 例如：'负责大型Web应用的前端架构设计和开发'
+          company: '请修改：公司名称',               // 例如：'某科技公司'
+          location: '请修改：工作地点'               // 例如：'上海'
         },
         {
-          year: '2025',                      // 例如：'2022'
-          title: '学生',                 // 例如：'前端工程师'
-          description: '学习前端框架和工具',           // 例如：'参与多个产品的前端开发工作'
-          company: '大连理工大学',               // 例如：'某创业公司'
-          location: '大连'               // 例如：'北京'
+          year: '请修改：年份',                      // 例如：'2022'
+          title: '请修改：职位标题',                 // 例如：'前端工程师'
+          description: '请修改：工作描述',           // 例如：'参与多个产品的前端开发工作'
+          company: '请修改：公司名称',               // 例如：'某创业公司'
+          location: '请修改：工作地点'               // 例如：'北京'
         }
         // 添加更多工作经历...
       ],
@@ -143,30 +143,30 @@ export const siteConfig = {
       // 技能列表
       skills: {
         frontend: [
-          'Vue.js',                       // 例如：'Vue.js'
-          'Nuxt.js',                       // 例如：'React'
-          'TypeScript'                     // 例如：'TypeScript'
+          '请修改：前端技能1',                       // 例如：'Vue.js'
+          '请修改：前端技能2',                       // 例如：'React'
+          '请修改：前端技能3'                        // 例如：'TypeScript'
           // 添加更多前端技能...
         ],
         backend: [
-          'Node.js',                       // 例如：'Node.js'
-          'Java',                       // 例如：'Python'
-          'MySQL'                        // 例如：'PostgreSQL'
+          '请修改：后端技能1',                       // 例如：'Node.js'
+          '请修改：后端技能2',                       // 例如：'Python'
+          '请修改：后端技能3'                        // 例如：'PostgreSQL'
           // 添加更多后端技能...
         ],
         tools: [
-          'Git',                       // 例如：'Git'
-          'Docker',                       // 例如：'Docker'
-          'VS Code'                        // 例如：'VS Code'
+          '请修改：工具技能1',                       // 例如：'Git'
+          '请修改：工具技能2',                       // 例如：'Docker'
+          '请修改：工具技能3'                        // 例如：'VS Code'
           // 添加更多工具...
         ]
       },
       
       // 个人兴趣
       interests: [
-        '📚 阅读技术博客',
-        '🎵 听音乐',
-        '🏃 打羽毛球'
+        '请修改：兴趣1',                            // 例如：'📚 阅读技术书籍'
+        '请修改：兴趣2',                            // 例如：'🎵 听音乐'
+        '请修改：兴趣3'                             // 例如：'🏃 跑步健身'
         // 添加更多兴趣...
       ]
     },
@@ -174,18 +174,18 @@ export const siteConfig = {
     // 联系页配置
     contact: {
       title: '联系我',                             // 联系页标题
-      description: '果你有任何问题或合作意向，欢迎联系我',            // 例如：'如果你有任何问题或合作意向，欢迎联系我'
+      description: '请修改：联系页描述',            // 例如：'如果你有任何问题或合作意向，欢迎联系我'
       formEndpoint: '/api/contact',               // 联系表单提交地址（可选）
-      responseTime: '...'                    // 回复时间承诺
+      responseTime: '24小时内'                    // 回复时间承诺
     }
   },
   
   // ====== SEO 配置 ======
   seo: {
-    defaultTitle: 'Adam的个人博客',               // 例如：'小明的技术博客'
-    titleTemplate: '%s - Adam的个人博客',          // 例如：'%s - 小明的博客'
-    defaultDescription: '欢迎来到我的个人博客',        // 例如：'专注前端开发的技术博客'
-    defaultImage: 'https://yourdomain.com/og-image.jpg',        // 例如：'https://yourdomain.com/og-image.jpg'
+    defaultTitle: '请修改：默认标题',               // 例如：'小明的技术博客'
+    titleTemplate: '%s - 请修改：站点名',          // 例如：'%s - 小明的博客'
+    defaultDescription: '请修改：默认描述',        // 例如：'专注前端开发的技术博客'
+    defaultImage: '请修改：默认分享图片URL',        // 例如：'https://yourdomain.com/og-image.jpg'
     twitterCard: 'summary_large_image',          // Twitter卡片类型
     locale: 'zh-CN'                             // 语言设置
   },

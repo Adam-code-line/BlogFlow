@@ -6,201 +6,146 @@
       <section class="py-20 px-4 sm:px-6 lg:px-8">
         <div class="max-w-4xl mx-auto text-center">
           <h1 class="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6">
-            {{ contactConfig.title }}
+            联系我
           </h1>
           <p class="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto mb-12">
-            {{ contactConfig.description }}
+            如果你有任何问题或合作意向，欢迎联系我
           </p>
         </div>
       </section>
 
-      <!-- 联系方式和表单 -->
+      <!-- 联系方式展示 -->
       <section class="pb-20 px-4 sm:px-6 lg:px-8">
-        <div class="max-w-7xl mx-auto">
-          <div class="grid lg:grid-cols-2 gap-12">
-            <!-- 联系信息 -->
-            <div>
-              <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8">
-                <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-8">联系方式</h2>
-                
-                <!-- 邮箱 -->
-                <div class="flex items-start space-x-4 mb-6">
-                  <div class="flex-shrink-0">
-                    <div class="w-12 h-12 bg-blue-100 dark:bg-blue-900 rounded-lg flex items-center justify-center">
-                      <Icon name="heroicons:envelope" class="w-6 h-6 text-blue-600 dark:text-blue-400" />
-                    </div>
-                  </div>
-                  <div>
-                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-1">邮箱</h3>
-                    <p class="text-gray-600 dark:text-gray-300">{{ author.email }}</p>
-                  </div>
-                </div>
-
-                <!-- 社交媒体 -->
-                <div class="flex items-start space-x-4 mb-6">
-                  <div class="flex-shrink-0">
-                    <div class="w-12 h-12 bg-green-100 dark:bg-green-900 rounded-lg flex items-center justify-center">
-                      <Icon name="heroicons:globe-alt" class="w-6 h-6 text-green-600 dark:text-green-400" />
-                    </div>
-                  </div>
-                  <div>
-                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-1">社交媒体</h3>
-                    <div class="space-y-1">
-                      <a v-for="social in socialLinks" :key="social.name" 
-                         :href="social.href" 
-                         :class="social.color" 
-                         class="hover:underline block"
-                         target="_blank"
-                         rel="noopener noreferrer">
-                        {{ social.name }}
-                      </a>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- 响应时间 -->
-                <div class="flex items-start space-x-4 mb-8">
-                  <div class="flex-shrink-0">
-                    <div class="w-12 h-12 bg-purple-100 dark:bg-purple-900 rounded-lg flex items-center justify-center">
-                      <Icon name="heroicons:clock" class="w-6 h-6 text-purple-600 dark:text-purple-400" />
-                    </div>
-                  </div>
-                  <div>
-                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-1">响应时间</h3>
-                    <p class="text-gray-600 dark:text-gray-300">通常在{{ contactConfig.responseTime }}回复</p>
-                  </div>
-                </div>
-
-                <!-- 社交链接 -->
-                <div class="border-t border-gray-200 dark:border-gray-700 pt-6">
-                  <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">关注我</h3>
-                  <div class="flex space-x-4">
-                    <a v-for="social in socialLinks.slice(0, 4)" 
-                       :key="social.name"
-                       :href="social.href" 
-                       :title="social.name"
-                       class="flex items-center justify-center w-10 h-10 rounded-lg transition-colors"
-                       :class="social.name === 'GitHub' ? 'bg-gray-900 text-white hover:bg-gray-800' :
-                               social.name === 'LinkedIn' ? 'bg-blue-600 text-white hover:bg-blue-700' :
-                               social.name === 'Twitter' ? 'bg-blue-400 text-white hover:bg-blue-500' :
-                               social.name === 'Email' ? 'bg-red-600 text-white hover:bg-red-700' :
-                               'bg-gray-600 text-white hover:bg-gray-700'"
-                       target="_blank"
-                       rel="noopener noreferrer">
-                      <Icon :name="social.icon" class="w-5 h-5" />
-                    </a>
-                  </div>
-                </div>
-              </div>
+        <div class="max-w-5xl mx-auto">
+          <!-- 主要联系信息卡片 -->
+          <Card 
+            variant="elevated" 
+            hoverable 
+            class="mb-12"
+            padding="xl"
+          >
+            <div class="text-center mb-12">
+              <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-4">联系方式</h2>
+              <p class="text-xl text-gray-600 dark:text-gray-300">随时欢迎与我交流</p>
             </div>
 
-            <!-- 联系表单 -->
-            <div>
-              <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8">
-                <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-8">发送消息</h2>
-                
-                <form @submit.prevent="handleSubmit" class="space-y-6">
-                  <!-- 成功消息 -->
-                  <div v-if="showSuccessMessage" class="p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
-                    <div class="flex items-center">
-                      <Icon name="heroicons:check-circle" class="w-5 h-5 text-green-600 dark:text-green-400 mr-2" />
-                      <p class="text-green-800 dark:text-green-200 font-medium">消息发送成功！我会尽快回复您。</p>
+            <!-- 联系方式网格 -->
+            <div class="grid md:grid-cols-3 gap-8 mb-12">
+              <!-- 邮箱联系 -->
+              <Card 
+                variant="bordered" 
+                hoverable 
+                clickable
+                class="text-center group cursor-pointer"
+                @click="handleEmailClick"
+              >
+                <div class="p-6">
+                  <div class="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                    <Icon name="heroicons:envelope" class="w-8 h-8 text-white" />
+                  </div>
+                  <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">邮箱联系</h3>
+                  <p class="text-gray-600 dark:text-gray-300 mb-2">{{ author.email }}</p>
+                  <p class="text-sm text-blue-600 dark:text-blue-400">点击发送邮件</p>
+                </div>
+              </Card>
+
+              <!-- 响应时间 -->
+              <Card variant="bordered" class="text-center">
+                <div class="p-6">
+                  <div class="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center">
+                    <Icon name="heroicons:clock" class="w-8 h-8 text-white" />
+                  </div>
+                  <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">响应时间</h3>
+                  <p class="text-gray-600 dark:text-gray-300 mb-2">通常在24小时内回复</p>
+                  <p class="text-sm text-purple-600 dark:text-purple-400">工作日更快</p>
+                </div>
+              </Card>
+
+              <!-- 位置信息 -->
+              <Card variant="bordered" class="text-center">
+                <div class="p-6">
+                  <div class="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl flex items-center justify-center">
+                    <Icon name="heroicons:map-pin" class="w-8 h-8 text-white" />
+                  </div>
+                  <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">所在位置</h3>
+                  <p class="text-gray-600 dark:text-gray-300 mb-2">{{ author.location }}</p>
+                  <p class="text-sm text-green-600 dark:text-green-400">远程协作友好</p>
+                </div>
+              </Card>
+            </div>
+
+            <!-- 社交媒体链接 -->
+            <div class="border-t border-gray-200 dark:border-gray-700 pt-8">
+              <div class="text-center mb-8">
+                <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">关注我的动态</h3>
+                <p class="text-gray-600 dark:text-gray-300">在这些平台上与我互动</p>
+              </div>
+              
+              <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <Card 
+                  v-for="social in socialLinks" 
+                  :key="social.name"
+                  variant="bordered" 
+                  hoverable 
+                  clickable
+                  class="group cursor-pointer"
+                  @click="() => handleSocialClick(social.href)"
+                >
+                  <div class="p-4 text-center">
+                    <div class="w-12 h-12 mx-auto mb-3 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300"
+                         :class="getSocialBgClass(social.name)">
+                      <Icon :name="social.icon" class="w-6 h-6 text-white" />
                     </div>
+                    <h4 class="font-semibold text-gray-900 dark:text-white mb-1">{{ social.name }}</h4>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">点击访问</p>
                   </div>
-
-                  <!-- 错误消息 -->
-                  <div v-if="error" class="p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
-                    <div class="flex items-center">
-                      <Icon name="heroicons:exclamation-circle" class="w-5 h-5 text-red-600 dark:text-red-400 mr-2" />
-                      <p class="text-red-800 dark:text-red-200 font-medium">{{ error }}</p>
-                    </div>
-                  </div>
-                  <!-- 姓名 -->
-                  <div>
-                    <label for="name" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      姓名 *
-                    </label>
-                    <UInput
-                      id="name"
-                      v-model="form.name"
-                      placeholder="请输入您的姓名"
-                      size="lg"
-                      :color="errors.name ? 'error' : 'primary'"
-                    />
-                    <p v-if="errors.name" class="mt-1 text-sm text-red-600 dark:text-red-400">
-                      {{ errors.name }}
-                    </p>
-                  </div>
-
-                  <!-- 邮箱 -->
-                  <div>
-                    <label for="email" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      邮箱 *
-                    </label>
-                    <UInput
-                      id="email"
-                      v-model="form.email"
-                      type="email"
-                      placeholder="请输入您的邮箱"
-                      size="lg"
-                      :color="errors.email ? 'error' : 'primary'"
-                    />
-                    <p v-if="errors.email" class="mt-1 text-sm text-red-600 dark:text-red-400">
-                      {{ errors.email }}
-                    </p>
-                  </div>
-
-                  <!-- 主题 -->
-                  <div>
-                    <label for="subject" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      主题 *
-                    </label>
-                    <USelect
-                      v-model="form.subject"
-                      :options="subjectOptions"
-                      placeholder="请选择主题"
-                      size="lg"
-                      :color="errors.subject ? 'error' : 'primary'"
-                    />
-                    <p v-if="errors.subject" class="mt-1 text-sm text-red-600 dark:text-red-400">
-                      {{ errors.subject }}
-                    </p>
-                  </div>
-
-                  <!-- 消息内容 -->
-                  <div>
-                    <label for="message" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      消息内容 *
-                    </label>
-                    <UTextarea
-                      id="message"
-                      v-model="form.message"
-                      placeholder="请输入您想说的话..."
-                      :rows="6"
-                      size="lg"
-                      :color="errors.message ? 'error' : 'primary'"
-                    />
-                    <p v-if="errors.message" class="mt-1 text-sm text-red-600 dark:text-red-400">
-                      {{ errors.message }}
-                    </p>
-                  </div>
-
-                  <!-- 提交按钮 -->
-                  <div>
-                    <UiButton
-                      type="submit"
-                      size="lg"
-                      color="primary"
-                      :loading="loading"
-                      :disabled="loading"
-                      block
-                    >
-                      {{ loading ? '发送中...' : '发送消息' }}
-                    </UiButton>
-                  </div>
-                </form>
+                </Card>
               </div>
             </div>
+          </Card>
+
+          <!-- 快速行动区域 -->
+          <div class="grid md:grid-cols-2 gap-8">
+            <!-- 邮件快速发送 -->
+            <Card variant="elevated" hoverable class="group">
+              <div class="p-8 text-center">
+                <div class="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-3xl flex items-center justify-center group-hover:scale-105 transition-transform duration-300">
+                  <Icon name="heroicons:paper-airplane" class="w-10 h-10 text-white" />
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-3">发送邮件</h3>
+                <p class="text-gray-600 dark:text-gray-300 mb-6">有项目想法或技术问题？直接发邮件给我</p>
+                <UiButton 
+                  size="lg" 
+                  color="primary" 
+                  class="w-full"
+                  @click="handleEmailClick"
+                >
+                  <Icon name="heroicons:envelope" class="w-5 h-5 mr-2" />
+                  打开邮件客户端
+                </UiButton>
+              </div>
+            </Card>
+
+            <!-- 查看简历/作品 -->
+            <Card variant="elevated" hoverable class="group">
+              <div class="p-8 text-center">
+                <div class="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-purple-500 to-pink-600 rounded-3xl flex items-center justify-center group-hover:scale-105 transition-transform duration-300">
+                  <Icon name="heroicons:document-text" class="w-10 h-10 text-white" />
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-3">了解更多</h3>
+                <p class="text-gray-600 dark:text-gray-300 mb-6">想了解我的技能和经验？查看我的详细信息</p>
+                <UiButton 
+                  size="lg" 
+                  color="secondary" 
+                  variant="outline"
+                  class="w-full"
+                  to="/about"
+                >
+                  <Icon name="heroicons:user" class="w-5 h-5 mr-2" />
+                  查看关于页面
+                </UiButton>
+              </div>
+            </Card>
           </div>
         </div>
       </section>
@@ -215,52 +160,55 @@
           
           <div class="grid md:grid-cols-3 gap-8">
             <!-- 技术咨询 -->
-            <UiCard class="text-center hover:shadow-xl transition-shadow duration-300">
-              <div class="p-6">
-                <div class="w-16 h-16 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Icon name="heroicons:light-bulb" class="w-8 h-8 text-blue-600 dark:text-blue-400" />
+            <Card variant="bordered" hoverable class="text-center group">
+              <div class="p-8">
+                <div class="w-16 h-16 mx-auto mb-6 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                  <Icon name="heroicons:light-bulb" class="w-8 h-8 text-white" />
                 </div>
-                <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">技术咨询</h3>
-                <ul class="text-gray-600 dark:text-gray-300 space-y-2">
-                  <li>前端架构设计</li>
-                  <li>Vue/Nuxt项目咨询</li>
-                  <li>代码审查和优化</li>
-                  <li>技术选型建议</li>
+                <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">技术咨询</h3>
+                <p class="text-gray-600 dark:text-gray-300 mb-6">前端架构设计、技术选型、性能优化等技术相关问题的咨询和解决方案</p>
+                <ul class="text-left text-sm text-gray-500 dark:text-gray-400 space-y-2">
+                  <li>• Vue.js / Nuxt.js 开发</li>
+                  <li>• 前端工程化配置</li>
+                  <li>• 性能优化建议</li>
+                  <li>• 代码审查服务</li>
                 </ul>
               </div>
-            </UiCard>
+            </Card>
 
-            <!-- 内容合作 -->
-            <UiCard class="text-center hover:shadow-xl transition-shadow duration-300">
-              <div class="p-6">
-                <div class="w-16 h-16 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Icon name="heroicons:pencil-square" class="w-8 h-8 text-green-600 dark:text-green-400" />
+            <!-- 项目合作 -->
+            <Card variant="bordered" hoverable class="text-center group">
+              <div class="p-8">
+                <div class="w-16 h-16 mx-auto mb-6 bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                  <Icon name="heroicons:code-bracket" class="w-8 h-8 text-white" />
                 </div>
-                <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">内容合作</h3>
-                <ul class="text-gray-600 dark:text-gray-300 space-y-2">
-                  <li>技术文章联合创作</li>
-                  <li>播客嘉宾邀请</li>
-                  <li>技术分享和演讲</li>
-                  <li>开源项目协作</li>
+                <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">项目合作</h3>
+                <p class="text-gray-600 dark:text-gray-300 mb-6">参与有趣的开源项目或商业项目，共同打造优质的产品和解决方案</p>
+                <ul class="text-left text-sm text-gray-500 dark:text-gray-400 space-y-2">
+                  <li>• 开源项目贡献</li>
+                  <li>• 全栈开发合作</li>
+                  <li>• 产品原型设计</li>
+                  <li>• 长期技术伙伴</li>
                 </ul>
               </div>
-            </UiCard>
+            </Card>
 
-            <!-- 商业合作 -->
-            <UiCard class="text-center hover:shadow-xl transition-shadow duration-300">
-              <div class="p-6">
-                <div class="w-16 h-16 bg-purple-100 dark:bg-purple-900 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Icon name="heroicons:briefcase" class="w-8 h-8 text-purple-600 dark:text-purple-400" />
+            <!-- 技术分享 -->
+            <Card variant="bordered" hoverable class="text-center group">
+              <div class="p-8">
+                <div class="w-16 h-16 mx-auto mb-6 bg-gradient-to-br from-green-500 to-emerald-500 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                  <Icon name="heroicons:academic-cap" class="w-8 h-8 text-white" />
                 </div>
-                <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">商业合作</h3>
-                <ul class="text-gray-600 dark:text-gray-300 space-y-2">
-                  <li>自由职业项目</li>
-                  <li>技术顾问服务</li>
-                  <li>培训和工作坊</li>
-                  <li>产品技术合作</li>
+                <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">技术分享</h3>
+                <p class="text-gray-600 dark:text-gray-300 mb-6">参与技术交流活动、演讲分享、在线讲座等，共同推动技术社区发展</p>
+                <ul class="text-left text-sm text-gray-500 dark:text-gray-400 space-y-2">
+                  <li>• 技术演讲分享</li>
+                  <li>• 在线技术讲座</li>
+                  <li>• 博客文章合作</li>
+                  <li>• 技术社区建设</li>
                 </ul>
               </div>
-            </UiCard>
+            </Card>
           </div>
         </div>
       </section>
@@ -268,39 +216,29 @@
       <!-- 常见问题 -->
       <section class="py-20 px-4 sm:px-6 lg:px-8">
         <div class="max-w-4xl mx-auto">
-          <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 md:p-12">
-            <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-8 text-center">常见问题</h2>
+          <Card variant="elevated" padding="xl">
+            <div class="text-center mb-12">
+              <h2 class="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">常见问题</h2>
+              <p class="text-xl text-gray-600 dark:text-gray-300">关于合作的一些常见疑问</p>
+            </div>
             
             <div class="space-y-8">
-              <div>
-                <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">技术问题</h3>
-                <p class="text-gray-600 dark:text-gray-300 mb-2">如果你有具体的技术问题，建议：</p>
-                <ul class="text-gray-600 dark:text-gray-300 list-disc list-inside space-y-1 ml-4">
-                  <li>提供完整的错误信息</li>
-                  <li>包含相关的代码片段</li>
-                  <li>说明你已经尝试过的解决方案</li>
-                </ul>
+              <div class="border-b border-gray-200 dark:border-gray-700 pb-6">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-3">如何开始合作？</h3>
+                <p class="text-gray-600 dark:text-gray-300">直接通过邮件联系我，简要描述您的项目需求和合作方式。我会在24小时内回复，并安排进一步的沟通。</p>
               </div>
-
-              <div>
-                <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">合作咨询</h3>
-                <p class="text-gray-600 dark:text-gray-300 mb-2">如果你想讨论合作机会，请告诉我：</p>
-                <ul class="text-gray-600 dark:text-gray-300 list-disc list-inside space-y-1 ml-4">
-                  <li>项目的具体需求</li>
-                  <li>预期的时间线</li>
-                  <li>预算范围（如适用）</li>
-                </ul>
+              
+              <div class="border-b border-gray-200 dark:border-gray-700 pb-6">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-3">收费标准如何？</h3>
+                <p class="text-gray-600 dark:text-gray-300">根据项目复杂度和时间投入制定合理的收费标准。技术咨询和小型项目可以灵活协商，长期合作有优惠政策。</p>
               </div>
-
-              <div class="bg-blue-50 dark:bg-blue-900/20 rounded-xl p-6">
-                <h3 class="text-lg font-semibold text-blue-900 dark:text-blue-300 mb-2">💡 温馨提示</h3>
-                <p class="text-blue-800 dark:text-blue-200">
-                  我通常在工作日的9:00-18:00（GMT+8）较为活跃。如果是开源项目相关的问题，建议在GitHub上创建Issue。
-                  对于学习相关的问题，我很乐意提供指导和建议。
-                </p>
+              
+              <div>
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-3">支持远程合作吗？</h3>
+                <p class="text-gray-600 dark:text-gray-300">是的，我支持远程合作。通过在线会议、项目管理工具等方式保持高效沟通，确保项目顺利进行。</p>
               </div>
             </div>
-          </div>
+          </Card>
         </div>
       </section>
     </main>
@@ -309,8 +247,6 @@
 
 <script setup lang="ts">
 import { useAuthorInfo, usePageConfig, useFormattedSocialLinks } from '~/composables/useSiteConfig'
-import { useApi, useApiState } from '~/composables/useApi'
-import { createContactFormValidator } from '~/utils/validate'
 
 // 从全局配置获取数据
 const author = useAuthorInfo()
@@ -318,86 +254,29 @@ const pageConfig = usePageConfig()
 const socialLinks = useFormattedSocialLinks()
 const contactConfig = computed(() => pageConfig.value.contact)
 
-// 使用API服务
-const { contact: contactApi } = useApi()
-const { loading, error, execute } = useApiState()
-
-// 表单数据
-const form = ref({
-  name: '',
-  email: '',
-  subject: '',
-  message: ''
-})
-
-// 表单验证错误
-const errors = ref<Record<string, string>>({})
-const showSuccessMessage = ref(false)
-
-// 创建验证器实例
-const validator = createContactFormValidator()
-
-// 主题选项
-const subjectOptions = [
-  { label: '技术咨询', value: 'tech-consulting' },
-  { label: '项目合作', value: 'project-collaboration' },
-  { label: '内容合作', value: 'content-collaboration' },
-  { label: '技术分享', value: 'tech-sharing' },
-  { label: '其他问题', value: 'other' }
-]
-
-// 表单验证
-const validateForm = () => {
-  const validationErrors = validator.validateForm(form.value)
-  errors.value = validationErrors
-  return Object.keys(validationErrors).length === 0
+// 社交媒体背景颜色映射
+const getSocialBgClass = (socialName: string): string => {
+  const bgClasses = {
+    'GitHub': 'bg-gray-900',
+    'Twitter': 'bg-blue-400',
+    'LinkedIn': 'bg-blue-600',
+    'Email': 'bg-red-600',
+    'Website': 'bg-green-600'
+  }
+  return bgClasses[socialName as keyof typeof bgClasses] || 'bg-gray-600'
 }
 
-// 实时字段验证
-const validateField = (fieldName: string) => {
-  const fieldError = validator.validateField(fieldName, form.value[fieldName as keyof typeof form.value])
-  if (fieldError) {
-    errors.value = { ...errors.value, [fieldName]: fieldError }
-  } else {
-    const newErrors = { ...errors.value }
-    delete newErrors[fieldName]
-    errors.value = newErrors
+// 处理邮件链接点击
+const handleEmailClick = () => {
+  if (process.client) {
+    window.location.href = `mailto:${author.value.email}`
   }
 }
 
-// 提交表单
-const submitForm = async () => {
-  const result = await execute(
-    () => contactApi.sendMessage(form.value),
-    {
-      successMessage: '消息发送成功！我会尽快回复您。',
-      errorMessage: '发送失败，请稍后重试。',
-      showToast: true
-    }
-  )
-
-  if (result) {
-    // 重置表单
-    form.value = {
-      name: '',
-      email: '',
-      subject: '',
-      message: ''
-    }
-    errors.value = {}
-    showSuccessMessage.value = true
-    
-    // 3秒后隐藏成功消息
-    setTimeout(() => {
-      showSuccessMessage.value = false
-    }, 3000)
-  }
-}
-
-// 提交处理
-const handleSubmit = async () => {
-  if (validateForm()) {
-    await submitForm()
+// 处理社交链接点击
+const handleSocialClick = (href: string) => {
+  if (process.client) {
+    window.open(href, '_blank')
   }
 }
 
