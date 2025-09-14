@@ -7,8 +7,6 @@ export function useDebugTools() {
   const clearLocalStorage = () => {
     if (process.client) {
       localStorage.removeItem('blogflow_posts')
-      console.log('✅ 已清除 blogflow_posts 本地存储')
-      
       // 刷新页面以重新初始化数据
       window.location.reload()
     }
@@ -17,8 +15,9 @@ export function useDebugTools() {
   const showLocalStorageData = () => {
     if (process.client) {
       const data = localStorage.getItem('blogflow_posts')
-      console.log('📦 本地存储数据:', data ? JSON.parse(data) : '无数据')
+      return data ? JSON.parse(data) : []
     }
+    return []
   }
 
   const addTestPost = () => {
@@ -63,7 +62,6 @@ console.log('Hello, World!');
       posts.push(testPost)
       localStorage.setItem('blogflow_posts', JSON.stringify(posts))
       
-      console.log('✅ 已添加测试文章:', testPost)
       window.location.reload()
     }
   }

@@ -154,8 +154,8 @@
 
       <!-- 文章正文 -->
       <article class="prose prose-lg dark:prose-invert max-w-none prose-headings:font-bold prose-h1:text-4xl prose-h2:text-3xl prose-h3:text-2xl prose-h4:text-xl prose-h5:text-lg prose-h6:text-base">
-        <!-- 渲染 Markdown 内容 -->
-        <div v-if="post?.content" v-html="renderMarkdown(post.content)" />
+        <!-- 渲染 Markdown 内容，移除重复的封面图片 -->
+        <div v-if="post?.content" v-html="renderMarkdown(post.content, post.cover)" />
         <!-- 备选方案：如果有路径信息，使用 ContentRenderer -->
         <ContentRenderer v-else-if="post?.path" :value="post" />
         <!-- 兜底方案：显示描述 -->
@@ -246,6 +246,7 @@ import { useCodeTheme } from '~/composables/useCodeTheme'
 import { getPostsAction } from '~/composables/usePostActions'
 import { useUIStore } from '~/stores/ui'
 import { useMarkdown } from '~/composables/useMarkdown'
+import { useAutoTextSelection } from '~/composables/useTextSelection'
 
 const route = useRoute()
 const slug = computed(() => (route.params as { slug: string }).slug);
@@ -268,6 +269,9 @@ const { $analytics, $codeHighlight } = useNuxtApp()
 // 使用代码主题功能
 const { initialize: initCodeTheme } = useCodeTheme()
 
+// 使用智能文本选择
+useAutoTextSelection()
+
 // 获取文章数据 - 修复点不开的问题
 const post = ref<ContentPost | null>(null)
 
@@ -285,7 +289,6 @@ const loadPost = async () => {
     
     post.value = postData
   } catch (err) {
-    console.error('获取文章失败:', err)
     error.value = '抱歉，未找到该文章'
   } finally {
     loading.value = false
@@ -296,16 +299,10 @@ const loadPost = async () => {
 const getPostData = async (): Promise<ContentPost | null> => {
   // 优先从localStorage获取文章
   const posts = await getPostsAction()
-  console.log('🔍 当前所有文章:', posts)
-  console.log('🔍 当前 slug:', slug.value)
   
   const foundPost = posts.find(p => p.slug === slug.value)
-  console.log('🔍 找到的文章:', foundPost)
   
   if (foundPost) {
-    console.log('📝 文章内容长度:', foundPost.content?.length || 0)
-    console.log('📝 文章内容预览:', foundPost.content?.substring(0, 100) + '...')
-    
     // 转换为ContentPost格式
     return {
       ...foundPost,
@@ -321,7 +318,6 @@ const getPostData = async (): Promise<ContentPost | null> => {
       }
     } as ContentPost
   } else {
-    console.log('❌ 未找到文章，尝试备用方案')
     // 备用方案：使用Content API
     return await blogAPI.getPostBySlug(slug.value)
   }

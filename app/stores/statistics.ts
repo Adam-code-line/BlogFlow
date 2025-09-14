@@ -147,6 +147,7 @@ export const useStatisticsStore = defineStore('statistics', () => {
       const totalCategories = new Set(posts.map(post => post.category).filter(Boolean)).size
       const totalTags = new Set(posts.flatMap(post => post.tags || [])).size
       
+      // 计算真实的总浏览量，如果没有数据则为0
       const totalViews = posts.reduce((sum, post) => sum + (post.views || 0), 0)
       
       return {
@@ -155,9 +156,11 @@ export const useStatisticsStore = defineStore('statistics', () => {
         draftPosts,
         totalCategories,
         totalTags,
-        totalViews: Math.max(totalViews, 2500), // 确保最小值
-        totalProjects: 15, // 固定值，后续从API获取
-        totalShares: Math.max(publishedPosts * 3, 100) // 基于文章数计算
+        totalViews, // 使用真实数据，没有则为0
+        totalLikes: 0, // 暂时设为0，等待后续添加likes字段
+        totalComments: 0, // 暂时设为0，等待后续添加comments字段  
+        totalProjects: 0, // 暂时设为0，后续从真实数据源获取
+        totalShares: 0 // 暂时设为0，后续从真实数据源获取
       }
     } catch (error) {
       console.error('计算统计数据失败:', error)

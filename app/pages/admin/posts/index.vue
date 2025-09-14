@@ -155,7 +155,7 @@
                   <div class="space-y-1">
                     <div class="flex items-center">
                       <Icon name="i-heroicons-eye" class="h-4 w-4 mr-1" />
-                      {{ (post as any).views || Math.floor(Math.random() * 500) + 100 }}
+                      {{ (post as any).views || 0 }}
                     </div>
                   </div>
                 </td>

@@ -45,7 +45,7 @@
           <Icon name="heroicons:fire" class="w-5 h-5 text-orange-500 mr-2" />
           热门文章
         </h3>
-        <div class="space-y-4">
+        <div v-if="popularPosts.length > 0" class="space-y-4">
           <article 
             v-for="(post, index) in popularPosts" 
             :key="post.slug"
@@ -62,14 +62,18 @@
                   </h4>
                   <div class="flex items-center mt-1 text-xs text-gray-500 dark:text-gray-400">
                     <Icon name="heroicons:eye" class="w-3 h-3 mr-1" />
-                    <span>{{ post.views }}</span>
-                    <span class="mx-2">•</span>
-                    <span>{{ formatDate(post.date) }}</span>
+                    <span>{{ post.views || 0 }}</span>
+                    <span v-if="post.date" class="mx-2">•</span>
+                    <span v-if="post.date">{{ formatDate(post.date) }}</span>
                   </div>
                 </div>
               </div>
             </NuxtLink>
           </article>
+        </div>
+        <div v-else class="text-center py-8 text-gray-500 dark:text-gray-400">
+          <Icon name="heroicons:document-text" class="w-12 h-12 mx-auto mb-2 opacity-50" />
+          <p class="text-sm">暂无热门文章</p>
         </div>
       </div>
 
@@ -79,16 +83,20 @@
           <Icon name="heroicons:tag" class="w-5 h-5 text-blue-500 mr-2" />
           热门标签
         </h3>
-        <div class="flex flex-wrap gap-2">
+        <div v-if="popularTags.length > 0" class="flex flex-wrap gap-2">
           <NuxtLink
             v-for="tag in popularTags"
             :key="tag.name"
             :to="`/blog?tag=${encodeURIComponent(tag.name)}`"
             class="tag-link"
-            :style="{ fontSize: `${Math.max(0.75, Math.min(1.2, tag.count / 10))}rem` }"
+            :style="{ fontSize: `${Math.max(0.75, Math.min(1.2, tag.count / Math.max(popularTags[0]?.count || 1, 5)))}rem` }"
           >
-            {{ tag.name }}
+            {{ tag.name }} ({{ tag.count }})
           </NuxtLink>
+        </div>
+        <div v-else class="text-center py-8 text-gray-500 dark:text-gray-400">
+          <Icon name="heroicons:tag" class="w-12 h-12 mx-auto mb-2 opacity-50" />
+          <p class="text-sm">暂无标签</p>
         </div>
       </div>
 
@@ -125,6 +133,8 @@ import { useFormatters } from '~/composables/useFormatters'
 import { getPostsAction } from '~/composables/usePostActions'
 import type { PostData } from '~/composables/usePostActions'
 import { useStatisticsStore } from '~/stores/statistics'
+// 明确导入 StatisticsDisplay 组件
+import StatisticsDisplay from '~/components/ui/StatisticsDisplay.vue'
 
 // 从全局配置获取作者信息
 const author = useAuthorInfo()
@@ -168,45 +178,42 @@ const authorInfo = computed(() => ({
   ]
 }))
 
-// 热门文章
-const popularPosts = [
-  {
-    title: 'Vue 3 Composition API 完全指南',
-    slug: 'vue3-composition-api-guide',
-    views: '2.1k',
-    date: '2024-01-15'
-  },
-  {
-    title: '前端工程化最佳实践',
-    slug: 'frontend-engineering-guide',
-    views: '1.8k',
-    date: '2024-01-10'
-  },
-  {
-    title: 'TypeScript 高级类型实战',
-    slug: 'typescript-best-practices',
-    views: '1.5k',
-    date: '2024-01-05'
-  },
-  {
-    title: 'Nuxt 3 博客开发教程',
-    slug: 'nuxt-blog-tutorial',
-    views: '1.2k',
-    date: '2024-01-01'
-  }
-]
+// 热门文章 - 基于真实数据
+const popularPosts = computed(() => {
+  if (!posts.value.length) return []
+  
+  // 按浏览量排序，取前4篇
+  return posts.value
+    .filter(post => post.views && post.views > 0) // 只显示有浏览量的文章
+    .sort((a, b) => (b.views || 0) - (a.views || 0))
+    .slice(0, 4)
+    .map(post => ({
+      title: post.title,
+      slug: post.slug || post.id,
+      views: post.views || 0,
+      date: post.publishedAt || post.createdAt
+    }))
+})
 
-// 热门标签
-const popularTags = [
-  { name: 'Vue.js', count: 15 },
-  { name: 'TypeScript', count: 12 },
-  { name: 'JavaScript', count: 20 },
-  { name: 'Nuxt.js', count: 8 },
-  { name: '前端工程化', count: 10 },
-  { name: 'CSS', count: 6 },
-  { name: 'Node.js', count: 7 },
-  { name: '性能优化', count: 5 }
-]
+// 热门标签 - 基于真实数据
+const popularTags = computed(() => {
+  if (!posts.value.length) return []
+  
+  const tagCounts = new Map<string, number>()
+  
+  posts.value.forEach(post => {
+    if (post.tags && post.tags.length > 0) {
+      post.tags.forEach(tag => {
+        tagCounts.set(tag, (tagCounts.get(tag) || 0) + 1)
+      })
+    }
+  })
+  
+  return Array.from(tagCounts.entries())
+    .map(([name, count]) => ({ name, count }))
+    .sort((a, b) => b.count - a.count)
+    .slice(0, 8) // 显示前8个标签
+})
 
 // 动态归档数据 - 基于实际文章数据
 const archiveData = computed(() => {

@@ -154,7 +154,6 @@ export const useBlogStore = defineStore('blog', {
         let localPosts: any[] = []
         try {
           localPosts = await getPostsAction()
-          console.log('从localStorage加载的文章:', localPosts)
         } catch (error) {
           console.warn('Failed to load posts from localStorage:', error)
         }
@@ -184,7 +183,6 @@ export const useBlogStore = defineStore('blog', {
         // 更新分页信息
         this.updatePagination()
         
-        console.log('文章加载完成:', this.posts.length, '篇文章')
       } catch (error) {
         this.postsError = '获取文章列表失败'
         console.error('Failed to fetch posts:', error)

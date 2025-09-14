@@ -188,8 +188,8 @@ import { useBlogPosts } from '~/composables/useContent'
 import { useFormatters } from '~/composables/useFormatters'
 import { useCodeTheme } from '~/composables/useCodeTheme'
 import { useAuthorInfo, useSiteConfig } from '~/composables/useSiteConfig'
-// 明确导入 ThemeToggle 组件
-import ThemeToggle from '~/components/ui/ThemeToggle.vue'
+// 明确导入 StatisticsDisplay 组件
+import StatisticsDisplay from '~/components/ui/StatisticsDisplay.vue'
 
 // 使用 composables
 const blogAPI = useBlogPosts()

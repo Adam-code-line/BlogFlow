@@ -147,9 +147,6 @@ export async function updatePostAction(postId: string, postData: Partial<PostDat
       updatedAt: new Date().toISOString()
     }
     
-    console.log('📝 更新后数据:', updatedPost)
-    console.log('📝 Content 字段长度:', updatedPost.content?.length || 0)
-    
     posts[postIndex] = updatedPost
     
     // 保存到本地存储
@@ -298,7 +295,7 @@ function hello() {
         publishedAt: new Date().toISOString(),
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
-        views: 128
+        views: 0
       },
       {
         id: '2',
@@ -335,7 +332,7 @@ function hello() {
         publishedAt: new Date().toISOString(),
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
-        views: 50
+        views: 0
       }
     ]
     

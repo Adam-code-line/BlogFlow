@@ -37,26 +37,25 @@
             </NuxtLink>
             
             <!-- 主题切换 -->
-            <ThemeToggle />
+            <UiThemeToggle />
             
             <!-- 通知图标 -->
-            <UButton
-              variant="ghost"
-              size="sm"
-              square
+            <button
+              class="p-2 text-gray-400 hover:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors duration-200"
             >
               <Icon name="i-heroicons-bell" class="h-5 w-5" />
-            </UButton>
+            </button>
             
             <!-- 用户下拉菜单 -->
-            <UDropdown :items="userMenuItems" :popper="{ placement: 'bottom-end' }">
-              <UAvatar
-                src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face"
-                alt="用户头像"
-                size="sm"
-                class="cursor-pointer"
-              />
-            </UDropdown>
+            <UiSimpleActionMenu :actions="userMenuItems">
+              <div class="cursor-pointer">
+                <img
+                  src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face"
+                  alt="用户头像"
+                  class="w-8 h-8 rounded-full object-cover"
+                />
+              </div>
+            </UiSimpleActionMenu>
           </div>
         </div>
       </div>
@@ -191,24 +190,30 @@ const adminMenuItemClass = computed(() => [
 
 // 用户菜单项
 const userMenuItems = [
-  [{
-    label: '个人资料',
-    icon: 'i-heroicons-user-circle',
-    to: '/admin/profile'
-  }],
-  [{
-    label: '设置',
-    icon: 'i-heroicons-cog-6-tooth',
-    to: '/admin/settings'
-  }],
-  [{
-    label: '退出登录',
-    icon: 'i-heroicons-arrow-right-on-rectangle',
-    click: () => {
-      // 处理退出登录
-      console.log('退出登录')
+  [
+    {
+      label: '个人资料',
+      icon: 'i-heroicons-user-circle',
+      click: () => navigateTo('/admin/profile')
     }
-  }]
+  ],
+  [
+    {
+      label: '设置',
+      icon: 'i-heroicons-cog-6-tooth',
+      click: () => navigateTo('/admin/settings')
+    }
+  ],
+  [
+    {
+      label: '退出登录',
+      icon: 'i-heroicons-arrow-right-on-rectangle',
+      click: () => {
+        // 处理退出登录
+        console.log('退出登录')
+      }
+    }
+  ]
 ]
 
 // 监听路由变化，关闭移动端侧边栏

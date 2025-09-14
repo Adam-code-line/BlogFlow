@@ -377,35 +377,36 @@
                       <p class="text-xs text-gray-500 dark:text-gray-400">在首页优先展示</p>
                     </div>
                   </div>
-                  <UToggle
-                    v-model="form.featured"
-                    size="md"
-                  />
+                  <!-- 自定义切换开关 -->
+                  <label class="relative inline-flex cursor-pointer">
+                    <input 
+                      type="checkbox" 
+                      v-model="form.featured" 
+                      class="sr-only peer"
+                    >
+                    <div class="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+                  </label>
                 </div>
               </div>
 
               <!-- 快速操作按钮 -->
               <div class="grid grid-cols-2 gap-3 pt-4 border-t border-gray-100 dark:border-gray-700">
-                <UButton
-                  variant="outline"
-                  size="sm"
-                  icon="heroicons:document-duplicate"
+                <button
                   @click="saveAsDraft"
-                  :loading="saving"
-                  block
+                  :disabled="saving"
+                  class="flex items-center justify-center space-x-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
                 >
-                  保存草稿
-                </UButton>
-                <UButton
-                  size="sm"
-                  icon="heroicons:rocket-launch"
+                  <Icon name="heroicons:document-duplicate" class="w-4 h-4" />
+                  <span>{{ saving ? '保存中...' : '保存草稿' }}</span>
+                </button>
+                <button
                   @click="publishPost"
-                  :loading="publishing"
-                  block
-                  class="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700"
+                  :disabled="publishing"
+                  class="flex items-center justify-center space-x-2 px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
                 >
-                  发布
-                </UButton>
+                  <Icon name="heroicons:rocket-launch" class="w-4 h-4" />
+                  <span>{{ publishing ? '发布中...' : '发布' }}</span>
+                </button>
               </div>
             </div>
           </div>
@@ -420,7 +421,7 @@
                 </div>
                 <div>
                   <h3 class="font-semibold text-gray-900 dark:text-white">封面图片</h3>
-                  <p class="text-xs text-gray-600 dark:text-gray-400">吸引读者的第一印象</p>
+                  <p class="text-xs text-gray-600 dark:text-gray-400">吸引读者的第一印象，不会在文章内容中显示</p>
                 </div>
               </div>
             </div>
@@ -585,6 +586,7 @@
 // 导入组件
 import CherryMarkdownEditor from '~/components/editor/CherryMarkdownEditor.vue'
 import { useUtils } from '~/composables/useFormatters'
+import { useMarkdown } from '~/composables/useMarkdown'
 import { createPostAction, updatePostAction, getPostByIdAction, type PostData } from '~/composables/usePostActions'
 
 // 设置布局
@@ -631,13 +633,14 @@ const form = ref({
   featured: false,
   slug: '',
   metaDescription: '',
-  keywords: ''
+  keywords: '',
+  views: 0
 })
 
-// 统计数据
-const stats = ref({
-  views: 1250
-})
+// 统计数据 - 基于真实文章数据
+const stats = computed(() => ({
+  views: form.value.views || 0
+}))
 
 // 计算属性
 const wordCount = computed(() => {
@@ -724,9 +727,18 @@ const handleFileUpload = async (event: Event) => {
         clearInterval(uploadInterval)
         uploadProgress.value = 100
         form.value.cover = e.target?.result as string
+        
+        // 自动清理内容中可能的重复封面图片
+        if (form.value.content && form.value.cover) {
+          const { removeDuplicateCoverImage } = useMarkdown()
+          form.value.content = removeDuplicateCoverImage(form.value.content, form.value.cover)
+        }
+        
         setTimeout(() => {
           uploading.value = false
           uploadProgress.value = 0
+          // 提示用户封面图片已设置
+          console.log('✅ 封面图片已设置，且已从文章内容中移除重复图片')
         }, 500)
         resolve(true)
       }
@@ -755,6 +767,14 @@ const selectFromUnsplash = () => {
   const randomId = Math.floor(Math.random() * 1000) + 1
   
   form.value.cover = `https://images.unsplash.com/photo-${1500000000000 + randomId * 1000}?w=800&h=400&fit=crop&q=80&auto=format&keywords=${randomQuery}`
+  
+  // 自动清理内容中可能的重复封面图片
+  if (form.value.content && form.value.cover) {
+    const { removeDuplicateCoverImage } = useMarkdown()
+    form.value.content = removeDuplicateCoverImage(form.value.content, form.value.cover)
+  }
+  
+  console.log('✅ 封面图片已从Unsplash选择，且已从文章内容中移除重复图片')
 }
 
 const saveAsDraft = debounce(async () => {
@@ -762,6 +782,12 @@ const saveAsDraft = debounce(async () => {
   try {
     // 更新标签
     updateTags()
+    
+    // 清理内容中重复的封面图片
+    if (form.value.cover && form.value.content) {
+      const { removeDuplicateCoverImage } = useMarkdown()
+      form.value.content = removeDuplicateCoverImage(form.value.content, form.value.cover)
+    }
     
     console.log('💾 保存草稿 - 表单数据:', form.value)
     console.log('💾 Content 字段:', form.value.content)
@@ -793,6 +819,12 @@ const publishPost = throttle(async () => {
   try {
     // 更新标签
     updateTags()
+    
+    // 清理内容中重复的封面图片
+    if (form.value.cover && form.value.content) {
+      const { removeDuplicateCoverImage } = useMarkdown()
+      form.value.content = removeDuplicateCoverImage(form.value.content, form.value.cover)
+    }
     
     console.log('🚀 发布文章 - 表单数据:', form.value)
     console.log('🚀 Content 字段:', form.value.content)
@@ -840,7 +872,8 @@ const initializeForm = async () => {
           featured: post.featured || false,
           slug: post.slug || '',
           metaDescription: post.metaDescription || '',
-          keywords: post.keywords || ''
+          keywords: post.keywords || '',
+          views: post.views || 0
         }
         tagsInput.value = post.tags.join(', ')
       } else {
@@ -861,7 +894,8 @@ const initializeForm = async () => {
         featured: false,
         slug: 'example-post',
         metaDescription: '这是示例文章的 meta 描述',
-        keywords: 'Vue.js, TypeScript, 前端开发'
+        keywords: 'Vue.js, TypeScript, 前端开发',
+        views: 0
       }
       tagsInput.value = form.value.tags.join(', ')
     }

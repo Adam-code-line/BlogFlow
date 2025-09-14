@@ -65,7 +65,7 @@
             </div>
             <div class="flex items-center space-x-2 text-xs text-gray-500 dark:text-gray-400">
               <Icon name="i-heroicons-eye" class="h-4 w-4" />
-              <span>{{ (post as any).views || Math.floor(Math.random() * 500) + 100 }}</span>
+              <span>{{ (post as any).views || 0 }}</span>
             </div>
           </div>
         </div>
@@ -119,6 +119,7 @@
 
 <script setup lang="ts">
 import { useBlogStore } from '~/stores/blog'
+import { useStatisticsStore } from '~/stores/statistics'
 import type { ContentPost } from '~/types'
 import { useFormatters } from '~/composables/useFormatters'
 
@@ -133,17 +134,18 @@ definePageMeta({
 
 // Store
 const blogStore = useBlogStore()
+const statisticsStore = useStatisticsStore()
 
 // 页面标题
 useHead({
   title: '管理仪表盘 - BlogFlow'
 })
 
-// 统计数据
-const stats = ref({
-  totalPosts: 0,
-  totalViews: 0
-})
+// 统计数据 - 使用响应式 store 数据
+const stats = computed(() => ({
+  totalPosts: statisticsStore.statistics.totalPosts,
+  totalViews: statisticsStore.statistics.totalViews
+}))
 
 // 最近文章
 const recentPosts = ref<ContentPost[]>([])
@@ -160,11 +162,8 @@ const loadDashboardData = async () => {
     await blogStore.fetchAllPosts()
     recentPosts.value = blogStore.posts.slice(0, 5)
     
-    // 更新统计数据
-    stats.value = {
-      totalPosts: blogStore.posts.length,
-      totalViews: Math.floor(Math.random() * 10000) + 5000 // 模拟数据
-    }
+    // 刷新统计数据
+    await statisticsStore.fetchStatistics()
   } catch (error) {
     console.error('Failed to load dashboard data:', error)
   }

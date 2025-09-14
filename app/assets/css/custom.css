@@ -14,8 +14,6 @@
 input,
 textarea,
 [contenteditable="true"],
-.prose,
-.prose *,
 pre,
 code,
 .markdown-content,
@@ -24,6 +22,50 @@ code,
   -moz-user-select: text;
   -ms-user-select: text;
   user-select: text;
+}
+
+/* 博客内容区域：只允许长按选择，避免点击出现光标 */
+.prose,
+.prose * {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  cursor: default;
+  /* 平滑过渡效果 */
+  transition: all 0.15s ease;
+}
+
+/* 长按选择文本（移动端） */
+.prose {
+  -webkit-touch-callout: default;
+}
+
+/* 鼠标悬停时的选择提示 */
+.prose:hover,
+.prose:hover * {
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  -ms-user-select: text;
+  user-select: text;
+  cursor: text;
+}
+
+/* 桌面端智能选择 */
+@media (hover: hover) and (pointer: fine) {
+  .prose,
+  .prose * {
+    -webkit-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    user-select: text;
+  }
+  
+  /* 鼠标离开时的平滑过渡 */
+  .prose:not(:hover),
+  .prose:not(:hover) * {
+    transition: user-select 0.2s ease, cursor 0.2s ease;
+  }
 }
 
 /* 链接和按钮的交互优化 */
@@ -42,6 +84,29 @@ textarea,
 select {
   -webkit-tap-highlight-color: transparent;
   -webkit-touch-callout: none;
+}
+
+/* 图片和媒体元素优化 */
+img,
+video,
+canvas,
+svg {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-user-drag: none;
+  -webkit-touch-callout: none;
+  pointer-events: auto;
+}
+
+/* 内容区域的图片可以被拖拽（但不能选择） */
+.prose img,
+.post-detail img,
+.blog-content img,
+article img {
+  -webkit-user-drag: auto;
+  cursor: pointer;
 }
 
 /* 标题和导航不应该被选中 */
@@ -66,4 +131,142 @@ header *,
   -moz-user-select: text;
   -ms-user-select: text;
   user-select: text;
+}
+
+/* 博客文章内容特殊处理 - 智能文本选择 */
+.post-detail,
+.post-detail *,
+.blog-content,
+.blog-content *,
+article,
+article * {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  cursor: default;
+  /* 平滑的选择过渡 */
+  transition: user-select 0.1s ease;
+}
+
+/* 文章内容区域：鼠标悬停时允许选择 */
+.post-detail:hover,
+.post-detail:hover *,
+.blog-content:hover,
+.blog-content:hover *,
+article:hover,
+article:hover * {
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  -ms-user-select: text;
+  user-select: text;
+  cursor: text;
+}
+
+/* 代码块始终可选择 */
+.post-detail pre,
+.post-detail code,
+.blog-content pre,
+.blog-content code,
+article pre,
+article code {
+  -webkit-user-select: text !important;
+  -moz-user-select: text !important;
+  -ms-user-select: text !important;
+  user-select: text !important;
+  cursor: text !important;
+}
+
+/* 桌面端优化：双击和拖拽选择 */
+@media (hover: hover) and (pointer: fine) {
+  .post-detail,
+  .post-detail *,
+  .blog-content,
+  .blog-content *,
+  article,
+  article * {
+    -webkit-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    user-select: text;
+  }
+  
+  /* 鼠标离开时快速恢复 */
+  .post-detail:not(:hover),
+  .post-detail:not(:hover) *,
+  .blog-content:not(:hover),
+  .blog-content:not(:hover) *,
+  article:not(:hover),
+  article:not(:hover) * {
+    transition: user-select 0.2s ease;
+  }
+}
+
+/* 文本选择视觉优化 */
+::selection {
+  background-color: rgba(59, 130, 246, 0.3);
+  color: inherit;
+}
+
+::-moz-selection {
+  background-color: rgba(59, 130, 246, 0.3);
+  color: inherit;
+}
+
+/* 暗色模式下的选择颜色 */
+.dark ::selection {
+  background-color: rgba(96, 165, 250, 0.4);
+  color: inherit;
+}
+
+.dark ::-moz-selection {
+  background-color: rgba(96, 165, 250, 0.4);
+  color: inherit;
+}
+
+/* 代码块的选择颜色 */
+pre ::selection,
+code ::selection {
+  background-color: rgba(168, 85, 247, 0.3);
+  color: inherit;
+}
+
+pre ::-moz-selection,
+code ::-moz-selection {
+  background-color: rgba(168, 85, 247, 0.3);
+  color: inherit;
+}
+
+/* 优化触摸设备的选择体验 */
+@media (hover: none) and (pointer: coarse) {
+  .prose,
+  .prose *,
+  .post-detail,
+  .post-detail *,
+  .blog-content,
+  .blog-content *,
+  article,
+  article * {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
+  }
+  
+  /* 长按启用选择 */
+  .prose:active,
+  .prose:active *,
+  .post-detail:active,
+  .post-detail:active *,
+  .blog-content:active,
+  .blog-content:active *,
+  article:active,
+  article:active * {
+    -webkit-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    user-select: text;
+    -webkit-touch-callout: default;
+  }
 }

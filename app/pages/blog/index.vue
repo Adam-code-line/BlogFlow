@@ -34,6 +34,7 @@
 import { useBlogStore } from '~/stores/blog'
 import { useCodeTheme } from '~/composables/useCodeTheme'
 import { initializeSamplePosts } from '~/composables/usePostActions'
+import { useAutoTextSelection } from '~/composables/useTextSelection'
 
 // 页面元数据
 useSeoMeta({
@@ -48,6 +49,9 @@ const blogStore = useBlogStore()
 
 // 使用代码主题功能
 const { initialize: initCodeTheme } = useCodeTheme()
+
+// 使用智能文本选择
+useAutoTextSelection()
 
 // 初始化示例数据（如果需要）
 initializeSamplePosts()
