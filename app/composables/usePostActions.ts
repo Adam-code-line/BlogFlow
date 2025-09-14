@@ -17,8 +17,6 @@ export interface PostData {
   metaDescription?: string
   keywords?: string
   views?: number
-  likes?: number
-  comments?: number
   createdAt?: string
   updatedAt?: string
 }
@@ -93,9 +91,7 @@ export async function createPostAction(postData: PostData): Promise<PostData> {
       keywords: postData.keywords || '',
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
-      views: 0,
-      likes: 0,
-      comments: 0
+      views: 0
     }
     
     // 添加到文章列表
@@ -147,8 +143,6 @@ export async function updatePostAction(postId: string, postData: Partial<PostDat
       metaDescription: postData.metaDescription ?? existingPost.metaDescription,
       keywords: postData.keywords ?? existingPost.keywords,
       views: postData.views ?? existingPost.views,
-      likes: postData.likes ?? existingPost.likes,
-      comments: postData.comments ?? existingPost.comments,
       createdAt: existingPost.createdAt,
       updatedAt: new Date().toISOString()
     }
@@ -211,14 +205,33 @@ export async function deletePostAction(postId: string): Promise<boolean> {
     await new Promise(resolve => setTimeout(resolve, 300))
     
     const posts = getStoredPosts()
-    const filteredPosts = posts.filter(post => post.id !== postId)
+    console.log('删除前的文章列表:', posts.map(p => ({ id: p.id, title: p.title, slug: p.slug })))
+    console.log('要删除的标识符:', postId)
+    
+    // 使用id、slug或title来匹配文章
+    const filteredPosts = posts.filter(post => {
+      const matches = post.id === postId || 
+                     post.slug === postId || 
+                     post.title === postId ||
+                     post.slug === postId.replace('/blog/', '')
+      
+      if (matches) {
+        console.log('找到要删除的文章:', { id: post.id, title: post.title, slug: post.slug })
+      }
+      
+      return !matches
+    })
     
     if (filteredPosts.length === posts.length) {
+      console.log('没有找到匹配的文章')
       throw new Error('文章不存在')
     }
     
+    console.log('删除后的文章列表:', filteredPosts.map(p => ({ id: p.id, title: p.title, slug: p.slug })))
+    
     savePostsToStorage(filteredPosts)
     
+    console.log(`文章已删除: ${postId}`)
     return true
     
   } catch (error) {
@@ -285,9 +298,7 @@ function hello() {
         publishedAt: new Date().toISOString(),
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
-        views: 128,
-        likes: 15,
-        comments: 3
+        views: 128
       },
       {
         id: '2',
@@ -324,9 +335,7 @@ function hello() {
         publishedAt: new Date().toISOString(),
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
-        views: 50,
-        likes: 5,
-        comments: 1
+        views: 50
       }
     ]
     

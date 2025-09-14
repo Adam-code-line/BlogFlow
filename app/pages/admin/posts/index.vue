@@ -157,10 +157,6 @@
                       <Icon name="i-heroicons-eye" class="h-4 w-4 mr-1" />
                       {{ (post as any).views || Math.floor(Math.random() * 500) + 100 }}
                     </div>
-                    <div class="flex items-center">
-                      <Icon name="i-heroicons-heart" class="h-4 w-4 mr-1" />
-                      {{ (post as any).likes || Math.floor(Math.random() * 50) + 10 }}
-                    </div>
                   </div>
                 </td>
                 
@@ -172,7 +168,7 @@
                 <!-- 操作 -->
                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                   <UDropdown :items="getPostActions(post, index)">
-                    <UiButton
+                    <UButton
                       variant="ghost"
                       size="sm"
                       icon="i-heroicons-ellipsis-horizontal"
@@ -197,6 +193,15 @@
         </div>
       </div>
     </UiCard>
+
+    <!-- 使用封装的删除确认对话框 -->
+    <AdminDeleteConfirmDialog
+      v-model="deleteDialogOpen"
+      :item="deleteTarget?.item"
+      item-type="文章"
+      :on-confirm="executeDelete"
+      @cancel="cancelDelete"
+    />
   </div>
 </template>
 
@@ -204,6 +209,8 @@
 import { useBlogStore } from '~/stores/blog'
 import type { ContentPost } from '~/types'
 import { useFormatters, useUtils } from '~/composables/useFormatters'
+import { usePostDelete } from '~/composables/useDelete'
+import AdminDeleteConfirmDialog from '~/components/admin/DeleteConfirmDialog.vue'
 
 // 使用统一的格式化函数
 const { formatDateShort } = useFormatters()
@@ -224,12 +231,34 @@ const blogStore = useBlogStore()
 
 // 响应式数据
 const loading = ref(false)
+const deleting = ref(false)
 const searchQuery = ref('')
 const selectedCategory = ref('')
 const selectedStatus = ref('')
 const sortBy = ref('publishedAt')
 const currentPage = ref(1)
 const pageSize = ref(10)
+
+// 加载数据
+const loadPosts = async () => {
+  loading.value = true
+  try {
+    // 确保示例数据已初始化
+    const { initializeSamplePosts } = await import('~/composables/usePostActions')
+    initializeSamplePosts()
+    
+    await blogStore.fetchAllPosts()
+  } catch (error) {
+    console.error('加载文章失败:', error)
+  } finally {
+    loading.value = false
+  }
+}
+
+// 删除功能
+const { executeDelete, deleteDialogOpen, deleteTarget, cancelDelete, confirmDelete } = usePostDelete({
+  onRefresh: loadPosts
+})
 
 // 计算属性
 const posts = computed(() => blogStore.filteredPosts)
@@ -301,16 +330,8 @@ const editPost = (post: ContentPost) => {
 }
 
 const deletePost = async (post: ContentPost, index: number) => {
-  if (confirm('确定要删除这篇文章吗？此操作不可撤销。')) {
-    try {
-      // 这里应该调用删除 API
-      console.log('删除文章:', post.path)
-      // 临时从列表中移除
-      blogStore.posts.splice(index, 1)
-    } catch (error) {
-      console.error('删除文章失败:', error)
-    }
-  }
+  // 使用 confirmDelete 方法打开删除确认对话框
+  confirmDelete(post, 'post', index)
 }
 
 // 事件处理
@@ -331,18 +352,6 @@ const handleStatusChange = () => {
 
 const handleSortChange = () => {
   blogStore.sortBy = sortBy.value
-}
-
-// 加载数据
-const loadPosts = async () => {
-  loading.value = true
-  try {
-    await blogStore.fetchAllPosts()
-  } catch (error) {
-    console.error('加载文章失败:', error)
-  } finally {
-    loading.value = false
-  }
 }
 
 // 页面挂载时加载数据

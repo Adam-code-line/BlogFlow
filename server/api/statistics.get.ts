@@ -23,8 +23,6 @@ export default defineEventHandler(async (event) => {
       draftPosts: 0, // 暂时设为0
       totalCategories: new Set(posts.map(post => post.category).filter(Boolean)).size,
       totalTags: new Set(posts.flatMap(post => post.tags || [])).size,
-      totalLikes: posts.reduce((sum, post) => sum + (post.likes || 0), 0),
-      totalComments: posts.reduce((sum, post) => sum + (post.comments || 0), 0),
       lastUpdated: new Date().toISOString(),
       
       // 扩展统计信息

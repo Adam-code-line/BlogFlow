@@ -4,7 +4,30 @@
  */
 
 import { defineStore } from 'pinia'
-import type { StatisticsData } from '~/composables/useStatistics'
+
+export interface StatisticsData {
+  // 首页统计数据
+  totalPosts: number
+  totalProjects: number
+  totalShares: number
+  totalViews: number
+  
+  // 博客相关统计
+  publishedPosts: number
+  draftPosts: number
+  totalCategories: number
+  totalTags: number
+  
+  // 扩展统计
+  totalLikes: number
+  totalComments: number
+  
+  // 时间相关统计
+  lastUpdated: string
+  
+  // 扩展字段，便于后续添加
+  [key: string]: any
+}
 
 export const useStatisticsStore = defineStore('statistics', () => {
   
@@ -125,8 +148,6 @@ export const useStatisticsStore = defineStore('statistics', () => {
       const totalTags = new Set(posts.flatMap(post => post.tags || [])).size
       
       const totalViews = posts.reduce((sum, post) => sum + (post.views || 0), 0)
-      const totalLikes = posts.reduce((sum, post) => sum + (post.likes || 0), 0)
-      const totalComments = posts.reduce((sum, post) => sum + (post.comments || 0), 0)
       
       return {
         totalPosts: publishedPosts,
@@ -135,8 +156,6 @@ export const useStatisticsStore = defineStore('statistics', () => {
         totalCategories,
         totalTags,
         totalViews: Math.max(totalViews, 2500), // 确保最小值
-        totalLikes,
-        totalComments,
         totalProjects: 15, // 固定值，后续从API获取
         totalShares: Math.max(publishedPosts * 3, 100) // 基于文章数计算
       }
