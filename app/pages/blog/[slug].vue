@@ -86,21 +86,42 @@
         </div>
 
         <!-- 文章标题 -->
-        <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white mb-6 leading-tight">
+        <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white mb-8 leading-tight">
           {{ post?.title }}
         </h1>
+
+        <!-- 文章封面图 - 美观地融合在头部 -->
+        <div v-if="post?.cover" class="mb-8">
+          <div class="relative overflow-hidden rounded-2xl shadow-2xl bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 p-1">
+            <img
+              :src="post.cover"
+              :alt="post.title"
+              class="w-full h-64 md:h-80 lg:h-96 object-cover rounded-xl"
+              loading="lazy"
+            />
+            <!-- 渐变遮罩，让文字更易读 -->
+            <div class="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent rounded-xl"></div>
+          </div>
+        </div>
+
+        <!-- 文章描述 -->
+        <div class="mb-8">
+          <p class="text-xl md:text-2xl text-gray-700 dark:text-gray-300 leading-relaxed font-light">
+            {{ post?.description }}
+          </p>
+        </div>
 
         <!-- 文章元信息 -->
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
           <div class="flex items-center space-x-4">
             <img 
-              :src="post?.author?.avatar || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=48&h=48&fit=crop&crop=face'"
-              :alt="post?.author?.name"
+              :src="post?.author?.avatar || author.avatar"
+              :alt="post?.author?.name || author.name"
               class="w-12 h-12 rounded-full border-2 border-white shadow-sm"
             >
             <div>
               <div class="font-medium text-gray-900 dark:text-white">
-                {{ post?.author?.name || 'BlogFlow Author' }}
+                {{ post?.author?.name || author.name }}
               </div>
               <div class="text-sm text-gray-600 dark:text-gray-400">
                 {{ formatDate(post?.publishedAt || '') }}
@@ -121,11 +142,6 @@
           </div>
         </div>
 
-        <!-- 文章描述 -->
-        <p class="text-xl text-gray-600 dark:text-gray-300 mb-6">
-          {{ post?.description }}
-        </p>
-
         <!-- 文章标签 -->
         <div class="flex flex-wrap gap-2">
           <UBadge 
@@ -142,19 +158,9 @@
 
     <!-- 文章内容 -->
     <main class="max-w-4xl mx-auto px-4 py-8">
-      <!-- 文章封面图 -->
-      <div v-if="post?.cover" class="mb-8">
-        <NuxtImg
-          :src="post.cover"
-          :alt="post.title"
-          class="w-full max-h-96 object-cover rounded-xl shadow-lg"
-          loading="lazy"
-        />
-      </div>
-
       <!-- 文章正文 -->
       <article class="prose prose-lg dark:prose-invert max-w-none prose-headings:font-bold prose-h1:text-4xl prose-h2:text-3xl prose-h3:text-2xl prose-h4:text-xl prose-h5:text-lg prose-h6:text-base">
-        <!-- 渲染 Markdown 内容，移除重复的封面图片 -->
+        <!-- 渲染 Markdown 内容，确保移除重复的封面图片 -->
         <div v-if="post?.content" v-html="renderMarkdown(post.content, post.cover)" />
         <!-- 备选方案：如果有路径信息，使用 ContentRenderer -->
         <ContentRenderer v-else-if="post?.path" :value="post" />
@@ -246,7 +252,7 @@ import { useCodeTheme } from '~/composables/useCodeTheme'
 import { getPostsAction } from '~/composables/usePostActions'
 import { useUIStore } from '~/stores/ui'
 import { useMarkdown } from '~/composables/useMarkdown'
-import { useAutoTextSelection } from '~/composables/useTextSelection'
+import { useAuthorInfo } from '~/composables/useSiteConfig'
 
 const route = useRoute()
 const slug = computed(() => (route.params as { slug: string }).slug);
@@ -271,6 +277,9 @@ const { initialize: initCodeTheme } = useCodeTheme()
 
 // 使用智能文本选择
 useAutoTextSelection()
+
+// 获取站点作者信息
+const author = useAuthorInfo()
 
 // 获取文章数据 - 修复点不开的问题
 const post = ref<ContentPost | null>(null)
@@ -319,8 +328,8 @@ const getPostData = async (): Promise<ContentPost | null> => {
         excerpt: foundPost.description || '',
         readingTime: Math.ceil((foundPost.content || '').split(/\s+/).length / 200),
         author: {
-          name: 'BlogFlow Author',
-          avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=48&h=48&fit=crop&crop=face'
+          name: author.value.name,
+          avatar: author.value.avatar
         }
       } as ContentPost
       

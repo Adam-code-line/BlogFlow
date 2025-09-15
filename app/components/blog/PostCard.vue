@@ -76,12 +76,12 @@
         <div class="flex items-center justify-between pt-4 border-t border-gray-100 dark:border-gray-700">
           <div class="flex items-center space-x-2">
             <img 
-              :src="post.author?.avatar || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=32&h=32&fit=crop&crop=face'"
-              :alt="post.author?.name || 'Author'"
+              :src="post.author?.avatar || author.avatar"
+              :alt="post.author?.name || author.name"
               class="w-6 h-6 rounded-full"
             />
             <span class="text-sm text-gray-600 dark:text-gray-400">
-              {{ post.author?.name || 'BlogFlow Author' }}
+              {{ post.author?.name || author.name }}
             </span>
           </div>
           <div class="flex items-center space-x-3 text-xs text-gray-500 dark:text-gray-400">
@@ -182,6 +182,7 @@
 <script setup lang="ts">
 import type { ContentPost } from '~/types'
 import { useFormatters } from '~/composables/useFormatters'
+import { useAuthorInfo } from '~/composables/useSiteConfig'
 
 // 使用统一的格式化函数
 const { formatDate, formatNumber } = useFormatters()
@@ -211,6 +212,9 @@ const props = withDefaults(defineProps<PostCardProps>(), {
 })
 
 const emit = defineEmits<PostCardEmits>()
+
+// 获取站点作者信息
+const author = useAuthorInfo()
 
 // 卡片样式
 const cardClasses = computed(() => {

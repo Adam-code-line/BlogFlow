@@ -487,17 +487,6 @@
                   >
                     {{ uploading ? '上传中...' : '本地上传' }}
                   </UButton>
-                  
-                  <UButton
-                    variant="outline"
-                    size="sm"
-                    icon="heroicons:sparkles"
-                    @click="selectFromUnsplash"
-                    block
-                    class="border-blue-200 text-blue-700 hover:bg-blue-50 dark:border-blue-700 dark:text-blue-400 dark:hover:bg-blue-900/20"
-                  >
-                    随机精美图片
-                  </UButton>
                 </div>
                 
                 <!-- 隐藏的文件输入 -->
@@ -755,20 +744,6 @@ const removeCover = () => {
   if (fileInputRef.value) {
     fileInputRef.value.value = ''
   }
-}
-
-const selectFromUnsplash = () => {
-  // 生成随机的Unsplash图片URL
-  const unsplashQueries = ['nature', 'technology', 'workspace', 'abstract', 'minimal', 'landscape', 'city', 'coffee']
-  const randomQuery = unsplashQueries[Math.floor(Math.random() * unsplashQueries.length)]
-  const randomId = Math.floor(Math.random() * 1000) + 1
-  
-  form.value.cover = `https://images.unsplash.com/photo-${1500000000000 + randomId * 1000}?w=800&h=400&fit=crop&q=80&auto=format&keywords=${randomQuery}`
-  
-  // 注释：移除重复的封面图片处理，改为只在渲染时处理
-  // 避免重复调用导致内容损坏
-  
-  console.log('✅ 封面图片已从Unsplash选择，且已从文章内容中移除重复图片')
 }
 
 const saveAsDraft = debounce(async () => {

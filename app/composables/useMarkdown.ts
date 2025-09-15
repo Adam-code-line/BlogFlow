@@ -58,43 +58,73 @@ export function useMarkdown() {
     }
 
     try {
-      // 提取封面图片的基础URL（移除查询参数）
-      const baseCoverUrl = coverImage.split('?')[0]
-      
-      // 匹配Markdown图片语法的正则表达式
-      const imageRegex = /!\[[^\]]*\]\(([^)]+)\)/g
-      let processedContent = content
-      
-      // 收集所有需要移除的图片
-      const imagesToRemove: string[] = []
-      let match
-      
-      // 重置正则表达式的lastIndex
-      imageRegex.lastIndex = 0
-      
-      while ((match = imageRegex.exec(content)) !== null) {
-        const [fullMatch, imageUrl] = match
-        
-        if (!imageUrl) continue
-        
-        // 提取图片的基础URL
-        const baseImageUrl = imageUrl.split('?')[0]
-        
-        // 如果图片URL匹配封面URL，记录需要移除的图片
-        if (baseImageUrl === baseCoverUrl) {
-          imagesToRemove.push(fullMatch)
-        }
+      // 提取封面图片的基础URL（移除查询参数和协议差异）
+      const normalizeCoverUrl = (url: string): string => {
+        if (!url) return ''
+        const parts = url.replace(/^https?:\/\//, '').split('?')
+        return parts[0]?.split('#')[0] || ''
       }
       
-      // 移除所有匹配的图片
-      imagesToRemove.forEach(imageMarkdown => {
-        processedContent = processedContent.replace(imageMarkdown, '')
+      const normalizedCoverUrl = normalizeCoverUrl(coverImage)
+      
+      // 更强的匹配正则，包含各种Markdown图片语法
+      const imagePatterns = [
+        /!\[[^\]]*\]\(([^)]+)\)/g,  // 标准图片语法 ![alt](url)
+        /!\[\]\(([^)]+)\)/g,       // 无alt文本 ![](url)
+        /<img[^>]+src="([^"]+)"[^>]*>/g, // HTML img标签
+        /<img[^>]+src='([^']+)'[^>]*>/g  // HTML img标签（单引号）
+      ]
+      
+      let processedContent = content
+      
+      imagePatterns.forEach(pattern => {
+        let match
+        const imagesToRemove: string[] = []
+        
+        // 重置正则表达式的lastIndex
+        pattern.lastIndex = 0
+        
+        while ((match = pattern.exec(content)) !== null) {
+          const [fullMatch, imageUrl] = match
+          
+          if (!imageUrl) continue
+          
+          // 标准化图片URL进行比较
+          const normalizedImageUrl = normalizeCoverUrl(imageUrl)
+          
+          // 多种匹配策略
+          const isMatch = 
+            normalizedImageUrl === normalizedCoverUrl ||                    // 完全匹配
+            normalizedImageUrl.includes(normalizedCoverUrl) ||              // 包含匹配
+            normalizedCoverUrl.includes(normalizedImageUrl) ||              // 被包含匹配
+            imageUrl === coverImage ||                                      // 原始URL匹配
+            imageUrl.split('?')[0] === coverImage.split('?')[0]            // 去参数匹配
+          
+          if (isMatch) {
+            imagesToRemove.push(fullMatch)
+            console.log('🎯 找到重复图片:', { fullMatch, imageUrl, coverImage })
+          }
+        }
+        
+        // 移除所有匹配的图片
+        imagesToRemove.forEach(imageMarkdown => {
+          processedContent = processedContent.replace(imageMarkdown, '')
+        })
       })
       
-      // 清理多余的空行
-      processedContent = processedContent.replace(/\n\s*\n\s*\n/g, '\n\n')
+      // 清理多余的空行和空格
+      processedContent = processedContent
+        .replace(/\n\s*\n\s*\n/g, '\n\n')  // 多个连续空行合并为两个
+        .replace(/^\s*\n/, '')              // 移除开头的空行
+        .trim()
       
-      return processedContent.trim()
+      console.log('✅ 封面图片去重完成:', { 
+        original: content.length, 
+        processed: processedContent.length, 
+        removed: content.length - processedContent.length 
+      })
+      
+      return processedContent
     } catch (error) {
       console.error('❌ removeDuplicateCoverImage 处理失败:', error)
       // 出错时返回原内容，避免数据丢失

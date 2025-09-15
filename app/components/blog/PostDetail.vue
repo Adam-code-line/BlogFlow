@@ -37,13 +37,13 @@
           <!-- 作者信息 -->
           <div class="flex items-center space-x-3">
             <img
-              :src="post.author?.avatar || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face'"
-              :alt="post.author?.name || 'Author'"
+              :src="post.author?.avatar || author.avatar"
+              :alt="post.author?.name || author.name"
               class="w-12 h-12 rounded-full object-cover border-2 border-gray-200 dark:border-gray-700"
             />
             <div>
               <p class="font-medium text-gray-900 dark:text-white">
-                {{ post.author?.name || 'BlogFlow Author' }}
+                {{ post.author?.name || author.name }}
               </p>
               <div class="flex items-center space-x-3 text-sm text-gray-600 dark:text-gray-400">
                 <time>{{ formatDate(post.publishedAt || post.createdAt) }}</time>
@@ -241,6 +241,7 @@
 <script setup lang="ts">
 import type { ContentPost } from '~/types'
 import { useFormatters, useUtils } from '~/composables/useFormatters'
+import { useAuthorInfo } from '~/composables/useSiteConfig'
 
 // 使用统一的工具函数
 const { formatDate, formatNumber, getExcerpt } = useFormatters()
@@ -293,6 +294,9 @@ const props = withDefaults(defineProps<PostDetailProps>(), {
 })
 
 const emit = defineEmits<PostDetailEmits>()
+
+// 获取站点作者信息
+const author = useAuthorInfo()
 
 // 响应式状态
 const showShareMenu = ref(false)

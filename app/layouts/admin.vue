@@ -50,8 +50,8 @@
             <UiSimpleActionMenu :actions="userMenuItems">
               <div class="cursor-pointer">
                 <img
-                  src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face"
-                  alt="用户头像"
+                  :src="author.avatar"
+                  :alt="author.name"
                   class="w-8 h-8 rounded-full object-cover"
                 />
               </div>
@@ -172,12 +172,16 @@
 
 <script setup lang="ts">
 import { useUIStore } from '~/stores/ui'
+import { useAuthorInfo } from '~/composables/useSiteConfig'
 
 // 侧边栏状态
 const sidebarOpen = ref(false)
 
 // UI Store
 const uiStore = useUIStore()
+
+// 获取站点作者信息
+const author = useAuthorInfo()
 
 // 菜单项样式类
 const adminMenuItemClass = computed(() => [
