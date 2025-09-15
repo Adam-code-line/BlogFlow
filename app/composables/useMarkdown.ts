@@ -51,43 +51,55 @@ export function useMarkdown() {
   const removeDuplicateCoverImage = (content: string, coverImage: string): string => {
     if (!coverImage || !content) return content
 
-    // 提取封面图片的基础URL（移除查询参数）
-    const baseCoverUrl = coverImage.split('?')[0]
-    
-    // 匹配Markdown图片语法的正则表达式
-    const imageRegex = /!\[[^\]]*\]\(([^)]+)\)/g
-    let processedContent = content
-    
-    // 收集所有需要移除的图片
-    const imagesToRemove: string[] = []
-    let match
-    
-    // 重置正则表达式的lastIndex
-    imageRegex.lastIndex = 0
-    
-    while ((match = imageRegex.exec(content)) !== null) {
-      const [fullMatch, imageUrl] = match
-      
-      if (!imageUrl) continue
-      
-      // 提取图片的基础URL
-      const baseImageUrl = imageUrl.split('?')[0]
-      
-      // 如果图片URL匹配封面URL，记录需要移除的图片
-      if (baseImageUrl === baseCoverUrl) {
-        imagesToRemove.push(fullMatch)
-      }
+    // 检查是否禁用了此功能（紧急修复）
+    if (typeof window !== 'undefined' && localStorage.getItem('disable_duplicate_removal') === 'true') {
+      console.log('🔄 重复图片移除功能已禁用')
+      return content
     }
-    
-    // 移除所有匹配的图片
-    imagesToRemove.forEach(imageMarkdown => {
-      processedContent = processedContent.replace(imageMarkdown, '')
-    })
-    
-    // 清理多余的空行
-    processedContent = processedContent.replace(/\n\s*\n\s*\n/g, '\n\n')
-    
-    return processedContent.trim()
+
+    try {
+      // 提取封面图片的基础URL（移除查询参数）
+      const baseCoverUrl = coverImage.split('?')[0]
+      
+      // 匹配Markdown图片语法的正则表达式
+      const imageRegex = /!\[[^\]]*\]\(([^)]+)\)/g
+      let processedContent = content
+      
+      // 收集所有需要移除的图片
+      const imagesToRemove: string[] = []
+      let match
+      
+      // 重置正则表达式的lastIndex
+      imageRegex.lastIndex = 0
+      
+      while ((match = imageRegex.exec(content)) !== null) {
+        const [fullMatch, imageUrl] = match
+        
+        if (!imageUrl) continue
+        
+        // 提取图片的基础URL
+        const baseImageUrl = imageUrl.split('?')[0]
+        
+        // 如果图片URL匹配封面URL，记录需要移除的图片
+        if (baseImageUrl === baseCoverUrl) {
+          imagesToRemove.push(fullMatch)
+        }
+      }
+      
+      // 移除所有匹配的图片
+      imagesToRemove.forEach(imageMarkdown => {
+        processedContent = processedContent.replace(imageMarkdown, '')
+      })
+      
+      // 清理多余的空行
+      processedContent = processedContent.replace(/\n\s*\n\s*\n/g, '\n\n')
+      
+      return processedContent.trim()
+    } catch (error) {
+      console.error('❌ removeDuplicateCoverImage 处理失败:', error)
+      // 出错时返回原内容，避免数据丢失
+      return content
+    }
   }
 
   /**

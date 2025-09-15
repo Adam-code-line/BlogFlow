@@ -728,11 +728,8 @@ const handleFileUpload = async (event: Event) => {
         uploadProgress.value = 100
         form.value.cover = e.target?.result as string
         
-        // 自动清理内容中可能的重复封面图片
-        if (form.value.content && form.value.cover) {
-          const { removeDuplicateCoverImage } = useMarkdown()
-          form.value.content = removeDuplicateCoverImage(form.value.content, form.value.cover)
-        }
+        // 注释：移除重复的封面图片处理，改为只在渲染时处理
+        // 避免重复调用导致内容损坏
         
         setTimeout(() => {
           uploading.value = false
@@ -768,11 +765,8 @@ const selectFromUnsplash = () => {
   
   form.value.cover = `https://images.unsplash.com/photo-${1500000000000 + randomId * 1000}?w=800&h=400&fit=crop&q=80&auto=format&keywords=${randomQuery}`
   
-  // 自动清理内容中可能的重复封面图片
-  if (form.value.content && form.value.cover) {
-    const { removeDuplicateCoverImage } = useMarkdown()
-    form.value.content = removeDuplicateCoverImage(form.value.content, form.value.cover)
-  }
+  // 注释：移除重复的封面图片处理，改为只在渲染时处理
+  // 避免重复调用导致内容损坏
   
   console.log('✅ 封面图片已从Unsplash选择，且已从文章内容中移除重复图片')
 }
@@ -783,11 +777,8 @@ const saveAsDraft = debounce(async () => {
     // 更新标签
     updateTags()
     
-    // 清理内容中重复的封面图片
-    if (form.value.cover && form.value.content) {
-      const { removeDuplicateCoverImage } = useMarkdown()
-      form.value.content = removeDuplicateCoverImage(form.value.content, form.value.cover)
-    }
+    // 注释：移除重复的封面图片处理，改为只在渲染时处理
+    // 避免重复调用导致内容损坏
     
     console.log('💾 保存草稿 - 表单数据:', form.value)
     console.log('💾 Content 字段:', form.value.content)
@@ -820,11 +811,8 @@ const publishPost = throttle(async () => {
     // 更新标签
     updateTags()
     
-    // 清理内容中重复的封面图片
-    if (form.value.cover && form.value.content) {
-      const { removeDuplicateCoverImage } = useMarkdown()
-      form.value.content = removeDuplicateCoverImage(form.value.content, form.value.cover)
-    }
+    // 注释：移除重复的封面图片处理，改为只在渲染时处理
+    // 避免重复调用导致内容损坏
     
     console.log('🚀 发布文章 - 表单数据:', form.value)
     console.log('🚀 Content 字段:', form.value.content)

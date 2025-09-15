@@ -287,8 +287,13 @@ const loadPost = async () => {
       new Promise(resolve => setTimeout(resolve, 800))
     ])
     
-    post.value = postData
+    if (postData) {
+      post.value = postData
+    } else {
+      error.value = '抱歉，未找到该文章'
+    }
   } catch (err) {
+    console.error('文章加载失败:', err)
     error.value = '抱歉，未找到该文章'
   } finally {
     loading.value = false
@@ -297,29 +302,36 @@ const loadPost = async () => {
 
 // 获取文章数据的具体逻辑
 const getPostData = async (): Promise<ContentPost | null> => {
-  // 优先从localStorage获取文章
-  const posts = await getPostsAction()
-  
-  const foundPost = posts.find(p => p.slug === slug.value)
-  
-  if (foundPost) {
-    // 转换为ContentPost格式
-    return {
-      ...foundPost,
-      path: `/blog/${foundPost.slug}`,
-      _path: `/blog/${foundPost.slug}`,
-      content: foundPost.content, // 确保 content 字段正确
-      body: foundPost.content,
-      excerpt: foundPost.description,
-      readingTime: Math.ceil(foundPost.content.split(/\s+/).length / 200),
-      author: {
-        name: 'BlogFlow Author',
-        avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=48&h=48&fit=crop&crop=face'
-      }
-    } as ContentPost
-  } else {
-    // 备用方案：使用Content API
-    return await blogAPI.getPostBySlug(slug.value)
+  try {
+    // 优先从localStorage获取文章
+    const posts = await getPostsAction()
+    
+    const foundPost = posts.find(p => p.slug === slug.value)
+    
+    if (foundPost) {
+      // 转换为ContentPost格式
+      const contentPost = {
+        ...foundPost,
+        path: `/blog/${foundPost.slug}`,
+        _path: `/blog/${foundPost.slug}`,
+        content: foundPost.content || '', // 确保 content 字段正确
+        body: foundPost.content || '',
+        excerpt: foundPost.description || '',
+        readingTime: Math.ceil((foundPost.content || '').split(/\s+/).length / 200),
+        author: {
+          name: 'BlogFlow Author',
+          avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=48&h=48&fit=crop&crop=face'
+        }
+      } as ContentPost
+      
+      return contentPost
+    } else {
+      // 备用方案：使用Content API
+      return await blogAPI.getPostBySlug(slug.value)
+    }
+  } catch (error) {
+    console.error('getPostData 错误:', error)
+    return null
   }
 }
 
