@@ -500,4 +500,69 @@ function copyUrl() {
   margin-top: 0.5rem !important;
   margin-bottom: 0.25rem !important;
 }
+
+/* 链接样式优化 - 添加蓝色高亮和悬停效果 */
+:deep(.prose a) {
+  color: #3b82f6 !important; /* 蓝色 */
+  text-decoration: underline !important;
+  text-decoration-color: rgba(59, 130, 246, 0.3) !important;
+  text-underline-offset: 3px !important;
+  font-weight: 500 !important;
+  transition: all 0.2s ease-in-out !important;
+}
+
+:deep(.prose a:hover) {
+  color: #1d4ed8 !important; /* 深蓝色 */
+  text-decoration-color: #3b82f6 !important;
+  text-shadow: 0 0 8px rgba(59, 130, 246, 0.3) !important; /* 蓝色发光效果 */
+  transform: translateY(-1px) !important;
+}
+
+/* 暗色模式下的链接样式 */
+:deep(.dark .prose a) {
+  color: #60a5fa !important; /* 亮蓝色 */
+  text-decoration-color: rgba(96, 165, 250, 0.3) !important;
+}
+
+:deep(.dark .prose a:hover) {
+  color: #93c5fd !important; /* 更亮的蓝色 */
+  text-decoration-color: #60a5fa !important;
+  text-shadow: 0 0 12px rgba(96, 165, 250, 0.4) !important; /* 暗色模式下的蓝色发光 */
+}
+
+/* 外部链接特殊样式 - 添加小图标 */
+:deep(.prose a[href^="http"]:not([href*="blogflow.example.com"]):not([href*="localhost"])) {
+  position: relative !important;
+}
+
+:deep(.prose a[href^="http"]:not([href*="blogflow.example.com"]):not([href*="localhost"]))::after {
+  content: "↗" !important;
+  display: inline-block !important;
+  margin-left: 4px !important;
+  font-size: 0.75em !important;
+  opacity: 0.7 !important;
+  transition: all 0.2s ease-in-out !important;
+}
+
+:deep(.prose a[href^="http"]:not([href*="blogflow.example.com"]):not([href*="localhost"])):hover::after {
+  opacity: 1 !important;
+  transform: translateX(2px) translateY(-2px) !important;
+}
+
+/* 代码中的链接样式 */
+:deep(.prose code a) {
+  color: inherit !important;
+  text-decoration: underline !important;
+  text-decoration-color: currentColor !important;
+}
+
+/* 引用块中的链接样式 */
+:deep(.prose blockquote a) {
+  color: #1e40af !important;
+  font-weight: 600 !important;
+}
+
+:deep(.dark .prose blockquote a) {
+  color: #93c5fd !important;
+}
 </style>

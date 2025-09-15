@@ -1,0 +1,181 @@
+/* 全局链接样式优化 */
+
+/* 基础链接样式 */
+.prose a,
+.blog-content a,
+.markdown-content a,
+.article-content a {
+  color: #3b82f6;
+  text-decoration: underline;
+  text-decoration-color: rgba(59, 130, 246, 0.3);
+  text-underline-offset: 3px;
+  font-weight: 500;
+  transition: all 0.2s ease-in-out;
+}
+
+.prose a:hover,
+.blog-content a:hover,
+.markdown-content a:hover,
+.article-content a:hover {
+  color: #1e40af;
+  text-decoration-color: #3b82f6;
+  text-shadow: 0 0 8px rgba(59, 130, 246, 0.3);
+  transform: translateY(-1px);
+}
+
+/* 暗色模式下的链接样式 */
+.dark .prose a,
+.dark .blog-content a,
+.dark .markdown-content a,
+.dark .article-content a {
+  color: #60a5fa;
+  text-decoration-color: rgba(96, 165, 250, 0.3);
+}
+
+.dark .prose a:hover,
+.dark .blog-content a:hover,
+.dark .markdown-content a:hover,
+.dark .article-content a:hover {
+  color: #93c5fd;
+  text-decoration-color: #60a5fa;
+  text-shadow: 0 0 12px rgba(96, 165, 250, 0.4);
+}
+
+/* 外部链接特殊样式 - 添加箭头图标 */
+.prose a[href^="http"]:not([href*="blogflow.example.com"]):not([href*="localhost"])::after,
+.blog-content a[href^="http"]:not([href*="blogflow.example.com"]):not([href*="localhost"])::after,
+.markdown-content a[href^="http"]:not([href*="blogflow.example.com"]):not([href*="localhost"])::after,
+.article-content a[href^="http"]:not([href*="blogflow.example.com"]):not([href*="localhost"])::after {
+  content: "↗";
+  display: inline-block;
+  margin-left: 4px;
+  font-size: 0.75em;
+  opacity: 0.7;
+  transition: all 0.2s ease-in-out;
+}
+
+.prose a[href^="http"]:not([href*="blogflow.example.com"]):not([href*="localhost"]):hover::after,
+.blog-content a[href^="http"]:not([href*="blogflow.example.com"]):not([href*="localhost"]):hover::after,
+.markdown-content a[href^="http"]:not([href*="blogflow.example.com"]):not([href*="localhost"]):hover::after,
+.article-content a[href^="http"]:not([href*="blogflow.example.com"]):not([href*="localhost"]):hover::after {
+  opacity: 1;
+  transform: translateX(2px) translateY(-2px);
+}
+
+/* 代码块中的链接样式 */
+.prose code a,
+.blog-content code a,
+.markdown-content code a,
+.article-content code a {
+  color: inherit !important;
+  text-decoration: underline;
+  text-decoration-color: currentColor;
+  font-weight: inherit;
+}
+
+/* 引用块中的链接样式 */
+.prose blockquote a,
+.blog-content blockquote a,
+.markdown-content blockquote a,
+.article-content blockquote a {
+  color: #1e40af;
+  font-weight: 600;
+}
+
+.dark .prose blockquote a,
+.dark .blog-content blockquote a,
+.dark .markdown-content blockquote a,
+.dark .article-content blockquote a {
+  color: #93c5fd;
+}
+
+/* 特殊的链接按钮样式 */
+.link-button {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: white;
+  background-color: #3b82f6;
+  border: 1px solid transparent;
+  border-radius: 0.375rem;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease-in-out;
+  text-decoration: none !important;
+}
+
+.link-button:hover {
+  background-color: #2563eb;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.dark .link-button {
+  background-color: #3b82f6;
+}
+
+.dark .link-button:hover {
+  background-color: #2563eb;
+  box-shadow: 0 4px 12px rgba(96, 165, 250, 0.3);
+}
+
+/* 为邮件链接添加特殊样式 */
+.prose a[href^="mailto:"],
+.blog-content a[href^="mailto:"],
+.markdown-content a[href^="mailto:"],
+.article-content a[href^="mailto:"] {
+  color: #059669;
+}
+
+.dark .prose a[href^="mailto:"],
+.dark .blog-content a[href^="mailto:"],
+.dark .markdown-content a[href^="mailto:"],
+.dark .article-content a[href^="mailto:"] {
+  color: #34d399;
+}
+
+.prose a[href^="mailto:"]:hover,
+.blog-content a[href^="mailto:"]:hover,
+.markdown-content a[href^="mailto:"]:hover,
+.article-content a[href^="mailto:"]:hover {
+  color: #047857;
+  text-shadow: 0 0 8px rgba(34, 197, 94, 0.3);
+}
+
+.dark .prose a[href^="mailto:"]:hover,
+.dark .blog-content a[href^="mailto:"]:hover,
+.dark .markdown-content a[href^="mailto:"]:hover,
+.dark .article-content a[href^="mailto:"]:hover {
+  color: #6ee7b7;
+}
+
+/* 为电话链接添加特殊样式 */
+.prose a[href^="tel:"],
+.blog-content a[href^="tel:"],
+.markdown-content a[href^="tel:"],
+.article-content a[href^="tel:"] {
+  color: #7c3aed;
+}
+
+.dark .prose a[href^="tel:"],
+.dark .blog-content a[href^="tel:"],
+.dark .markdown-content a[href^="tel:"],
+.dark .article-content a[href^="tel:"] {
+  color: #a78bfa;
+}
+
+.prose a[href^="tel:"]:hover,
+.blog-content a[href^="tel:"]:hover,
+.markdown-content a[href^="tel:"]:hover,
+.article-content a[href^="tel:"]:hover {
+  color: #5b21b6;
+  text-shadow: 0 0 8px rgba(147, 51, 234, 0.3);
+}
+
+.dark .prose a[href^="tel:"]:hover,
+.dark .blog-content a[href^="tel:"]:hover,
+.dark .markdown-content a[href^="tel:"]:hover,
+.dark .article-content a[href^="tel:"]:hover {
+  color: #c4b5fd;
+}

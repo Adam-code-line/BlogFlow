@@ -394,22 +394,46 @@ defineExpose({
   border-left-color: rgb(147 197 253);
 }
 
-/* 链接样式 */
+/* 链接样式优化 - 添加蓝色高亮和悬停效果 */
 :deep(.cherry-previewer a) {
-  color: rgb(59 130 246);
-  text-decoration: underline;
-  transition: color 0.2s ease;
+  color: #3b82f6 !important;
+  text-decoration: underline !important;
+  text-decoration-color: rgba(59, 130, 246, 0.3) !important;
+  text-underline-offset: 3px !important;
+  font-weight: 500 !important;
+  transition: all 0.2s ease-in-out !important;
 }
 
 :deep(.cherry-previewer a:hover) {
-  color: rgb(29 78 216);
+  color: #1d4ed8 !important;
+  text-decoration-color: #3b82f6 !important;
+  text-shadow: 0 0 8px rgba(59, 130, 246, 0.3) !important;
+  transform: translateY(-1px) !important;
 }
 
 .dark :deep(.cherry-previewer a) {
-  color: rgb(147 197 253);
+  color: #60a5fa !important;
+  text-decoration-color: rgba(96, 165, 250, 0.3) !important;
 }
 
 .dark :deep(.cherry-previewer a:hover) {
-  color: rgb(191 219 254);
+  color: #93c5fd !important;
+  text-decoration-color: #60a5fa !important;
+  text-shadow: 0 0 12px rgba(96, 165, 250, 0.4) !important;
+}
+
+/* 外部链接特殊样式 - 添加小图标 */
+:deep(.cherry-previewer a[href^="http"]:not([href*="blogflow.example.com"]):not([href*="localhost"]))::after {
+  content: "↗" !important;
+  display: inline-block !important;
+  margin-left: 4px !important;
+  font-size: 0.75em !important;
+  opacity: 0.7 !important;
+  transition: all 0.2s ease-in-out !important;
+}
+
+:deep(.cherry-previewer a[href^="http"]:not([href*="blogflow.example.com"]):not([href*="localhost"])):hover::after {
+  opacity: 1 !important;
+  transform: translateX(2px) translateY(-2px) !important;
 }
 </style>

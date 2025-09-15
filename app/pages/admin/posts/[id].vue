@@ -68,175 +68,118 @@
         <!-- 左侧主要内容区域 -->
         <div class="xl:col-span-3 space-y-6">
           <!-- 文章基本信息卡片 -->
-          <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+          <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
             <!-- 卡片头部 -->
-            <div class="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border-b border-gray-200 dark:border-gray-700 px-6 py-4">
-              <div class="flex items-center space-x-3">
-                <div class="p-2 bg-blue-500 rounded-lg shadow-sm">
-                  <Icon name="heroicons:document-text" class="w-5 h-5 text-white" />
+            <div class="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border-b border-gray-200 dark:border-gray-700 px-4 py-3">
+              <div class="flex items-center space-x-2">
+                <div class="p-1.5 bg-blue-500 rounded-lg">
+                  <Icon name="heroicons:document-text" class="w-4 h-4 text-white" />
                 </div>
                 <div>
-                  <h2 class="text-lg font-semibold text-gray-900 dark:text-white">基本信息</h2>
-                  <p class="text-sm text-gray-600 dark:text-gray-400">配置文章的标题、描述和分类标签</p>
+                  <h2 class="text-base font-semibold text-gray-900 dark:text-white">基本信息</h2>
+                  <p class="text-xs text-gray-600 dark:text-gray-400">配置文章的标题、描述和分类标签</p>
                 </div>
               </div>
             </div>
             
             <!-- 卡片内容 -->
-            <div class="p-6 space-y-8">
-              <!-- 文章标题 -->
-              <div class="space-y-3">
-                <label class="flex items-center space-x-2 text-sm font-medium text-gray-700 dark:text-gray-300">
-                  <Icon name="heroicons:pencil" class="w-4 h-4 text-blue-500" />
-                  <span>文章标题</span>
-                  <span class="text-red-500">*</span>
-                </label>
-                <UInput
-                  v-model="form.title"
-                  placeholder="输入一个吸引人的标题..."
-                  size="xl"
-                  class="text-lg"
-                  :ui="{ 
-                    base: 'bg-gray-50 dark:bg-gray-700/50 border-gray-200 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-500 transition-all duration-200 px-4 py-3'
-                  }"
-                />
-                <p class="text-xs text-gray-500 dark:text-gray-400 flex items-center">
-                  <Icon name="heroicons:light-bulb" class="w-3 h-3 mr-1" />
-                  建议长度：10-60个字符，当前：{{ form.title.length }}/60
-                </p>
+            <div class="p-4 space-y-4">
+              <!-- 第一行：标题和描述 -->
+              <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                <!-- 文章标题 -->
+                <div class="space-y-2">
+                  <label class="flex items-center space-x-1 text-sm font-medium text-gray-700 dark:text-gray-300">
+                    <Icon name="heroicons:pencil" class="w-3 h-3 text-blue-500" />
+                    <span>文章标题</span>
+                    <span class="text-red-500">*</span>
+                  </label>
+                  <UInput
+                    v-model="form.title"
+                    placeholder="输入一个吸引人的标题..."
+                    size="md"
+                    :ui="{ 
+                      base: 'bg-gray-50 dark:bg-gray-700/50 border-gray-200 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-500 transition-all duration-200'
+                    }"
+                  />
+                  <p class="text-xs text-gray-500 dark:text-gray-400">
+                    当前：{{ form.title.length }}/60
+                  </p>
+                </div>
+                
+                <!-- 文章描述 -->
+                <div class="space-y-2">
+                  <label class="flex items-center space-x-1 text-sm font-medium text-gray-700 dark:text-gray-300">
+                    <Icon name="heroicons:chat-bubble-left-ellipsis" class="w-3 h-3 text-green-500" />
+                    <span>文章描述</span>
+                  </label>
+                  <UTextarea
+                    v-model="form.description"
+                    placeholder="简要描述这篇文章的内容..."
+                    :rows="2"
+                    :ui="{ 
+                      base: 'bg-gray-50 dark:bg-gray-700/50 border-gray-200 dark:border-gray-600 focus:border-green-500 focus:ring-green-500 transition-all duration-200'
+                    }"
+                  />
+                  <p class="text-xs text-gray-500 dark:text-gray-400">
+                    当前：{{ (form.description || '').length }}/160
+                  </p>
+                </div>
               </div>
               
-              <!-- 文章描述 -->
-              <div class="space-y-3">
-                <label class="flex items-center space-x-2 text-sm font-medium text-gray-700 dark:text-gray-300">
-                  <Icon name="heroicons:chat-bubble-left-ellipsis" class="w-4 h-4 text-green-500" />
-                  <span>文章描述</span>
-                </label>
-                <UTextarea
-                  v-model="form.description"
-                  placeholder="简要描述这篇文章的内容，这将显示在文章列表和搜索结果中..."
-                  :rows="4"
-                  resize
-                  :ui="{ 
-                    base: 'bg-gray-50 dark:bg-gray-700/50 border-gray-200 dark:border-gray-600 focus:border-green-500 focus:ring-green-500 transition-all duration-200'
-                  }"
-                />
-                <p class="text-xs text-gray-500 dark:text-gray-400 flex items-center">
-                  <Icon name="heroicons:information-circle" class="w-3 h-3 mr-1" />
-                  建议长度：50-160个字符，当前：{{ (form.description || '').length }}/160
-                </p>
-              </div>
-              
-              <!-- 分类和标签区域 -->
-              <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              <!-- 第二行：分类和标签 -->
+              <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
                 <!-- 分类选择 -->
-                <div class="space-y-3">
-                  <label class="flex items-center space-x-2 text-sm font-medium text-gray-700 dark:text-gray-300">
-                    <Icon name="heroicons:folder" class="w-4 h-4 text-purple-500" />
+                <div class="space-y-2">
+                  <label class="flex items-center space-x-1 text-sm font-medium text-gray-700 dark:text-gray-300">
+                    <Icon name="heroicons:folder" class="w-3 h-3 text-purple-500" />
                     <span>文章分类</span>
                   </label>
                   <USelect
                     v-model="form.category"
                     :options="categoryOptions"
                     placeholder="选择文章分类"
-                    size="lg"
+                    size="md"
                     :ui="{ 
                       base: 'bg-gray-50 dark:bg-gray-700/50 border-gray-200 dark:border-gray-600 focus:border-purple-500 focus:ring-purple-500 transition-all duration-200'
                     }"
                   />
-                  <p class="text-xs text-gray-500 dark:text-gray-400 flex items-center">
-                    <Icon name="heroicons:tag" class="w-3 h-3 mr-1" />
-                    选择合适的分类有助于读者找到您的文章
-                  </p>
                 </div>
                 
                 <!-- 标签管理 -->
-                <div class="space-y-3">
-                  <label class="flex items-center space-x-2 text-sm font-medium text-gray-700 dark:text-gray-300">
-                    <Icon name="heroicons:hashtag" class="w-4 h-4 text-orange-500" />
+                <div class="space-y-2">
+                  <label class="flex items-center space-x-1 text-sm font-medium text-gray-700 dark:text-gray-300">
+                    <Icon name="heroicons:hashtag" class="w-3 h-3 text-orange-500" />
                     <span>文章标签</span>
                   </label>
                   <UInput
                     v-model="tagsInput"
-                    placeholder="输入标签，用逗号分隔（如：技术,前端,Vue）"
+                    placeholder="输入标签，用逗号分隔"
                     @blur="updateTags"
                     @keydown.enter.prevent="updateTags"
-                    size="lg"
+                    size="md"
                     :ui="{ 
                       base: 'bg-gray-50 dark:bg-gray-700/50 border-gray-200 dark:border-gray-600 focus:border-orange-500 focus:ring-orange-500 transition-all duration-200'
                     }"
                   />
-                  
-                  <!-- 标签预览 -->
-                  <div v-if="form.tags.length" class="space-y-2">
-                    <p class="text-xs text-gray-500 dark:text-gray-400">已添加的标签：</p>
-                    <div class="flex flex-wrap gap-2">
-                      <span
-                        v-for="tag in form.tags"
-                        :key="tag"
-                        class="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-medium bg-gradient-to-r from-blue-100 to-blue-200 text-blue-800 dark:from-blue-900/30 dark:to-blue-800/30 dark:text-blue-300 border border-blue-200 dark:border-blue-700 transition-all duration-200 hover:shadow-sm"
-                      >
-                        <Icon name="heroicons:hashtag" class="w-3 h-3 mr-1" />
-                        {{ tag }}
-                        <button
-                          @click="removeTag(tag)"
-                          class="ml-2 inline-flex items-center justify-center w-4 h-4 rounded-full hover:bg-blue-300 dark:hover:bg-blue-700/50 transition-colors duration-200"
-                        >
-                          <Icon name="heroicons:x-mark" class="w-3 h-3" />
-                        </button>
-                      </span>
-                    </div>
-                  </div>
-                  
-                  <p class="text-xs text-gray-500 dark:text-gray-400 flex items-center">
-                    <Icon name="heroicons:sparkles" class="w-3 h-3 mr-1" />
-                    建议添加3-8个相关标签，有助于SEO优化
-                  </p>
                 </div>
               </div>
               
-              <!-- SEO优化设置 -->
-              <div class="border-t border-gray-100 dark:border-gray-700 pt-6">
-                <div class="flex items-center space-x-3 mb-4">
-                  <div class="p-2 bg-gradient-to-r from-indigo-100 to-purple-100 dark:from-indigo-900/20 dark:to-purple-900/20 rounded-lg">
-                    <Icon name="heroicons:magnifying-glass" class="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
-                  </div>
-                  <div>
-                    <h3 class="text-sm font-semibold text-gray-900 dark:text-white">SEO优化</h3>
-                    <p class="text-xs text-gray-500 dark:text-gray-400">提升文章在搜索引擎中的排名</p>
-                  </div>
-                </div>
-                
-                <div class="space-y-4">
-                  <!-- SEO描述 -->
-                  <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      SEO描述（可选）
-                    </label>
-                    <UTextarea
-                      v-model="form.metaDescription"
-                      placeholder="为搜索引擎优化的描述文本..."
-                      :rows="2"
-                      :ui="{ 
-                        base: 'bg-gray-50 dark:bg-gray-700/50 border-gray-200 dark:border-gray-600 focus:border-indigo-500 focus:ring-indigo-500'
-                      }"
-                    />
-                  </div>
-                  
-                  <!-- 关键词 -->
-                  <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      SEO关键词（可选）
-                    </label>
-                    <UInput
-                      v-model="form.keywords"
-                      placeholder="关键词1, 关键词2, 关键词3"
-                      :ui="{ 
-                        base: 'bg-gray-50 dark:bg-gray-700/50 border-gray-200 dark:border-gray-600 focus:border-indigo-500 focus:ring-indigo-500'
-                      }"
-                    />
-                  </div>
-                </div>
+              <!-- 标签预览 -->
+              <div v-if="form.tags.length" class="flex flex-wrap gap-2">
+                <span
+                  v-for="tag in form.tags"
+                  :key="tag"
+                  class="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300 border border-blue-200 dark:border-blue-700"
+                >
+                  <Icon name="heroicons:hashtag" class="w-3 h-3 mr-1" />
+                  {{ tag }}
+                  <button
+                    @click="removeTag(tag)"
+                    class="ml-1 inline-flex items-center justify-center w-3 h-3 rounded-full hover:bg-blue-300 dark:hover:bg-blue-700/50"
+                  >
+                    <Icon name="heroicons:x-mark" class="w-2 h-2" />
+                  </button>
+                </span>
               </div>
             </div>
           </div>
@@ -268,7 +211,7 @@
               <div class="border border-gray-200 dark:border-gray-600 rounded-xl overflow-hidden bg-gray-50 dark:bg-gray-700/30">
                 <CherryMarkdownEditor
                   v-model="form.content"
-                  height="600px"
+                  height="800px"
                   placeholder="在这里编写您的文章内容..."
                   :ui="{
                     wrapper: 'rounded-xl overflow-hidden',
@@ -621,8 +564,6 @@ const form = ref({
   publishedAt: '',
   featured: false,
   slug: '',
-  metaDescription: '',
-  keywords: '',
   views: 0
 })
 
@@ -834,8 +775,6 @@ const initializeForm = async () => {
           publishedAt: post.publishedAt ? new Date(post.publishedAt).toISOString().slice(0, 16) : '',
           featured: post.featured || false,
           slug: post.slug || '',
-          metaDescription: post.metaDescription || '',
-          keywords: post.keywords || '',
           views: post.views || 0
         }
         tagsInput.value = post.tags.join(', ')
@@ -856,8 +795,6 @@ const initializeForm = async () => {
         publishedAt: new Date().toISOString().slice(0, 16),
         featured: false,
         slug: 'example-post',
-        metaDescription: '这是示例文章的 meta 描述',
-        keywords: 'Vue.js, TypeScript, 前端开发',
         views: 0
       }
       tagsInput.value = form.value.tags.join(', ')
@@ -989,13 +926,13 @@ onMounted(async () => {
 /* 响应式优化 */
 @media (max-width: 1279px) {
   :deep(.cherry) {
-    height: 500px !important;
+    height: 700px !important;
   }
 }
 
 @media (max-width: 768px) {
   :deep(.cherry) {
-    height: 400px !important;
+    height: 600px !important;
   }
   
   :deep(.cherry-editor),
